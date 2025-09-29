@@ -1,12 +1,7 @@
 import model from "../../shared/utils/vertex-client";
+import { ParsedArticle } from "../types/parsed-article";
 
-const analyzeArticle = async (parsedArticle: {
-  title: string | null | undefined;
-  byline: string | null | undefined;
-  content: string | null | undefined;
-  length: number | null | undefined;
-  excerpt: string | null | undefined;
-}) => {
+const analyzeArticle = async (parsedArticle: ParsedArticle) => {
   const userPrompt = `I have this article: ${JSON.stringify(parsedArticle)}`;
 
   const result = await model.generateContent({
