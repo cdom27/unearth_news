@@ -2,7 +2,22 @@ import model from "../../shared/utils/vertex-client";
 import { ParsedArticle } from "../types/parsed-article";
 
 const analyzeArticle = async (parsedArticle: ParsedArticle) => {
-  const userPrompt = `I have this article: ${JSON.stringify(parsedArticle)}`;
+  const userPrompt = `
+Article Metadata:
+- Title: ${parsedArticle.title}
+- Byline: ${parsedArticle.byline || "N/A"}
+- Source: ${parsedArticle.sourceName}
+- URL: ${parsedArticle.url}
+- Published Time: ${parsedArticle.publishedTime.toISOString()}
+
+Excerpt: 
+${parsedArticle.excerpt}
+
+Full Text Content:
+"""
+${parsedArticle.textContent}
+"""
+`;
 
   const result = await model.generateContent({
     contents: [
