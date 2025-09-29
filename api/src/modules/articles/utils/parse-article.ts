@@ -22,8 +22,6 @@ const extractKeywords = (title: string) => {
   nouns = nouns.filter((w) => !/^(he|she|they|it|we|I)$/i.test(w));
 
   const keywordArray = Array.from(new Set([...nouns]));
-
-  console.log("keywords:", keywordArray.join(" ").toLowerCase());
   return keywordArray.join(" ").toLowerCase();
 };
 
