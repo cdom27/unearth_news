@@ -39,6 +39,7 @@ const parseArticle = async (url: string) => {
 
   const keywords = extractKeywords(article.title!);
   const parsedArticle: ParsedArticle = {
+    keywords: keywords,
     sourceName: article.siteName ?? "",
     url: url,
     title: article.title ?? "",

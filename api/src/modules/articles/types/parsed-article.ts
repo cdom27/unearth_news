@@ -1,4 +1,5 @@
 export type ParsedArticle = {
+  keywords: string;
   sourceName: string;
   url: string;
   title: string;
