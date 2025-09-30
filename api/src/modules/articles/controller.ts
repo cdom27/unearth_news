@@ -3,9 +3,11 @@ import { success, failure } from "../shared/utils/build-response";
 import analyzeArticle from "./utils/analyze-article";
 import parseArticle from "./utils/parse-article";
 import type { Analysis } from "./types/analysis";
+import { AnalysisRequest } from "./dtos/analysis-request";
+import { normalizeUrl } from "./utils/normalize-url";
 
 export const analyzeArticles = async (
-  req: Request<{}, {}, { url: string }>,
+  req: Request<{}, {}, AnalysisRequest>,
   res: Response
 ) => {
   try {
@@ -14,8 +16,9 @@ export const analyzeArticles = async (
     if (!url) {
       return failure(res, "Request body is missing", 400);
     }
+    const normalizedUrl = normalizeUrl(url);
 
-    const parsedArticle = await parseArticle(url);
+    const parsedArticle = await parseArticle(normalizedUrl);
     if (!parsedArticle) {
       return failure(res, "Unable to parse article", 422);
     }
