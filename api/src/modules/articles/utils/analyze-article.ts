@@ -1,14 +1,13 @@
 import model from "../../shared/utils/vertex-client";
-import { ParsedArticle } from "../types/parsed-article";
+import { Article } from "../types/article";
 
-const analyzeArticle = async (parsedArticle: ParsedArticle) => {
+const analyzeArticle = async (parsedArticle: Article) => {
   const userPrompt = `
 Article Metadata:
 - Title: ${parsedArticle.title}
 - Byline: ${parsedArticle.byline || "N/A"}
-- Source: ${parsedArticle.sourceName}
 - URL: ${parsedArticle.url}
-- Published Time: ${parsedArticle.publishedTime.toISOString()}
+- Published Time: ${parsedArticle.publishedTime}
 
 Excerpt: 
 ${parsedArticle.excerpt}
