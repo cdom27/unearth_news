@@ -37,10 +37,17 @@ const parseArticle = async (url: string) => {
     return null;
   }
 
+  // fallback to hostname if name is empty
+  if (!article.siteName) {
+    const domain = new URL(url).hostname;
+    const base = domain.replace(/^www\./, "").split(".")[0];
+    article.siteName = base.charAt(0).toUpperCase() + base.slice(1);
+  }
+
   const keywords = extractKeywords(article.title!);
   const parsedArticle: ParsedArticle = {
     keywords: keywords,
-    sourceName: article.siteName ?? "",
+    sourceName: article.siteName,
     url: url,
     title: article.title ?? "",
     byline: article.byline ?? "",
