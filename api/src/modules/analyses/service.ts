@@ -30,6 +30,34 @@ export const findAnalysisByArticleId = async (
   }
 };
 
+export const findAnalysisBySlug = async (
+  slug: string
+): Promise<Analysis | null> => {
+  try {
+    const result = await pool.query(
+      "SELECT * FROM analyses WHERE slug = $1 LIMIT 1",
+      [slug]
+    );
+    const row = result.rows[0];
+
+    if (!row) return null;
+
+    return {
+      id: row.id,
+      articleId: row.article_id,
+      slug: row.slug,
+      summary: row.summary,
+      sentiment: row.sentiment,
+      framing: row.framing,
+      meta: row.meta,
+      createdAt: row.created_at,
+    };
+  } catch (error) {
+    console.error(`Error occurred while finding analysis:`, error);
+    throw new Error(`Error occurred while finding analysis`);
+  }
+};
+
 export const saveAndReturnAnalysis = async (
   articleId: string,
   slug: string,
