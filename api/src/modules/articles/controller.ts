@@ -1,17 +1,19 @@
 import { Request, Response } from "express";
-import { success, failure } from "../shared/utils/build-response";
-import analyzeArticle from "./utils/analyze-article";
-import parseArticle from "./utils/parse-article";
-import { AnalysisRequest } from "./dtos/analysis-request";
-import { normalizeUrl } from "./utils/normalize-url";
-import { findArticleByUrl, saveAndReturnArticle } from "./service";
-import { findSourceByDomain, saveAndReturnSource } from "../sources/service";
 import {
   findAnalysisByArticleId,
   saveAndReturnAnalysis,
 } from "../analyses/service";
 import { GeminiResponse } from "../shared/lib/dtos/gemini-response";
+import { failure, success } from "../shared/utils/build-response";
+import fetchNewsApiArticles from "../shared/utils/fetch-news-api";
 import slugify from "../shared/utils/slugify";
+import { findSourceByDomain, saveAndReturnSource } from "../sources/service";
+import { AnalysisRequest } from "./dtos/analysis-request";
+import { AnalysisResponse } from "./dtos/analysis-response";
+import { findArticleByUrl, saveAndReturnArticle } from "./service";
+import analyzeArticle from "./utils/analyze-article";
+import { normalizeUrl } from "./utils/normalize-url";
+import parseArticle from "./utils/parse-article";
 
 export const analyzeArticles = async (
   req: Request<{}, {}, AnalysisRequest>,
@@ -29,12 +31,14 @@ export const analyzeArticles = async (
     // attempt article lookup
     let article = await findArticleByUrl(normalizedUrl);
     let slug = "";
+    let keywords = "";
 
     if (!article) {
       const parsedArticle = await parseArticle(normalizedUrl);
       if (!parsedArticle) {
         return failure(res, "Unable to parse article", 422);
       }
+      keywords = parsedArticle.keywords;
 
       // attempt source lookup
       let source = await findSourceByDomain(parsedArticle.sourceName);
@@ -63,7 +67,15 @@ export const analyzeArticles = async (
       analysis = await saveAndReturnAnalysis(article.id, slug, geminiResponse);
     }
 
-    return success(res, { analysis }, "Successfully analyzed article");
+    // fetch related articles &
+    const newsApiResponse = await fetchNewsApiArticles(keywords);
+
+    const payload: AnalysisResponse = {
+      slug: analysis.slug,
+      relatedArticles: newsApiResponse.articles,
+    };
+
+    return success(res, payload, "Successfully analyzed article");
   } catch (error) {
     console.log("Error processing analysis:", error);
     return failure(res, "Internal error while processing analysis");
