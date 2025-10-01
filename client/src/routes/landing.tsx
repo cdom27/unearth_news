@@ -1,12 +1,18 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { CircleNotchIcon } from "@phosphor-icons/react";
 import SiteLayout from "../components/layouts/site-layout";
+import useArticles from "../hooks/use-articles";
 import {
-  AnalyzeUrlSchema,
   type AnalyzeUrlData,
+  AnalyzeUrlSchema,
 } from "../lib/schemas/analyze-url";
+import { useNavigate } from "react-router";
 
 const LandingPage = () => {
+  const { analyzeArticle, isArticleLoading } = useArticles();
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -18,8 +24,11 @@ const LandingPage = () => {
   });
 
   const onSubmit = async (data: AnalyzeUrlData) => {
-    // do something
-    console.log("user input:", data);
+    const slug = await analyzeArticle(data);
+    if (slug) {
+      navigate(`/article/${slug}`);
+    }
+
     reset();
   };
 
@@ -48,7 +57,11 @@ const LandingPage = () => {
           disabled={!dirtyFields.url}
           className="bg-stone-800 text-stone-100 p-2 hover:cursor-pointer disabled:cursor-not-allowed disabled:bg-stone-300 disabled:text-stone-500"
         >
-          Analyze
+          {isArticleLoading ? (
+            <CircleNotchIcon size={20} className="animate-spin mx-auto" />
+          ) : (
+            <span>Analyze</span>
+          )}
         </button>
       </form>
     </SiteLayout>
