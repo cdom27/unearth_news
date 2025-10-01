@@ -31,7 +31,7 @@ export const analyzeArticles = async (
     // attempt article lookup
     let article = await findArticleByUrl(normalizedUrl);
     let slug = "";
-    let keywords = "";
+    let keywords;
 
     if (!article) {
       const parsedArticle = await parseArticle(normalizedUrl);
@@ -67,8 +67,10 @@ export const analyzeArticles = async (
       analysis = await saveAndReturnAnalysis(article.id, slug, geminiResponse);
     }
 
-    // fetch related articles &
-    const newsApiResponse = await fetchNewsApiArticles(keywords);
+    // fetch related articles
+    const newsApiResponse = await fetchNewsApiArticles(
+      keywords || article.title
+    );
 
     const payload: AnalysisResponse = {
       slug: analysis.slug,
