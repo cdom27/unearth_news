@@ -1,4 +1,4 @@
-export type Analysis = {
+export type GeminiResponse = {
   summary: string; // unbiased summary of the topic
   sentiment: "negative" | "neutral" | "positive" | "mixed"; // overall sentiment towards the topic
   framing: {
