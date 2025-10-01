@@ -2,11 +2,15 @@ import { useCallback, useState } from "react";
 import http from "../utils/http";
 import type { AnalyzeUrlData } from "../lib/schemas/analyze-url";
 import type { AnalysisResponse } from "../lib/types/analysis-response";
+import type { ArticleDetails } from "../lib/dtos/article-details";
 
 const useArticles = () => {
   const [isArticleLoading, setIsArticleLoading] = useState(false);
+  const [article, setArticle] = useState<ArticleDetails | null>(null);
+
   const analyzeArticle = useCallback(async (data: AnalyzeUrlData) => {
     setIsArticleLoading(true);
+
     try {
       const response = await http<AnalysisResponse>("/articles", {
         method: "POST",
@@ -29,7 +33,27 @@ const useArticles = () => {
     }
   }, []);
 
-  return { analyzeArticle, isArticleLoading };
+  const getArticleDetails = useCallback(async (slug: string) => {
+    setIsArticleLoading(true);
+
+    try {
+      const response = await http<ArticleDetails>(`/articles/${slug}`, {
+        method: "GET",
+      });
+
+      if (response.data) {
+        console.log("data retrieved:", response.data);
+        setArticle(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching article details:", error);
+      setArticle(null);
+    } finally {
+      setIsArticleLoading(false);
+    }
+  }, []);
+
+  return { analyzeArticle, getArticleDetails, isArticleLoading, article };
 };
 
 export default useArticles;
