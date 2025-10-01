@@ -1,5 +1,5 @@
 import pool from "../../db/client";
-import { GeminiResponse } from "../articles/dtos/gemini-response";
+import { GeminiResponse } from "../shared/lib/dtos/gemini-response";
 import { Analysis } from "./types/analysis";
 
 export const findAnalysisByArticleId = async (

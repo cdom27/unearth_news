@@ -8,7 +8,7 @@ const nanoId = (length: number) => {
   return id;
 };
 
-// Normalize title into a unique slug friendly string
+// Normalize string into a unique slug friendly string
 const slugify = (title: string) => {
   const slugifiedTitle = title
     .toLowerCase()

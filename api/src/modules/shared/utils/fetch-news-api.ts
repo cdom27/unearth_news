@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 import { NEWS_API_KEY } from "../../../config/env";
-import { NewsApiResponse } from "../dtos/news-api-response";
+import { NewsApiResponse } from "../lib/dtos/news-api-response";
 
 const fetchNewsApiArticles = async (query: string) => {
   const response = await fetch(

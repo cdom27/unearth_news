@@ -10,8 +10,8 @@ import {
   findAnalysisByArticleId,
   saveAndReturnAnalysis,
 } from "../analyses/service";
-import { GeminiResponse } from "./dtos/gemini-response";
-import slugify from "./utils/slugify-title";
+import { GeminiResponse } from "../shared/lib/dtos/gemini-response";
+import slugify from "../shared/utils/slugify";
 
 export const analyzeArticles = async (
   req: Request<{}, {}, AnalysisRequest>,
