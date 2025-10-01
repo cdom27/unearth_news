@@ -1,19 +1,30 @@
 import { Request, Response } from "express";
 import {
   findAnalysisByArticleId,
+  findAnalysisBySlug,
   saveAndReturnAnalysis,
 } from "../analyses/service";
 import { GeminiResponse } from "../shared/lib/dtos/gemini-response";
 import { failure, success } from "../shared/utils/build-response";
 import fetchNewsApiArticles from "../shared/utils/fetch-news-api";
 import slugify from "../shared/utils/slugify";
-import { findSourceByDomain, saveAndReturnSource } from "../sources/service";
-import { AnalysisRequest } from "./dtos/analysis-request";
-import { AnalysisResponse } from "./dtos/analysis-response";
-import { findArticleByUrl, saveAndReturnArticle } from "./service";
+import {
+  findSourceByDomain,
+  findSourceById,
+  saveAndReturnSource,
+} from "../sources/service";
+import {
+  findArticleById,
+  findArticleByUrl,
+  saveAndReturnArticle,
+} from "./service";
 import analyzeArticle from "./utils/analyze-article";
 import { normalizeUrl } from "./utils/normalize-url";
 import parseArticle from "./utils/parse-article";
+import type { AnalysisRequest } from "./dtos/analysis-request";
+import type { AnalysisResponse } from "./dtos/analysis-response";
+import type { ArticleSlugParams } from "./types/article-slug-params";
+import type { ArticleDetails } from "./dtos/article-details";
 
 export const analyzeArticles = async (
   req: Request<{}, {}, AnalysisRequest>,
@@ -81,5 +92,66 @@ export const analyzeArticles = async (
   } catch (error) {
     console.log("Error processing analysis:", error);
     return failure(res, "Internal error while processing analysis");
+  }
+};
+
+export const getArticleDetails = async (
+  req: Request<ArticleSlugParams>,
+  res: Response
+) => {
+  // validate slug
+  // get analysis
+  // get article
+  // get source
+  // build payload
+  try {
+    const { slug } = req.params;
+
+    if (!slug) {
+      return failure(res, "Request params are missing", 400);
+    }
+
+    // attempt lookups
+    const analysis = await findAnalysisBySlug(slug);
+
+    if (analysis) {
+      const article = await findArticleById(analysis.articleId);
+
+      if (article) {
+        const source = await findSourceById(article.sourceId);
+
+        if (source) {
+          const payload: ArticleDetails = {
+            article: {
+              url: article.url,
+              title: article.title,
+              language: article.language,
+              byline: article.byline,
+              excerpt: article.excerpt,
+              textContent: article.textContent,
+              publishedTime: article.publishedTime,
+            },
+            source: {
+              name: source.name,
+              domain: source.domain,
+            },
+            analysis: {
+              slug: analysis.slug,
+              summary: analysis.summary,
+              sentiment: analysis.sentiment,
+              framing: analysis.framing,
+              confidence: analysis.meta.confidence,
+            },
+          };
+
+          return success(res, payload, "Successfully fetched article details");
+        }
+      }
+    }
+
+    return failure(res, "Article details not found", 404);
+  } catch (error) {
+    console.error("Error whil fetching article details:", error);
+    return failure(res, "Internal error while fetching article details");
   }
 };

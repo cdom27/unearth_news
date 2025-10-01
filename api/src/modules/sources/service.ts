@@ -26,6 +26,29 @@ export const findSourceByDomain = async (
   }
 };
 
+// Find an existing source record by id
+export const findSourceById = async (id: string): Promise<Source | null> => {
+  try {
+    const result = await pool.query(
+      "SELECT * FROM sources WHERE id = $1 LIMIT 1",
+      [id]
+    );
+    const row = result.rows[0];
+
+    if (!row) return null;
+
+    return {
+      id: row.id,
+      name: row.name,
+      domain: row.domain,
+      createdAt: row.created_at,
+    };
+  } catch (error) {
+    console.error(`Error occurred while finding source:`, error);
+    throw new Error(`Error occurred while finding source`);
+  }
+};
+
 // Insert a newly created source and return it, else fallback to select query
 export const saveAndReturnSource = async (
   name: string,
