@@ -5,6 +5,8 @@ import parseArticle from "./utils/parse-article";
 import type { Analysis } from "./types/analysis";
 import { AnalysisRequest } from "./dtos/analysis-request";
 import { normalizeUrl } from "./utils/normalize-url";
+import { findArticleByUrl, saveAndReturnArticle } from "./service";
+import { findSourceByDomain, saveAndReturnSource } from "../sources/service";
 
 export const analyzeArticles = async (
   req: Request<{}, {}, AnalysisRequest>,
@@ -16,19 +18,36 @@ export const analyzeArticles = async (
     if (!url) {
       return failure(res, "Request body is missing", 400);
     }
+
     const normalizedUrl = normalizeUrl(url);
 
-    const parsedArticle = await parseArticle(normalizedUrl);
-    if (!parsedArticle) {
-      return failure(res, "Unable to parse article", 422);
+    // attempt article lookup
+    let article = await findArticleByUrl(normalizedUrl);
+
+    if (!article) {
+      const parsedArticle = await parseArticle(normalizedUrl);
+      if (!parsedArticle) {
+        return failure(res, "Unable to parse article", 422);
+      }
+
+      // attempt source lookup
+      let source = await findSourceByDomain(parsedArticle.sourceName);
+
+      if (!source) {
+        const hostname = new URL(parsedArticle.url).hostname;
+        source = await saveAndReturnSource(parsedArticle.sourceName, hostname);
+      }
+
+      article = await saveAndReturnArticle(source.id, parsedArticle);
     }
 
-    const analysis = await analyzeArticle(parsedArticle);
+    // analyze article
+    const analysis = await analyzeArticle(article);
     if (!analysis) {
       return failure(res, "Unable to analyze article", 422);
     }
 
-    const parsedAnalysis: Analysis = JSON.parse(analysis);
+    const parsedAnalysis = JSON.parse(analysis) as Analysis;
 
     return success(res, parsedAnalysis, "Successfully analyzed url");
   } catch (error) {

@@ -1,0 +1,84 @@
+import pool from "../../db/client";
+import { Article } from "./types/article";
+import { ParsedArticle } from "./types/parsed-article";
+
+// Find an existing article record by url
+export const findArticleByUrl = async (
+  url: string
+): Promise<Article | null> => {
+  try {
+    const result = await pool.query(
+      "SELECT * FROM articles WHERE url = $1 LIMIT 1",
+      [url]
+    );
+    const row = result.rows[0];
+
+    if (!row) return null;
+
+    return {
+      id: row.id,
+      sourceId: row.source_id,
+      url: row.url,
+      title: row.title,
+      language: row.language,
+      byline: row.byline,
+      excerpt: row.excerpt,
+      htmlContent: row.html_content,
+      textContent: row.text_content,
+      publishedTime: row.published_time,
+      createdAt: row.created_at,
+    };
+  } catch (error) {
+    console.error(`Error occurred while finding article:`, error);
+    throw new Error(`Error occurred while finding artcile`);
+  }
+};
+
+// Insert article record and return it, else fallback to select query
+export const saveAndReturnArticle = async (
+  sourceId: string,
+  parsedArticle: ParsedArticle
+): Promise<Article> => {
+  const insertResult = await pool.query(
+    "INSERT INTO articles (source_id, url, title, language, byline, excerpt, html_content, text_content, published_time) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) ON CONFLICT (url) DO NOTHING RETURNING *",
+    [
+      sourceId,
+      parsedArticle.url,
+      parsedArticle.title,
+      parsedArticle.language,
+      parsedArticle.byline,
+      parsedArticle.excerpt,
+      parsedArticle.htmlContent,
+      parsedArticle.textContent,
+      parsedArticle.publishedTime,
+    ]
+  );
+
+  const insertRows = insertResult.rows;
+
+  if (insertRows.length > 0) {
+    return {
+      id: insertRows[0].id,
+      sourceId: insertRows[0].source_id,
+      url: insertRows[0].url,
+      title: insertRows[0].title,
+      language: insertRows[0].language,
+      byline: insertRows[0].byline,
+      excerpt: insertRows[0].excerpt,
+      htmlContent: insertRows[0].html_content,
+      textContent: insertRows[0].text_content,
+      publishedTime: insertRows[0].published_time,
+      createdAt: insertRows[0].created_at,
+    };
+  }
+
+  // insert failed due to constraints, find existing record by url
+  const selectResult = await findArticleByUrl(parsedArticle.url);
+  if (!selectResult) {
+    throw new Error(
+      `Article not found after conflict insert: ${parsedArticle.url}`
+    );
+  }
+
+  return selectResult!;
+};
