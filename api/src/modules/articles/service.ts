@@ -80,5 +80,5 @@ export const saveAndReturnArticle = async (
     );
   }
 
-  return selectResult!;
+  return selectResult;
 };
