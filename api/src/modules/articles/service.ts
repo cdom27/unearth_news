@@ -54,21 +54,20 @@ export const saveAndReturnArticle = async (
     ]
   );
 
-  const insertRows = insertResult.rows;
-
-  if (insertRows.length > 0) {
+  if (insertResult.rows.length > 0) {
+    const row = insertResult.rows[0];
     return {
-      id: insertRows[0].id,
-      sourceId: insertRows[0].source_id,
-      url: insertRows[0].url,
-      title: insertRows[0].title,
-      language: insertRows[0].language,
-      byline: insertRows[0].byline,
-      excerpt: insertRows[0].excerpt,
-      htmlContent: insertRows[0].html_content,
-      textContent: insertRows[0].text_content,
-      publishedTime: insertRows[0].published_time,
-      createdAt: insertRows[0].created_at,
+      id: row.id,
+      sourceId: row.source_id,
+      url: row.url,
+      title: row.title,
+      language: row.language,
+      byline: row.byline,
+      excerpt: row.excerpt,
+      htmlContent: row.html_content,
+      textContent: row.text_content,
+      publishedTime: row.published_time,
+      createdAt: row.created_at,
     };
   }
 

@@ -36,14 +36,13 @@ export const saveAndReturnSource = async (
     [name, domain]
   );
 
-  const insertRows = insertResult.rows;
-
-  if (insertRows.length > 0) {
+  if (insertResult.rows.length > 0) {
+    const row = insertResult.rows[0];
     return {
-      id: insertRows[0].id,
-      name: insertRows[0].name,
-      domain: insertRows[0].domain,
-      createdAt: insertRows[0].created_at,
+      id: row.id,
+      name: row.name,
+      domain: row.domain,
+      createdAt: row.created_at,
     };
   }
 
