@@ -1,6 +1,6 @@
-import { GeminiResponse } from "../../shared/lib/dtos/gemini-response";
+import { GeminiResponseDTO } from "../../shared/dtos/gemini-response";
 
-export type Analysis = GeminiResponse & {
+export type Analysis = GeminiResponseDTO & {
   id: string;
   articleId: string;
   slug: string;

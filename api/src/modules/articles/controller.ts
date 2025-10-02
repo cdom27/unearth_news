@@ -4,7 +4,6 @@ import {
   findAnalysisBySlug,
   saveAndReturnAnalysis,
 } from "../analyses/service";
-import { GeminiResponse } from "../shared/lib/dtos/gemini-response";
 import { failure, success } from "../shared/utils/build-response";
 import fetchNewsApiArticles from "../shared/utils/fetch-news-api";
 import slugify from "../shared/utils/slugify";
@@ -22,9 +21,9 @@ import analyzeArticle from "./utils/analyze-article";
 import { normalizeUrl } from "./utils/normalize-url";
 import parseArticle from "./utils/parse-article";
 import type { AnalysisRequest } from "./dtos/analysis-request";
-import type { AnalysisResponse } from "./dtos/analysis-response";
 import type { ArticleSlugParams } from "./types/article-slug-params";
-import type { ArticleDetails } from "./dtos/article-details";
+import type { ArticleDetailsDTO } from "@shared/dtos/article-details";
+import type { AnalyzeMetaDTO } from "@shared/dtos/analyze-meta";
 
 export const analyzeArticles = async (
   req: Request<{}, {}, AnalysisRequest>,
@@ -73,9 +72,11 @@ export const analyzeArticles = async (
         return failure(res, "Unable to analyze article", 422);
       }
 
-      const geminiResponse = JSON.parse(analysisResponse) as GeminiResponse;
-
-      analysis = await saveAndReturnAnalysis(article.id, slug, geminiResponse);
+      analysis = await saveAndReturnAnalysis(
+        article.id,
+        slug,
+        analysisResponse
+      );
     }
 
     // fetch related articles
@@ -83,7 +84,7 @@ export const analyzeArticles = async (
       keywords || article.title
     );
 
-    const payload: AnalysisResponse = {
+    const payload: AnalyzeMetaDTO = {
       slug: analysis.slug,
       relatedArticles: newsApiResponse.articles,
     };
@@ -121,7 +122,7 @@ export const getArticleDetails = async (
         const source = await findSourceById(article.sourceId);
 
         if (source) {
-          const payload: ArticleDetails = {
+          const payload: ArticleDetailsDTO = {
             article: {
               url: article.url,
               title: article.title,

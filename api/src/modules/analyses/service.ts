@@ -1,5 +1,5 @@
 import pool from "../../db/client";
-import { GeminiResponse } from "../shared/lib/dtos/gemini-response";
+import { GeminiResponseDTO } from "../shared/dtos/gemini-response";
 import { Analysis } from "./types/analysis";
 
 export const findAnalysisByArticleId = async (
@@ -61,7 +61,7 @@ export const findAnalysisBySlug = async (
 export const saveAndReturnAnalysis = async (
   articleId: string,
   slug: string,
-  geminiResponse: GeminiResponse
+  geminiResponse: GeminiResponseDTO
 ): Promise<Analysis> => {
   const insertResult = await pool.query(
     "INSERT INTO analyses (article_id, slug, summary, sentiment, framing, meta) VALUES ($1, $2, $3, $4, $5, $6) ON CONFLICT (article_id) DO NOTHING RETURNING *",

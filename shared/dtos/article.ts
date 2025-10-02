@@ -1,4 +1,4 @@
-export type Article = {
+export type ArticleDTO = {
   url: string;
   title: string;
   language: string;

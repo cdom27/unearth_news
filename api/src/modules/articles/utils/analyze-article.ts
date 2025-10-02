@@ -1,3 +1,4 @@
+import { GeminiResponseDTO } from "src/modules/shared/dtos/gemini-response";
 import model from "../../shared/utils/vertex-client";
 import { Article } from "../types/article";
 
@@ -31,7 +32,13 @@ ${parsedArticle.textContent}
   });
 
   if (result.response.candidates) {
-    return result.response.candidates[0].content.parts[0].text;
+    const jsonString = result.response.candidates[0].content.parts[0].text;
+
+    if (jsonString) {
+      return JSON.parse(jsonString) as GeminiResponseDTO;
+    }
+
+    return null;
   }
 
   return null;
