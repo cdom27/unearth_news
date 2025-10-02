@@ -2,11 +2,11 @@ import { useCallback, useState } from "react";
 import http from "../utils/http";
 import type { AnalyzeUrlData } from "../lib/schemas/analyze-url";
 import type { AnalysisResponse } from "../lib/types/analysis-response";
-import type { ArticleDetails } from "../lib/dtos/article-details";
+import type { ArticleDetailsDTO } from "@shared/dtos/article-details";
 
 const useArticles = () => {
   const [isArticleLoading, setIsArticleLoading] = useState(false);
-  const [article, setArticle] = useState<ArticleDetails | null>(null);
+  const [article, setArticle] = useState<ArticleDetailsDTO | null>(null);
 
   const analyzeArticle = useCallback(async (data: AnalyzeUrlData) => {
     setIsArticleLoading(true);
@@ -37,7 +37,7 @@ const useArticles = () => {
     setIsArticleLoading(true);
 
     try {
-      const response = await http<ArticleDetails>(`/articles/${slug}`, {
+      const response = await http<ArticleDetailsDTO>(`/articles/${slug}`, {
         method: "GET",
       });
 

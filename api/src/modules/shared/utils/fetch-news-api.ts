@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 import { NEWS_API_KEY } from "../../../config/env";
-import { NewsApiResponse } from "../lib/dtos/news-api-response";
+import { NewsApiResponseDTO } from "../dtos/news-api-response";
 
 const fetchNewsApiArticles = async (query: string) => {
   const response = await fetch(
@@ -11,7 +11,7 @@ const fetchNewsApiArticles = async (query: string) => {
     throw new Error(`News API request failed with status: ${response.status}`);
   }
 
-  const data = (await response.json()) as NewsApiResponse;
+  const data = (await response.json()) as NewsApiResponseDTO;
   return data;
 };
 
