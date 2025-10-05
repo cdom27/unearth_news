@@ -12,15 +12,6 @@ type Status =
 
 type Reliability = "high" | "medium" | "low";
 
-type Fact = {
-  fact: string;
-  sourceQuote: string;
-  sourceName: string;
-  sourceUrl: string;
-  confidence: number;
-  confidenceJustification: string;
-};
-
 type Source = {
   sourceName: string;
   sourceUrl: string;
@@ -49,8 +40,8 @@ type Framing = {
   narrative: string;
   terms: Term[];
   claims: Claim[];
-  facts: Fact[];
 };
+
 export type AnalysisDTO = {
   slug: string;
   summary: string;
