@@ -1,14 +1,12 @@
 import pool from "../../db/client";
 import { Source } from "./types/source";
 
-// Find an existing source record by domain
-export const findSourceByDomain = async (
-  domain: string
-): Promise<Source | null> => {
+// Find an existing source record by url
+export const findSourceByUrl = async (url: string): Promise<Source | null> => {
   try {
     const result = await pool.query(
-      "SELECT * FROM sources WHERE domain = $1 LIMIT 1",
-      [domain]
+      "SELECT * FROM sources WHERE url = $1 LIMIT 1",
+      [url]
     );
     const row = result.rows[0];
 
@@ -17,7 +15,9 @@ export const findSourceByDomain = async (
     return {
       id: row.id,
       name: row.name,
-      domain: row.domain,
+      url: row.url,
+      slug: row.slug,
+      bias: row.bias,
       createdAt: row.created_at,
     };
   } catch (error) {
@@ -40,7 +40,9 @@ export const findSourceById = async (id: string): Promise<Source | null> => {
     return {
       id: row.id,
       name: row.name,
-      domain: row.domain,
+      url: row.url,
+      slug: row.slug,
+      bias: row.bias,
       createdAt: row.created_at,
     };
   } catch (error) {
@@ -52,11 +54,11 @@ export const findSourceById = async (id: string): Promise<Source | null> => {
 // Insert a newly created source and return it, else fallback to select query
 export const saveAndReturnSource = async (
   name: string,
-  domain: string
+  url: string
 ): Promise<Source> => {
   const insertResult = await pool.query(
-    "INSERT INTO sources (name, domain) VALUES ($1, $2) ON CONFLICT (domain, name) DO NOTHING RETURNING *",
-    [name, domain]
+    "INSERT INTO sources (name, url) VALUES ($1, $2) ON CONFLICT (url, name) DO NOTHING RETURNING *",
+    [name, url]
   );
 
   if (insertResult.rows.length > 0) {
@@ -64,17 +66,17 @@ export const saveAndReturnSource = async (
     return {
       id: row.id,
       name: row.name,
-      domain: row.domain,
+      url: row.url,
+      slug: row.slug,
+      bias: row.bias,
       createdAt: row.created_at,
     };
   }
 
-  // insert failed due to constraints, find existing record by domain
-  const selectResult = await findSourceByDomain(domain);
+  // insert failed due to constraints, find existing record by url
+  const selectResult = await findSourceByUrl(url);
   if (!selectResult) {
-    throw new Error(
-      `Source not found after conflict insert: ${name} - ${domain}`
-    );
+    throw new Error(`Source not found after conflict insert: ${name} - ${url}`);
   }
 
   return selectResult;

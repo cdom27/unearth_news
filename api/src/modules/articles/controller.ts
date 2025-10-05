@@ -8,7 +8,7 @@ import { failure, success } from "../shared/utils/build-response";
 import fetchNewsApiArticles from "../shared/utils/fetch-news-api";
 import slugify from "../shared/utils/slugify";
 import {
-  findSourceByDomain,
+  findSourceByUrl,
   findSourceById,
   saveAndReturnSource,
 } from "../sources/service";
@@ -51,10 +51,10 @@ export const analyzeArticles = async (
       keywords = parsedArticle.keywords;
 
       // attempt source lookup
-      let source = await findSourceByDomain(parsedArticle.sourceName);
+      const hostname = new URL(parsedArticle.url).hostname;
+      let source = await findSourceByUrl(hostname);
 
       if (!source) {
-        const hostname = new URL(parsedArticle.url).hostname;
         source = await saveAndReturnSource(parsedArticle.sourceName, hostname);
       }
 
@@ -134,7 +134,9 @@ export const getArticleDetails = async (
             },
             source: {
               name: source.name,
-              domain: source.domain,
+              url: source.url,
+              slug: source.slug,
+              bias: source.bias,
             },
             analysis: {
               slug: analysis.slug,
