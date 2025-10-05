@@ -1,5 +1,7 @@
 type Sentiment = "negative" | "neutral" | "positive" | "mixed";
 
+type Bias = "left" | "lean-left" | "center" | "lean-right" | "right";
+
 type Tone = "negative" | "neutral" | "positive";
 
 type Classification = "claim" | "opinion" | "speculation";
@@ -50,6 +52,7 @@ type Meta = {
 export type GeminiResponseDTO = {
   summary: string;
   sentiment: Sentiment;
+  bias: Bias;
   framing: Framing;
   meta: Meta;
 };
