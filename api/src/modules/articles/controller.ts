@@ -100,11 +100,6 @@ export const getArticleDetails = async (
   req: Request<ArticleSlugParams>,
   res: Response
 ) => {
-  // validate slug
-  // get analysis
-  // get article
-  // get source
-  // build payload
   try {
     const { slug } = req.params;
 
