@@ -6,5 +6,9 @@ export type Source = {
   url: string;
   slug: string;
   bias: Bias;
+  factualReporting: string;
+  country: string;
+  mediaType: string;
+  credibility: string;
   createdAt: string;
 };

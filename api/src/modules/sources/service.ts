@@ -18,6 +18,10 @@ export const findSourceByUrl = async (url: string): Promise<Source | null> => {
       url: row.url,
       slug: row.slug,
       bias: row.bias,
+      factualReporting: row.factual_reporting,
+      country: row.country,
+      mediaType: row.media_type,
+      credibility: row.credibility,
       createdAt: row.created_at,
     };
   } catch (error) {
@@ -43,6 +47,10 @@ export const findSourceById = async (id: string): Promise<Source | null> => {
       url: row.url,
       slug: row.slug,
       bias: row.bias,
+      factualReporting: row.factual_reporting,
+      country: row.country,
+      mediaType: row.media_type,
+      credibility: row.credibility,
       createdAt: row.created_at,
     };
   } catch (error) {
@@ -69,6 +77,10 @@ export const saveAndReturnSource = async (
       url: row.url,
       slug: row.slug,
       bias: row.bias,
+      factualReporting: row.factual_reporting,
+      country: row.country,
+      mediaType: row.media_type,
+      credibility: row.credibility,
       createdAt: row.created_at,
     };
   }

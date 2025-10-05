@@ -132,6 +132,10 @@ export const getArticleDetails = async (
               url: source.url,
               slug: source.slug,
               bias: source.bias,
+              factualReporting: source.factualReporting,
+              country: source.country,
+              mediaType: source.mediaType,
+              credibility: source.credibility,
             },
             analysis: {
               slug: analysis.slug,
