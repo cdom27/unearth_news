@@ -2,4 +2,5 @@
 
 # TODOS:
 
-- save related article results from NewsAPI (to avoid refetching if an article has already been processed)
+- get thumbnails for related articles
+- store fetched thumbnails in bucket
