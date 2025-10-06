@@ -26,6 +26,7 @@ export const findArticleByUrl = async (
       htmlContent: row.html_content,
       textContent: row.text_content,
       keywords: row.keywords,
+      thumbnailUrl: row.thumbnail_url,
       publishedTime: row.published_time,
       createdAt: row.created_at,
     };
@@ -57,6 +58,7 @@ export const findArticleById = async (id: string): Promise<Article | null> => {
       htmlContent: row.html_content,
       textContent: row.text_content,
       keywords: row.keywords,
+      thumbnailUrl: row.thumbnail_url,
       publishedTime: row.published_time,
       createdAt: row.created_at,
     };
@@ -69,10 +71,11 @@ export const findArticleById = async (id: string): Promise<Article | null> => {
 // Insert article record and return it, else fallback to select query
 export const saveAndReturnArticle = async (
   sourceId: string,
-  parsedArticle: ParsedArticle
+  parsedArticle: ParsedArticle,
+  thumbnailUrl: string
 ): Promise<Article> => {
   const insertResult = await pool.query(
-    "INSERT INTO articles (source_id, url, title, language, byline, excerpt, html_content, text_content, keywords, published_time) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) ON CONFLICT (url) DO NOTHING RETURNING *",
+    "INSERT INTO articles (source_id, url, title, language, byline, excerpt, html_content, text_content, keywords, thumbnail_url, published_time) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) ON CONFLICT (url) DO NOTHING RETURNING *",
     [
       sourceId,
       parsedArticle.url,
@@ -83,6 +86,7 @@ export const saveAndReturnArticle = async (
       parsedArticle.htmlContent,
       parsedArticle.textContent,
       parsedArticle.keywords,
+      thumbnailUrl,
       parsedArticle.publishedTime,
     ]
   );
@@ -100,6 +104,7 @@ export const saveAndReturnArticle = async (
       htmlContent: row.html_content,
       textContent: row.text_content,
       keywords: row.keywords,
+      thumbnailUrl: row.thumbnail_url,
       publishedTime: row.published_time,
       createdAt: row.created_at,
     };

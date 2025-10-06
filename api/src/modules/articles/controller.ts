@@ -5,7 +5,9 @@ import {
   saveAndReturnAnalysis,
 } from "../analyses/service";
 import { failure, success } from "../shared/utils/build-response";
-import fetchNewsApiArticles from "../shared/utils/fetch-news-api";
+import fetchNewsApiArticles, {
+  fetchArticleThumbnail,
+} from "../shared/utils/fetch-news-api";
 import slugify from "../shared/utils/slugify";
 import {
   findSourceByUrl,
@@ -48,6 +50,11 @@ export const analyzeArticles = async (
         return failure(res, "Unable to parse article", 422);
       }
 
+      const thumbnailUrl = await fetchArticleThumbnail(
+        parsedArticle.title,
+        parsedArticle.keywords
+      );
+
       // attempt source lookup
       const hostname = new URL(parsedArticle.url).hostname;
       let source = await findSourceByUrl(hostname);
@@ -56,7 +63,11 @@ export const analyzeArticles = async (
         source = await saveAndReturnSource(parsedArticle.sourceName, hostname);
       }
 
-      article = await saveAndReturnArticle(source.id, parsedArticle);
+      article = await saveAndReturnArticle(
+        source.id,
+        parsedArticle,
+        thumbnailUrl
+      );
       slug = slugify(article.title);
     }
 
@@ -114,8 +125,6 @@ export const getArticleDetails = async (
             article.keywords || article.title
           );
 
-          console.log("related fetch:", newsApiResponse);
-
           const payload: ArticleDetailsDTO = {
             article: {
               url: article.url,
@@ -124,6 +133,7 @@ export const getArticleDetails = async (
               byline: article.byline,
               excerpt: article.excerpt,
               textContent: article.textContent,
+              thumbnailUrl: article.thumbnailUrl,
               publishedTime: article.publishedTime,
             },
             source: {
@@ -153,7 +163,7 @@ export const getArticleDetails = async (
 
     return failure(res, "Article details not found", 404);
   } catch (error) {
-    console.error("Error whil fetching article details:", error);
+    console.error("Error while fetching article details:", error);
     return failure(res, "Internal error while fetching article details");
   }
 };

@@ -9,6 +9,7 @@ export type Article = {
   htmlContent: string;
   textContent: string;
   keywords: string;
+  thumbnailUrl: string;
   publishedTime: string;
   createdAt: string;
 };
