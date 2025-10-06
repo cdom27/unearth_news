@@ -8,6 +8,7 @@ export type Article = {
   excerpt: string;
   htmlContent: string;
   textContent: string;
+  keywords: string;
   publishedTime: string;
   createdAt: string;
 };

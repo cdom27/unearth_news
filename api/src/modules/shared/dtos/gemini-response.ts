@@ -1,5 +1,7 @@
 type Sentiment = "negative" | "neutral" | "positive" | "mixed";
 
+type Bias = "left" | "lean-left" | "center" | "lean-right" | "right";
+
 type Tone = "negative" | "neutral" | "positive";
 
 type Classification = "claim" | "opinion" | "speculation";
@@ -11,15 +13,6 @@ type Status =
   | "insufficient evidence";
 
 type Reliability = "high" | "medium" | "low";
-
-type Fact = {
-  fact: string;
-  sourceQuote: string;
-  sourceName: string;
-  sourceUrl: string;
-  confidence: number;
-  confidenceJustification: string;
-};
 
 type Source = {
   sourceName: string;
@@ -49,7 +42,6 @@ type Framing = {
   narrative: string;
   terms: Term[];
   claims: Claim[];
-  facts: Fact[];
 };
 
 type Meta = {
@@ -60,6 +52,7 @@ type Meta = {
 export type GeminiResponseDTO = {
   summary: string;
   sentiment: Sentiment;
+  bias: Bias;
   framing: Framing;
   meta: Meta;
 };
