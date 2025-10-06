@@ -39,16 +39,14 @@ export const analyzeArticles = async (
     const normalizedUrl = normalizeUrl(url);
 
     // attempt article lookup
-    let article = await findArticleByUrl(normalizedUrl);
+    let article = await findArticleByUrl(url);
     let slug = "";
-    let keywords;
 
     if (!article) {
       const parsedArticle = await parseArticle(normalizedUrl);
       if (!parsedArticle) {
         return failure(res, "Unable to parse article", 422);
       }
-      keywords = parsedArticle.keywords;
 
       // attempt source lookup
       const hostname = new URL(parsedArticle.url).hostname;
@@ -79,14 +77,8 @@ export const analyzeArticles = async (
       );
     }
 
-    // fetch related articles
-    const newsApiResponse = await fetchNewsApiArticles(
-      keywords || article.title
-    );
-
     const payload: AnalyzeMetaDTO = {
       slug: analysis.slug,
-      relatedArticles: newsApiResponse.articles,
     };
 
     return success(res, payload, "Successfully analyzed article");
@@ -117,6 +109,13 @@ export const getArticleDetails = async (
         const source = await findSourceById(article.sourceId);
 
         if (source) {
+          // fetch related articles
+          const newsApiResponse = await fetchNewsApiArticles(
+            article.keywords || article.title
+          );
+
+          console.log("related fetch:", newsApiResponse);
+
           const payload: ArticleDetailsDTO = {
             article: {
               url: article.url,
@@ -144,6 +143,7 @@ export const getArticleDetails = async (
               framing: analysis.framing,
               confidence: analysis.meta.confidence,
             },
+            relatedArticles: [...newsApiResponse.articles],
           };
 
           return success(res, payload, "Successfully fetched article details");

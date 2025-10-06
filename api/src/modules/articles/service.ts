@@ -25,6 +25,7 @@ export const findArticleByUrl = async (
       excerpt: row.excerpt,
       htmlContent: row.html_content,
       textContent: row.text_content,
+      keywords: row.keywords,
       publishedTime: row.published_time,
       createdAt: row.created_at,
     };
@@ -55,6 +56,7 @@ export const findArticleById = async (id: string): Promise<Article | null> => {
       excerpt: row.excerpt,
       htmlContent: row.html_content,
       textContent: row.text_content,
+      keywords: row.keywords,
       publishedTime: row.published_time,
       createdAt: row.created_at,
     };
@@ -70,7 +72,7 @@ export const saveAndReturnArticle = async (
   parsedArticle: ParsedArticle
 ): Promise<Article> => {
   const insertResult = await pool.query(
-    "INSERT INTO articles (source_id, url, title, language, byline, excerpt, html_content, text_content, published_time) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) ON CONFLICT (url) DO NOTHING RETURNING *",
+    "INSERT INTO articles (source_id, url, title, language, byline, excerpt, html_content, text_content, keywords, published_time) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) ON CONFLICT (url) DO NOTHING RETURNING *",
     [
       sourceId,
       parsedArticle.url,
@@ -80,6 +82,7 @@ export const saveAndReturnArticle = async (
       parsedArticle.excerpt,
       parsedArticle.htmlContent,
       parsedArticle.textContent,
+      parsedArticle.keywords,
       parsedArticle.publishedTime,
     ]
   );
@@ -96,6 +99,7 @@ export const saveAndReturnArticle = async (
       excerpt: row.excerpt,
       htmlContent: row.html_content,
       textContent: row.text_content,
+      keywords: row.keywords,
       publishedTime: row.published_time,
       createdAt: row.created_at,
     };
