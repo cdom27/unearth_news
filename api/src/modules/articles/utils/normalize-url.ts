@@ -8,6 +8,11 @@ export const normalizeUrl = (rawUrl: string): string => {
 
   url.hostname = url.hostname.toLowerCase();
 
+  // remove 'www.'
+  if (url.hostname.startsWith("www.")) {
+    url.hostname = url.hostname.substring(4);
+  }
+
   const trackingParams = [
     // google analytics
     "utm_source",
