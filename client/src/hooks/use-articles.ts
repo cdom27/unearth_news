@@ -1,8 +1,8 @@
 import { useCallback, useState } from "react";
 import http from "../utils/http";
 import type { AnalyzeUrlData } from "../lib/schemas/analyze-url";
-import type { AnalysisResponse } from "../lib/types/analysis-response";
 import type { ArticleDetailsDTO } from "@shared/dtos/article-details";
+import type { AnalyzeMetaDTO } from "@shared/dtos/analyze-meta";
 
 const useArticles = () => {
   const [isArticleLoading, setIsArticleLoading] = useState(false);
@@ -12,13 +12,13 @@ const useArticles = () => {
     setIsArticleLoading(true);
 
     try {
-      const response = await http<AnalysisResponse>("/articles", {
+      const response = await http<AnalyzeMetaDTO>("/articles", {
         method: "POST",
         body: JSON.stringify(data),
       });
 
       if (response.data) {
-        const analysis: AnalysisResponse = response.data;
+        const analysis: AnalyzeMetaDTO = response.data;
         console.log("data retrieved:", analysis);
 
         return analysis.slug;
