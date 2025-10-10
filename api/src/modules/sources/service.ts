@@ -93,3 +93,37 @@ export const saveAndReturnSource = async (
 
   return selectResult;
 };
+
+// Find sources by their bias and slug
+export const findFilteredSourceIds = async (
+  slugs?: string[],
+  bias?: string
+): Promise<string[]> => {
+  let conditions: string[] = [];
+  let params: any[] = [];
+  let paramIndex = 1;
+
+  if (bias) {
+    conditions.push(`bias = $${paramIndex}`);
+    params.push(bias);
+    paramIndex++;
+  }
+
+  if (slugs && slugs.length > 0) {
+    const placeholders = slugs.map(() => `$${paramIndex++}`).join(",");
+    conditions.push(`slug IN (${placeholders})`);
+    params.push(...slugs);
+  }
+
+  // return empty if no filters
+  if (conditions.length === 0) {
+    return [];
+  }
+
+  const whereClause = `WHERE ${conditions.join(" AND ")}`;
+  const query = `SELECT id FROM sources ${whereClause}`;
+
+  const result = await pool.query(query, params);
+
+  return result.rows.map((row) => row.id);
+};

@@ -1,6 +1,7 @@
 import pool from "../../db/client";
 import { Article } from "./types/article";
 import { ParsedArticle } from "./types/parsed-article";
+import type { ArticlePreviewDTO } from "@shared/dtos/article-preview";
 
 // Find an existing article record by url
 export const findArticleByUrl = async (
@@ -119,4 +120,72 @@ export const saveAndReturnArticle = async (
   }
 
   return selectResult;
+};
+
+// Find articles and build article preview DTO using joins
+export const findArticlePreviews = async (
+  sourceIds: string[] | null,
+  sort: string,
+  page: number,
+  pageSize: number
+): Promise<{ articles: ArticlePreviewDTO[]; totalCount: number }> => {
+  const sortClause =
+    sort === "date_asc"
+      ? "ORDER BY published_time ASC"
+      : "ORDER BY published_time DESC";
+
+  const offset = (page - 1) * pageSize;
+
+  let whereClause = "";
+  let queryParams: string[] = [];
+  let paramIndex = 1;
+
+  if (sourceIds && sourceIds.length > 0) {
+    const placeholders = sourceIds.map(() => `$${paramIndex++}`).join(",");
+    whereClause = `WHERE a.source_id IN (${placeholders})`;
+    queryParams.push(...sourceIds); // Add sourceIds to queryParams
+  }
+
+  const query = `
+    SELECT 
+      a.title,
+      a.excerpt,
+      a.thumbnail_url,
+      a.published_time,
+      s.name as source_name,
+      s.slug as source_slug,
+      s.bias as source_bias,
+      an.slug as analysis_slug
+    FROM articles a
+    JOIN sources s ON a.source_id = s.id
+    LEFT JOIN analyses an ON a.id = an.article_id
+    ${whereClause}
+    ${sortClause}
+    LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
+  `;
+
+  const countQuery = `SELECT COUNT(*) as total FROM articles a ${whereClause}`;
+
+  const [articlesResult, countResult] = await Promise.all([
+    pool.query(query, [...queryParams, pageSize, offset]),
+    pool.query(countQuery, queryParams),
+  ]);
+
+  const articles: ArticlePreviewDTO[] = articlesResult.rows.map((row) => ({
+    title: row.title,
+    excerpt: row.excerpt,
+    thumbnailUrl: row.thumbnail_url,
+    publishedTime: row.published_time,
+    source: {
+      name: row.source_name,
+      slug: row.source_slug,
+      bias: row.source_bias,
+    },
+    slug: row.analysis_slug || "",
+  }));
+
+  return {
+    articles,
+    totalCount: parseInt(countResult.rows[0].total),
+  };
 };

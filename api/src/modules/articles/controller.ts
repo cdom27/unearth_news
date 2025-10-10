@@ -13,10 +13,12 @@ import {
   findSourceByUrl,
   findSourceById,
   saveAndReturnSource,
+  findFilteredSourceIds,
 } from "../sources/service";
 import {
   findArticleById,
   findArticleByUrl,
+  findArticlePreviews,
   saveAndReturnArticle,
 } from "./service";
 import analyzeArticle from "./utils/analyze-article";
@@ -26,6 +28,10 @@ import type { AnalysisRequest } from "./dtos/analysis-request";
 import type { ArticleSlugParams } from "./types/article-slug-params";
 import type { ArticleDetailsDTO } from "@shared/dtos/article-details";
 import type { AnalyzeMetaDTO } from "@shared/dtos/analyze-meta";
+import type { ArticlePreviewQuery } from "./types/article-preview-query";
+import { resolveToNumber } from "../shared/utils/resolve-number";
+import { validateSort } from "./utils/validate-sort";
+import { validateBias } from "./utils/validate-bias";
 
 export const analyzeArticles = async (
   req: Request<{}, {}, AnalysisRequest>,
@@ -165,5 +171,71 @@ export const getArticleDetails = async (
   } catch (error) {
     console.error("Error while fetching article details:", error);
     return failure(res, "Internal error while fetching article details");
+  }
+};
+
+export const getArticlePreviews = async (
+  req: Request<{}, {}, {}, ArticlePreviewQuery>,
+  res: Response
+) => {
+  try {
+    const DEFAULT_PAGE = 1;
+    const DEFAULT_PAGE_SIZE = 20;
+    const MAX_PAGE_SIZE = 100;
+    const DEFAULT_SORT = "date_desc";
+
+    const { page, pageSize, sources, bias, sort } = req.query;
+
+    const sourceParam = typeof sources === "string" ? sources : undefined;
+    const sourceList = sourceParam
+      ? sourceParam.split(",").filter((s) => s.trim())
+      : undefined;
+
+    const sanitized = {
+      page: resolveToNumber(page, DEFAULT_PAGE),
+      pageSize: resolveToNumber(pageSize, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE),
+      sources: sourceList ?? [],
+      bias: validateBias(bias),
+      sort: validateSort(sort) ?? DEFAULT_SORT,
+    };
+
+    let sourceIds: string[] | null = null;
+
+    // get filtered source ids (bias and source)
+    if (sanitized.bias || (sanitized.sources && sanitized.sources.length > 0)) {
+      sourceIds = await findFilteredSourceIds(
+        sanitized.sources,
+        sanitized.bias?.toString()
+      );
+    }
+
+    // get sorted article previews
+    const { articles, totalCount } = await findArticlePreviews(
+      sourceIds,
+      sanitized.sort,
+      sanitized.page,
+      sanitized.pageSize
+    );
+
+    const totalPages = Math.ceil(totalCount / sanitized.pageSize);
+
+    return success(
+      res,
+      {
+        articles,
+        pagination: {
+          currentPage: sanitized.page,
+          pageSize: sanitized.pageSize,
+          totalCount,
+          totalPages,
+          hasNextPage: sanitized.page < totalPages,
+          hasPrevPage: sanitized.page > 1,
+        },
+      },
+      "Successfully fetched article previews"
+    );
+  } catch (error) {
+    console.error("Error while fetching article previews:", error);
+    return failure(res, "Internal error while fetching article previews");
   }
 };
