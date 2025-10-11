@@ -31,7 +31,7 @@ import type { AnalyzeMetaDTO } from "@shared/dtos/analyze-meta";
 import type { ArticlePreviewQuery } from "./types/article-preview-query";
 import { resolveToNumber } from "../shared/utils/resolve-number";
 import { validateSort } from "./utils/validate-sort";
-import { validateBias } from "./utils/validate-bias";
+import { validateArrayParams } from "../shared/utils/validate-array-params";
 
 export const analyzeArticles = async (
   req: Request<{}, {}, AnalysisRequest>,
@@ -186,27 +186,44 @@ export const getArticlePreviews = async (
 
     const { page, pageSize, sources, bias, sort } = req.query;
 
-    const sourceParam = typeof sources === "string" ? sources : undefined;
-    const sourceList = sourceParam
-      ? sourceParam.split(",").filter((s) => s.trim())
-      : undefined;
-
     const sanitized = {
       page: resolveToNumber(page, DEFAULT_PAGE),
       pageSize: resolveToNumber(pageSize, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE),
-      sources: sourceList ?? [],
-      bias: validateBias(bias),
+      sources: validateArrayParams(sources),
+      bias: validateArrayParams(bias),
       sort: validateSort(sort) ?? DEFAULT_SORT,
     };
 
     let sourceIds: string[] | null = null;
 
-    // get filtered source ids (bias and source)
-    if (sanitized.bias || (sanitized.sources && sanitized.sources.length > 0)) {
+    if (
+      (sanitized.bias && sanitized.bias.length > 0) ||
+      (sanitized.sources && sanitized.sources.length > 0)
+    ) {
       sourceIds = await findFilteredSourceIds(
         sanitized.sources,
-        sanitized.bias?.toString()
+        sanitized.bias
       );
+
+      // if filters were applied but no sources match (conflicting filters)
+      // return empty result
+      if (sourceIds.length === 0) {
+        return success(
+          res,
+          {
+            articles: [],
+            pagination: {
+              currentPage: sanitized.page,
+              pageSize: sanitized.pageSize,
+              totalCount: 0,
+              totalPages: 0,
+              hasNextPage: false,
+              hasPrevPage: false,
+            },
+          },
+          "No articles found matching the specified filters"
+        );
+      }
     }
 
     // get sorted article previews

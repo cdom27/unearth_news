@@ -97,16 +97,16 @@ export const saveAndReturnSource = async (
 // Find sources by their bias and slug
 export const findFilteredSourceIds = async (
   slugs?: string[],
-  bias?: string
+  bias?: string[]
 ): Promise<string[]> => {
   let conditions: string[] = [];
   let params: any[] = [];
   let paramIndex = 1;
 
-  if (bias) {
-    conditions.push(`bias = $${paramIndex}`);
-    params.push(bias);
-    paramIndex++;
+  if (bias && bias.length > 0) {
+    const placeholders = bias.map(() => `$${paramIndex++}`).join(",");
+    conditions.push(`bias IN (${placeholders})`);
+    params.push(...bias);
   }
 
   if (slugs && slugs.length > 0) {
