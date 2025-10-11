@@ -9,7 +9,7 @@ export type NewsApiArticleDTO = {
   title: string;
   description: string;
   url: string;
-  urlToimage: string;
+  urlToImage: string;
   publishedAt: string;
   content: string;
 };
