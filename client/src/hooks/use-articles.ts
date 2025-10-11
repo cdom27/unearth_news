@@ -8,6 +8,7 @@ const useArticles = () => {
   const [isArticleLoading, setIsArticleLoading] = useState(false);
   const [article, setArticle] = useState<ArticleDetailsDTO | null>(null);
 
+  // Queue a user-submitted article for analysis
   const analyzeArticle = useCallback(async (data: AnalyzeUrlData) => {
     setIsArticleLoading(true);
 
@@ -33,6 +34,7 @@ const useArticles = () => {
     }
   }, []);
 
+  // Fetch full data of an article including analysis and source
   const getArticleDetails = useCallback(async (slug: string) => {
     setIsArticleLoading(true);
 
@@ -53,7 +55,58 @@ const useArticles = () => {
     }
   }, []);
 
-  return { analyzeArticle, getArticleDetails, isArticleLoading, article };
+  // Fetch article preview data for discovery pages
+  const getArticlePreviews = useCallback(
+    async (params?: {
+      page?: string;
+      pageSize?: string;
+      sources?: string[];
+      bias?: string[];
+      sort?: string;
+    }) => {
+      try {
+        const queryParams = new URLSearchParams();
+
+        const page = params?.page || "1";
+        const pageSize = params?.pageSize || "20";
+        const sort = params?.sort || "date_desc";
+
+        queryParams.append("page", page);
+        queryParams.append("pageSize", pageSize);
+        queryParams.append("sort", sort);
+
+        if (params?.sources && params.sources.length > 0) {
+          queryParams.append("sources", params.sources.join(","));
+        }
+
+        if (params?.bias && params.bias.length > 0) {
+          queryParams.append("bias", params.bias.join(","));
+        }
+
+        const queryString = queryParams.toString();
+        const url = `/articles?${queryString}`;
+
+        const response = await http(url, {
+          method: "GET",
+        });
+
+        if (response.data) {
+          console.log("Article previews response:", response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching article previews:", error);
+      }
+    },
+    []
+  );
+
+  return {
+    analyzeArticle,
+    getArticleDetails,
+    getArticlePreviews,
+    isArticleLoading,
+    article,
+  };
 };
 
 export default useArticles;
