@@ -1,4 +1,5 @@
 import { Response } from "express";
+import type { ApiResponse } from "@shared/types/api-response";
 
 export const success = <T>(
   res: Response,
@@ -6,7 +7,8 @@ export const success = <T>(
   message = "Success",
   status = 200
 ) => {
-  res.status(status).json({ status, message, data });
+  const response: ApiResponse<T> = { status, message, data };
+  res.status(status).json(response);
 };
 
 export const failure = (
@@ -14,5 +16,6 @@ export const failure = (
   message = "Internal server error",
   status = 500
 ) => {
-  res.status(status).json({ status, message, data: null });
+  const response: ApiResponse<null> = { status, message, data: null };
+  res.status(status).json(response);
 };

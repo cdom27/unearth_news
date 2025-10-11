@@ -4,7 +4,6 @@ export type ArticleDTO = {
   language: string;
   byline: string;
   excerpt: string;
-
   textContent: string;
   thumbnailUrl: string;
   publishedTime: string;

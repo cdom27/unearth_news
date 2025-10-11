@@ -1,4 +1,4 @@
-type Bias = "left" | "lean-left" | "center" | "lean-right" | "right";
+import type { Bias } from "@shared/types/analysis-fields";
 
 export type Source = {
   id: string;
