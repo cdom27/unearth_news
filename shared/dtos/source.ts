@@ -1,4 +1,4 @@
-type Bias = "left" | "lean-left" | "center" | "lean-right" | "right";
+import type { Bias } from "../types/analysis-fields";
 
 export type SourceDTO = {
   name: string;
