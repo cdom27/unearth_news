@@ -7,4 +7,5 @@ export type ArticleDTO = {
   textContent: string;
   thumbnailUrl: string;
   publishedTime: string;
+  keywords: string;
 };

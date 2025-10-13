@@ -1,126 +1,17 @@
-import pool from "../../db/client";
-import { Article } from "./types/article";
-import { ParsedArticle } from "./types/parsed-article";
+import { ArticleRepository } from "./repository";
+import { AnalysisRepository } from "../analyses/repository";
+import { SourceRepository } from "../sources/repository";
+import { analyzeUserArticle } from "./utils/analyze-article";
+import { normalizeUrl } from "./utils/normalize-url";
+import parseArticle from "./utils/parse-article";
+import fetchNewsApiArticles, {
+  fetchArticleThumbnail,
+} from "../shared/utils/fetch-news-api";
+import slugify from "../shared/utils/slugify";
 import type { ArticlePreviewDTO } from "@shared/dtos/article-preview";
-
-// Find an existing article record by url
-export const findArticleByUrl = async (
-  url: string
-): Promise<Article | null> => {
-  try {
-    const result = await pool.query(
-      "SELECT * FROM articles WHERE url = $1 LIMIT 1",
-      [url]
-    );
-    const row = result.rows[0];
-
-    if (!row) return null;
-
-    return {
-      id: row.id,
-      sourceId: row.source_id,
-      url: row.url,
-      title: row.title,
-      language: row.language,
-      byline: row.byline,
-      excerpt: row.excerpt,
-      htmlContent: row.html_content,
-      textContent: row.text_content,
-      keywords: row.keywords,
-      thumbnailUrl: row.thumbnail_url,
-      publishedTime: row.published_time,
-      createdAt: row.created_at,
-    };
-  } catch (error) {
-    console.error(`Error occurred while finding article:`, error);
-    throw new Error(`Error occurred while finding artcile`);
-  }
-};
-
-// Find an existing article record by id
-export const findArticleById = async (id: string): Promise<Article | null> => {
-  try {
-    const result = await pool.query(
-      "SELECT * FROM articles WHERE id = $1 LIMIT 1",
-      [id]
-    );
-    const row = result.rows[0];
-
-    if (!row) return null;
-
-    return {
-      id: row.id,
-      sourceId: row.source_id,
-      url: row.url,
-      title: row.title,
-      language: row.language,
-      byline: row.byline,
-      excerpt: row.excerpt,
-      htmlContent: row.html_content,
-      textContent: row.text_content,
-      keywords: row.keywords,
-      thumbnailUrl: row.thumbnail_url,
-      publishedTime: row.published_time,
-      createdAt: row.created_at,
-    };
-  } catch (error) {
-    console.error(`Error occurred while finding article:`, error);
-    throw new Error(`Error occurred while finding artcile`);
-  }
-};
-
-// Insert article record and return it, else fallback to select query
-export const saveAndReturnArticle = async (
-  sourceId: string,
-  parsedArticle: ParsedArticle,
-  thumbnailUrl: string
-): Promise<Article> => {
-  const insertResult = await pool.query(
-    "INSERT INTO articles (source_id, url, title, language, byline, excerpt, html_content, text_content, keywords, thumbnail_url, published_time) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) ON CONFLICT (url) DO NOTHING RETURNING *",
-    [
-      sourceId,
-      parsedArticle.url,
-      parsedArticle.title,
-      parsedArticle.language,
-      parsedArticle.byline,
-      parsedArticle.excerpt,
-      parsedArticle.htmlContent,
-      parsedArticle.textContent,
-      parsedArticle.keywords,
-      thumbnailUrl,
-      parsedArticle.publishedTime,
-    ]
-  );
-
-  if (insertResult.rows.length > 0) {
-    const row = insertResult.rows[0];
-    return {
-      id: row.id,
-      sourceId: row.source_id,
-      url: row.url,
-      title: row.title,
-      language: row.language,
-      byline: row.byline,
-      excerpt: row.excerpt,
-      htmlContent: row.html_content,
-      textContent: row.text_content,
-      keywords: row.keywords,
-      thumbnailUrl: row.thumbnail_url,
-      publishedTime: row.published_time,
-      createdAt: row.created_at,
-    };
-  }
-
-  // insert failed due to constraints, find existing record by url
-  const selectResult = await findArticleByUrl(parsedArticle.url);
-  if (!selectResult) {
-    throw new Error(
-      `Article not found after conflict insert: ${parsedArticle.url}`
-    );
-  }
-
-  return selectResult;
-};
+import type { AnalyzeMetaDTO } from "@shared/dtos/analyze-meta";
+import type { Result } from "../shared/types/service-result";
+import type { ArticleDetailsDTO } from "@shared/dtos/article-details";
 
 // Find articles and build article preview DTO using joins
 export const findArticlePreviews = async (
@@ -128,64 +19,134 @@ export const findArticlePreviews = async (
   sort: string,
   page: number,
   pageSize: number
-): Promise<{ articles: ArticlePreviewDTO[]; totalCount: number }> => {
-  const sortClause =
-    sort === "date_asc"
-      ? "ORDER BY published_time ASC"
-      : "ORDER BY published_time DESC";
+): Promise<Result<ArticlePreviewDTO[]>> => {
+  try {
+    const offset = (page - 1) * pageSize;
+    const result = await ArticleRepository.findPreviewBySourceId(
+      pageSize,
+      offset,
+      sourceIds,
+      sort
+    );
 
-  const offset = (page - 1) * pageSize;
+    return { success: true, data: result };
+  } catch (error) {
+    console.error("Unexpected error:", error);
+    return { success: false, error: "Internal error" };
+  }
+};
 
-  let whereClause = "";
-  let queryParams: string[] = [];
-  let paramIndex = 1;
+// Normalize variables + check for existing records before sending to model
+export const analyzeArticle = async (
+  url: string
+): Promise<Result<AnalyzeMetaDTO>> => {
+  try {
+    const normalizedUrl = normalizeUrl(url);
 
-  if (sourceIds && sourceIds.length > 0) {
-    const placeholders = sourceIds.map(() => `$${paramIndex++}`).join(",");
-    whereClause = `WHERE a.source_id IN (${placeholders})`;
-    queryParams.push(...sourceIds); // Add sourceIds to queryParams
+    // article lookup
+    let article = await ArticleRepository.findByText("url", normalizedUrl);
+    let slug = "";
+
+    if (!article) {
+      const parsedArticle = await parseArticle(normalizedUrl);
+      if (!parsedArticle) {
+        return { success: false, error: "Unable to parse article" };
+      }
+
+      const thumbnailUrl = await fetchArticleThumbnail(
+        parsedArticle.title,
+        parsedArticle.keywords
+      );
+
+      // source lookup
+      const hostname = new URL(parsedArticle.url).hostname;
+      let source = await SourceRepository.findByText("url", hostname);
+
+      if (!source) {
+        const saved = await SourceRepository.save(
+          parsedArticle.sourceName,
+          hostname
+        );
+
+        if (!saved) {
+          return {
+            success: false,
+            error: "Error after insert conflict: Source not found",
+          };
+        }
+
+        source = saved;
+      }
+
+      article = await ArticleRepository.save(
+        source.id,
+        parsedArticle,
+        thumbnailUrl
+      );
+
+      if (!article) {
+        return {
+          success: false,
+          error: "Error after insert conflict: Source not found",
+        };
+      }
+
+      slug = slugify(article.title);
+    }
+
+    // analysis lookup
+    let analysis = await AnalysisRepository.findByText(
+      "article_id",
+      article.id
+    );
+
+    if (!analysis) {
+      const analysisResponse = await analyzeUserArticle(article);
+
+      if (!analysisResponse) {
+        return { success: false, error: "Unable to analyze article" };
+      }
+
+      analysis = await AnalysisRepository.save(
+        article.id,
+        slug,
+        analysisResponse
+      );
+
+      if (!analysis) {
+        return {
+          success: false,
+          error: "Error after insert conflict: Analysis not found",
+        };
+      }
+    }
+
+    return { success: true, data: { slug: analysis.slug } };
+  } catch (error) {
+    console.error("Unexpected error:", error);
+    return { success: false, error: "Internal error" };
+  }
+};
+
+// Find article and analysis details by slug
+export const findArticleDetails = async (
+  slug: string
+): Promise<Result<ArticleDetailsDTO>> => {
+  const analysisDetails = await AnalysisRepository.findAnalysisDetails(slug);
+
+  if (!analysisDetails) {
+    return { success: false, error: "Unable to find article or analysis" };
   }
 
-  const query = `
-    SELECT 
-      a.title,
-      a.excerpt,
-      a.thumbnail_url,
-      a.published_time,
-      s.name as source_name,
-      s.slug as source_slug,
-      s.bias as source_bias,
-      an.slug as analysis_slug
-    FROM articles a
-    JOIN sources s ON a.source_id = s.id
-    LEFT JOIN analyses an ON a.id = an.article_id
-    ${whereClause}
-    ${sortClause}
-    LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
-  `;
+  // fetch related articles
+  const newsApiResponse = await fetchNewsApiArticles(
+    analysisDetails.article.keywords || analysisDetails.article.title
+  );
 
-  const countQuery = `SELECT COUNT(*) as total FROM articles a ${whereClause}`;
-
-  const [articlesResult, countResult] = await Promise.all([
-    pool.query(query, [...queryParams, pageSize, offset]),
-    pool.query(countQuery, queryParams),
-  ]);
-
-  const articles: ArticlePreviewDTO[] = articlesResult.rows.map((row) => ({
-    title: row.title,
-    excerpt: row.excerpt,
-    thumbnailUrl: row.thumbnail_url,
-    publishedTime: row.published_time,
-    source: {
-      name: row.source_name,
-      slug: row.source_slug,
-      bias: row.source_bias,
-    },
-    slug: row.analysis_slug || "",
-  }));
-
-  return {
-    articles,
-    totalCount: parseInt(countResult.rows[0].total),
+  const details = {
+    ...analysisDetails,
+    relatedArticles: [...newsApiResponse.articles],
   };
+
+  return { success: true, data: details };
 };

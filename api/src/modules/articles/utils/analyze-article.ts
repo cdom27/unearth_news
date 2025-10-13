@@ -2,7 +2,7 @@ import { GeminiResponseDTO } from "src/modules/shared/dtos/gemini-response";
 import model from "../../shared/utils/vertex-client";
 import { Article } from "../types/article";
 
-const analyzeArticle = async (parsedArticle: Article) => {
+export const analyzeUserArticle = async (parsedArticle: Article) => {
   const userPrompt = `
 Article Metadata:
 - Title: ${parsedArticle.title}
@@ -43,5 +43,3 @@ ${parsedArticle.textContent}
 
   return null;
 };
-
-export default analyzeArticle;

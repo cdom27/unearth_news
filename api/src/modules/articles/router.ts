@@ -1,15 +1,15 @@
 import { Router } from "express";
 import {
-  analyzeArticles,
-  getArticleDetails,
-  getArticlePreviews,
+  analyzeArticleHandler,
+  getArticleDetailsHandler,
+  getArticlePreviewsHandler,
 } from "./controller";
 
 const router = Router();
 
 // /api/v1/articles
-router.post("", analyzeArticles);
-router.get("", getArticlePreviews);
-router.get("/:slug", getArticleDetails);
+router.post("", analyzeArticleHandler);
+router.get("", getArticlePreviewsHandler);
+router.get("/:slug", getArticleDetailsHandler);
 
 export default router;
