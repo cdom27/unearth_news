@@ -1,39 +1,19 @@
 import { Request, Response } from "express";
-import {
-  findAnalysisByArticleId,
-  findAnalysisBySlug,
-  saveAndReturnAnalysis,
-} from "../analyses/service";
 import { failure, success } from "../shared/utils/build-response";
-import fetchNewsApiArticles, {
-  fetchArticleThumbnail,
-} from "../shared/utils/fetch-news-api";
-import slugify from "../shared/utils/slugify";
+import { findFilteredSourceIds } from "../sources/service";
 import {
-  findSourceByUrl,
-  findSourceById,
-  saveAndReturnSource,
-  findFilteredSourceIds,
-} from "../sources/service";
-import {
-  findArticleById,
-  findArticleByUrl,
   findArticlePreviews,
-  saveAndReturnArticle,
+  analyzeArticle,
+  findArticleDetails,
 } from "./service";
-import analyzeArticle from "./utils/analyze-article";
-import { normalizeUrl } from "./utils/normalize-url";
-import parseArticle from "./utils/parse-article";
-import type { AnalysisRequest } from "./dtos/analysis-request";
-import type { ArticleSlugParams } from "./types/article-slug-params";
-import type { ArticleDetailsDTO } from "@shared/dtos/article-details";
-import type { AnalyzeMetaDTO } from "@shared/dtos/analyze-meta";
-import type { ArticlePreviewQuery } from "./types/article-preview-query";
 import { resolveToNumber } from "../shared/utils/resolve-number";
 import { validateSort } from "./utils/validate-sort";
 import { validateArrayParams } from "../shared/utils/validate-array-params";
+import type { AnalysisRequest } from "./dtos/analysis-request";
+import type { ArticleSlugParams } from "./types/article-slug-params";
+import type { ArticlePreviewQuery } from "./types/article-preview-query";
 
-export const analyzeArticles = async (
+export const analyzeArticleHandler = async (
   req: Request<{}, {}, AnalysisRequest>,
   res: Response
 ) => {
@@ -44,68 +24,20 @@ export const analyzeArticles = async (
       return failure(res, "Request body is missing", 400);
     }
 
-    const normalizedUrl = normalizeUrl(url);
+    const result = await analyzeArticle(url);
 
-    // attempt article lookup
-    let article = await findArticleByUrl(url);
-    let slug = "";
-
-    if (!article) {
-      const parsedArticle = await parseArticle(normalizedUrl);
-      if (!parsedArticle) {
-        return failure(res, "Unable to parse article", 422);
-      }
-
-      const thumbnailUrl = await fetchArticleThumbnail(
-        parsedArticle.title,
-        parsedArticle.keywords
-      );
-
-      // attempt source lookup
-      const hostname = new URL(parsedArticle.url).hostname;
-      let source = await findSourceByUrl(hostname);
-
-      if (!source) {
-        source = await saveAndReturnSource(parsedArticle.sourceName, hostname);
-      }
-
-      article = await saveAndReturnArticle(
-        source.id,
-        parsedArticle,
-        thumbnailUrl
-      );
-      slug = slugify(article.title);
+    if (!result.success) {
+      return failure(res, result.error, 422);
     }
 
-    // attempt analysis lookup
-    let analysis = await findAnalysisByArticleId(article.id);
-
-    if (!analysis) {
-      const analysisResponse = await analyzeArticle(article);
-
-      if (!analysisResponse) {
-        return failure(res, "Unable to analyze article", 422);
-      }
-
-      analysis = await saveAndReturnAnalysis(
-        article.id,
-        slug,
-        analysisResponse
-      );
-    }
-
-    const payload: AnalyzeMetaDTO = {
-      slug: analysis.slug,
-    };
-
-    return success(res, payload, "Successfully analyzed article");
+    return success(res, result.data, "Successfully analyzed article");
   } catch (error) {
-    console.log("Error processing analysis:", error);
-    return failure(res, "Internal error while processing analysis");
+    console.error("Error while attempting analysis:", error);
+    return failure(res, "Internal error while attempting analysis");
   }
 };
 
-export const getArticleDetails = async (
+export const getArticleDetailsHandler = async (
   req: Request<ArticleSlugParams>,
   res: Response
 ) => {
@@ -113,68 +45,27 @@ export const getArticleDetails = async (
     const { slug } = req.params;
 
     if (!slug) {
-      return failure(res, "Request params are missing", 400);
+      return failure(res, "Request params are missing", 422);
     }
 
-    // attempt lookups
-    const analysis = await findAnalysisBySlug(slug);
+    const articleDetails = await findArticleDetails(slug);
 
-    if (analysis) {
-      const article = await findArticleById(analysis.articleId);
-
-      if (article) {
-        const source = await findSourceById(article.sourceId);
-
-        if (source) {
-          // fetch related articles
-          const newsApiResponse = await fetchNewsApiArticles(
-            article.keywords || article.title
-          );
-
-          const payload: ArticleDetailsDTO = {
-            article: {
-              url: article.url,
-              title: article.title,
-              language: article.language,
-              byline: article.byline,
-              excerpt: article.excerpt,
-              textContent: article.textContent,
-              thumbnailUrl: article.thumbnailUrl,
-              publishedTime: article.publishedTime,
-            },
-            source: {
-              name: source.name,
-              url: source.url,
-              slug: source.slug,
-              bias: source.bias,
-              factualReporting: source.factualReporting,
-              country: source.country,
-              mediaType: source.mediaType,
-              credibility: source.credibility,
-            },
-            analysis: {
-              slug: analysis.slug,
-              summary: analysis.summary,
-              sentiment: analysis.sentiment,
-              framing: analysis.framing,
-              confidence: analysis.meta.confidence,
-            },
-            relatedArticles: [...newsApiResponse.articles],
-          };
-
-          return success(res, payload, "Successfully fetched article details");
-        }
-      }
+    if (!articleDetails.data) {
+      return failure(res, "No data found", 404);
     }
 
-    return failure(res, "Article details not found", 404);
+    return success(
+      res,
+      articleDetails.data,
+      "Sucessfully fetched article details"
+    );
   } catch (error) {
     console.error("Error while fetching article details:", error);
     return failure(res, "Internal error while fetching article details");
   }
 };
 
-export const getArticlePreviews = async (
+export const getArticlePreviewsHandler = async (
   req: Request<{}, {}, {}, ArticlePreviewQuery>,
   res: Response
 ) => {
@@ -200,14 +91,16 @@ export const getArticlePreviews = async (
       (sanitized.bias && sanitized.bias.length > 0) ||
       (sanitized.sources && sanitized.sources.length > 0)
     ) {
-      sourceIds = await findFilteredSourceIds(
+      const sourceIdResult = await findFilteredSourceIds(
         sanitized.sources,
         sanitized.bias
       );
 
+      sourceIds = sourceIdResult.data || [];
+
       // if filters were applied but no sources match (conflicting filters)
       // return empty result
-      if (sourceIds.length === 0) {
+      if (sourceIdResult.data && sourceIdResult.data.length === 0) {
         return success(
           res,
           {
@@ -227,13 +120,14 @@ export const getArticlePreviews = async (
     }
 
     // get sorted article previews
-    const { articles, totalCount } = await findArticlePreviews(
+    const articles = await findArticlePreviews(
       sourceIds,
       sanitized.sort,
       sanitized.page,
       sanitized.pageSize
     );
 
+    const totalCount = articles.data?.length || 0;
     const totalPages = Math.ceil(totalCount / sanitized.pageSize);
 
     return success(
