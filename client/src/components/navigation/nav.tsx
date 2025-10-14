@@ -10,7 +10,7 @@ interface NavProps {
 const Nav = ({ onClick, open }: NavProps) => {
   return (
     <nav>
-      <button onClick={() => onClick(!open)}>
+      <button onClick={() => onClick(!open)} className="hover:cursor-pointer">
         <ListIcon className="size-6 fill-fg-dark" />
       </button>
 
@@ -23,7 +23,10 @@ const Nav = ({ onClick, open }: NavProps) => {
             Unearth
           </Link>
 
-          <button onClick={() => onClick(!open)}>
+          <button
+            onClick={() => onClick(!open)}
+            className="hover:cursor-pointer"
+          >
             <XIcon className="size-6 fill-fg-light" />
           </button>
         </div>
