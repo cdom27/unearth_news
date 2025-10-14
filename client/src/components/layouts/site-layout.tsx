@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { Link } from "react-router";
 import Nav from "../navigation/nav";
+import { Banner, BannerBody, BannerFooter } from "../ui/banner";
 
 interface SiteLayoutProps {
   children: ReactNode;
@@ -8,15 +9,33 @@ interface SiteLayoutProps {
 
 const SiteLayout = ({ children }: SiteLayoutProps) => {
   const [open, setOpen] = useState(false);
+  const now = new Date().toDateString();
 
   return (
-    <div className={`p-5 grainy-bg ${open ? "h-screen overflow-hidden" : ""}`}>
-      <header className="flex justify-between items-center">
-        <Link to="/" className="text-xl font-medium">
-          Unearth
-        </Link>
+    <div className={`grainy-bg ${open ? "h-screen overflow-hidden" : ""}`}>
+      <header>
+        <Banner label="Announcement">
+          <BannerBody>
+            Unearth is currently under development, some features may only be
+            available to{" "}
+            <Link
+              to="/subscribe"
+              className="text-fg-dark-tertiary underline underline-offset-2 decoration-dotted hover:text-brand-primary"
+            >
+              subscribers
+            </Link>
+          </BannerBody>
 
-        <Nav onClick={() => setOpen(!open)} open={open} />
+          <BannerFooter>{now}</BannerFooter>
+        </Banner>
+
+        <div className="flex p-5 justify-between items-center">
+          <Link to="/" className="text-xl font-medium">
+            Unearth
+          </Link>
+
+          <Nav onClick={() => setOpen(!open)} open={open} />
+        </div>
       </header>
 
       <main className="min-h-screen flex flex-col items-center justify-center">
