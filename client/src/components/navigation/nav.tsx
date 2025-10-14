@@ -1,21 +1,35 @@
-import { ListIcon, XIcon } from "@phosphor-icons/react";
+import { XIcon } from "@phosphor-icons/react";
 import { Link, NavLink } from "react-router";
 import { navLinks } from "../../utils/nav-links";
+import { quickLinks } from "../../utils/quick-links";
 
 interface NavProps {
-  onClick: (a: boolean) => void;
+  setOpen: (action: boolean) => void;
   open: boolean;
 }
 
-const Nav = ({ onClick, open }: NavProps) => {
+const Nav = ({ setOpen, open }: NavProps) => {
   return (
-    <nav>
-      <button onClick={() => onClick(!open)} className="hover:cursor-pointer">
-        <ListIcon className="size-6 fill-fg-dark" />
-      </button>
+    <nav className="flex">
+      <ul className="hidden sm:flex gap-4">
+        {quickLinks.map((link) => (
+          <li key={link.href}>
+            <NavLink
+              to={link.href}
+              className={({ isActive }) =>
+                isActive
+                  ? "underline decoration-dotted underline-offset-4 text-fg-dark"
+                  : "hover:underline hover:decoration-dotted underline-offset-4 text-fg-dark-tertiary hover:text-fg-dark-secondary"
+              }
+            >
+              {link.label}
+            </NavLink>
+          </li>
+        ))}
+      </ul>
 
       <div
-        className={`fixed inset-0 z-10 p-5 transition-transform duration-500 ease-in-out bg-bg-dark-secondary text-fg-light
+        className={`fixed inset-0 sm:w-[320px] xl:w-[400px] z-10 p-5 transition-transform duration-500 ease-in-out bg-bg-dark-secondary text-fg-light
     ${open ? "translate-x-0" : "-translate-x-full"}`}
       >
         <div className="flex justify-between pb-5 border-b-1 border-fg-dark-secondary">
@@ -24,7 +38,7 @@ const Nav = ({ onClick, open }: NavProps) => {
           </Link>
 
           <button
-            onClick={() => onClick(!open)}
+            onClick={() => setOpen(!open)}
             className="hover:cursor-pointer"
           >
             <XIcon className="size-6 fill-fg-light" />
@@ -45,8 +59,8 @@ const Nav = ({ onClick, open }: NavProps) => {
                     to={link.href}
                     className={({ isActive }) =>
                       (isActive
-                        ? "text-brand-primary/90 underline decoration-dotted"
-                        : "hover:underline hover:decoration-dotted") +
+                        ? "text-brand-primary/90 underline decoration-dotted underline-offset-4"
+                        : "hover:underline hover:decoration-dotted underline-offset-4") +
                       " text-2xl"
                     }
                   >
