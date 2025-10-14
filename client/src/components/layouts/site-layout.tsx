@@ -2,6 +2,7 @@ import { useState, type ReactNode } from "react";
 import { Link } from "react-router";
 import Nav from "../navigation/nav";
 import { Banner, BannerBody, BannerFooter } from "../ui/banner";
+import Footer from "../navigation/footer";
 
 interface SiteLayoutProps {
   children: ReactNode;
@@ -42,7 +43,7 @@ const SiteLayout = ({ children }: SiteLayoutProps) => {
         {children}
       </main>
 
-      <footer>footer</footer>
+      <Footer />
     </div>
   );
 };
