@@ -1,1 +1,49 @@
+@import url("https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Syne:wght@400..800&display=swap");
 @import "tailwindcss";
+
+:root {
+  color: var(--color-fg-dark);
+  background: var(--color-bg-light);
+  font-family: var(--font-syne);
+  font-weight: 400;
+}
+
+@theme {
+  --color-fg-light: #ece8e5;
+  --color-fg-dark: #1e1d19;
+  --color-fg-dark-secondary: #555555;
+  --color-fg-dark-tertiary: #7c7c7c;
+
+  --color-bg-light: #dad7cd;
+  --color-bg-light-secondary: #e4e2db;
+  --color-bg-dark: #111111;
+  --color-bg-dark-secondary: #201f1f;
+
+  --color-bias-left: #0052bd;
+  --color-bias-lean-left: #008abd;
+  --color-bias-lean-right: #b2154f;
+  --color-bias-right: #b21515;
+
+  --color-brand-primary: #f6bd60;
+
+  --font-syne: "Syne", sans-serif;
+  --font-instrument: "Instrument Serif", serif;
+}
+
+.grainy-bg {
+  position: relative;
+  isolation: isolate;
+}
+
+.grainy-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.2;
+  background-image: url("./assets/images/image.png");
+  background-repeat: repeat;
+  background-size: cover;
+  mix-blend-mode: overlay;
+}
