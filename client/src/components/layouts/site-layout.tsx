@@ -14,7 +14,7 @@ const SiteLayout = ({ children }: SiteLayoutProps) => {
 
   return (
     <div className={`grainy-bg ${open ? "h-screen overflow-hidden" : ""}`}>
-      <header>
+      <header className="border-b-1 border-fg-dark-tertiary">
         <Banner label="Announcement">
           <BannerBody>
             Unearth is currently under development, some features may only be
