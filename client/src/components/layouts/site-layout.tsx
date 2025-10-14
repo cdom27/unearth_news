@@ -43,7 +43,7 @@ const SiteLayout = ({ children }: SiteLayoutProps) => {
         </div>
       </header>
 
-      <main className="min-h-screen flex flex-col items-center justify-center">
+      <main className="min-h-screen py-25">
         <div
           onClick={() => setOpen(false)}
           className={`fixed inset-0 transition-opacity duration-500 ease-in-out bg-fg-dark ${
