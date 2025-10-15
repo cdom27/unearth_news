@@ -19,7 +19,7 @@ export const findArticlePreviews = async (
   sort: string,
   page: number,
   pageSize: number
-): Promise<Result<ArticlePreviewDTO[]>> => {
+): Promise<Result<{ previews: ArticlePreviewDTO[]; count: number }>> => {
   try {
     const offset = (page - 1) * pageSize;
     const result = await ArticleRepository.findPreviewBySourceId(
