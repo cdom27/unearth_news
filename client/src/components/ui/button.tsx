@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 
 interface ButtonProps {
   children: ReactNode;
-  variant: "primary" | "outline";
+  variant: "primary" | "secondary" | "outline";
   className?: string;
   onClick?: () => void;
   disabled?: boolean;
@@ -14,6 +14,8 @@ const coreClasses =
 
 const variantClasses: Record<string, string> = {
   primary: "",
+  secondary:
+    "bg-bg-light border-bg-light hover:bg-bg-dark-secondary text-fg-dark hover:text-fg-light",
   outline:
     "border-fg-dark-tertiary hover:border-fg-dark-secondary active:border-fg-dark-secondary",
 };
