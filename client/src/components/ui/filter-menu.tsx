@@ -99,14 +99,15 @@ const FilterMenu = ({
 
               <ul className="grid grid-cols-2 pt-3 gap-1">
                 {biasOptions.map((bias) => (
-                  <li key={bias}>
-                    <label className="flex items-center space-x-2">
+                  <li key={bias} className="mr-auto">
+                    <label className="flex items-center space-x-2 cursor-pointer">
                       <input
                         type="checkbox"
                         checked={stagedBiases.includes(bias)}
                         onChange={(e) =>
                           handleBiasChange(bias, e.target.checked)
                         }
+                        className="cursor-pointer"
                       />
                       <span className="text-lg capitalize">
                         {bias.replace("-", " ")}
@@ -124,14 +125,15 @@ const FilterMenu = ({
 
               <ul className="grid grid-cols-1 sm:grid-cols-2 pt-3 gap-1">
                 {sourceOptions.map((source) => (
-                  <li key={source}>
-                    <label className="flex items-center space-x-2">
+                  <li key={source} className="mr-auto">
+                    <label className="flex items-center space-x-2 cursor-pointer">
                       <input
                         type="checkbox"
                         checked={stagedSources.includes(source)}
                         onChange={(e) =>
                           handleSourceChange(source, e.target.checked)
                         }
+                        className="cursor-pointer"
                       />
                       <span className="text-lg capitalize">
                         {source.replace("-", " ")}
