@@ -2,10 +2,14 @@ import { useCallback, useState } from "react";
 import http from "../utils/http";
 import type { AnalyzeUrlData } from "../lib/schemas/analyze-url";
 import type { ArticleDetailsDTO } from "@shared/dtos/article-details";
+import type { ArticlePreviewDTO } from "@shared/dtos/article-preview";
 import type { AnalyzeMetaDTO } from "@shared/dtos/analyze-meta";
+import type { PaginationInfo } from "@shared/types/pagination-info";
 
 const useArticles = () => {
   const [isArticleLoading, setIsArticleLoading] = useState(false);
+  const [previews, setPreviews] = useState<ArticlePreviewDTO[]>([]);
+  const [previewsLoading, setPreviewsLoading] = useState(false);
   const [article, setArticle] = useState<ArticleDetailsDTO | null>(null);
 
   // Queue a user-submitted article for analysis
@@ -65,6 +69,7 @@ const useArticles = () => {
       sort?: string;
     }) => {
       try {
+        setPreviewsLoading(true);
         const queryParams = new URLSearchParams();
 
         const page = params?.page || "1";
@@ -86,15 +91,21 @@ const useArticles = () => {
         const queryString = queryParams.toString();
         const url = `/articles?${queryString}`;
 
-        const response = await http(url, {
+        const response = await http<{
+          paginationInfo: PaginationInfo;
+          previews: ArticlePreviewDTO[];
+        }>(url, {
           method: "GET",
         });
 
         if (response.data) {
           console.log("Article previews response:", response.data);
+          setPreviews(response.data.previews);
         }
       } catch (error) {
         console.error("Error fetching article previews:", error);
+      } finally {
+        setPreviewsLoading(false);
       }
     },
     []
@@ -106,6 +117,8 @@ const useArticles = () => {
     getArticlePreviews,
     isArticleLoading,
     article,
+    previews,
+    previewsLoading,
   };
 };
 
