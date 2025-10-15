@@ -124,6 +124,19 @@ export const ArticleRepository = {
     const rows = result.rows;
     const totalCount = rows[0]?.total_count ? Number(rows[0].total_count) : 0;
 
-    return { previews: rows, count: totalCount };
+    const previews: ArticlePreviewDTO[] = rows.map((r) => ({
+      title: r.title,
+      excerpt: r.excerpt,
+      thumbnailUrl: r.thumbnail_url,
+      publishedTime: r.published_time,
+      slug: r.analysis_slug,
+      source: {
+        name: r.source_name,
+        slug: r.source_slug,
+        bias: r.source_bias,
+      },
+    }));
+
+    return { previews, count: totalCount };
   },
 };
