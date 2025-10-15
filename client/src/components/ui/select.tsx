@@ -2,16 +2,16 @@ import { CaretDownIcon } from "@phosphor-icons/react";
 
 interface SelectProps {
   name: string;
-
   options: { value: string; label: string }[];
   handleChange: (value: string) => void;
+  defaultValue: string;
 }
 
-const Select = ({ name, options, handleChange }: SelectProps) => {
+const Select = ({ name, options, handleChange, defaultValue }: SelectProps) => {
   return (
     <div className="relative inline-block">
       <select
-        defaultValue={options[0].value}
+        defaultValue={defaultValue}
         onChange={(e) => handleChange(e.target.value)}
         id={name}
         className="appearance-none font-semibold rounded-full pl-3.5 pr-10 py-2 cursor-pointer focus:outline-none border-1 border-fg-dark-tertiary bg-transparent hover:border-fg-dark-secondary active:border-fg-dark-secondary"
