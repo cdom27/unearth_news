@@ -19,7 +19,7 @@ const SORT_OPTIONS = [
   { value: "date_asc", label: "Oldest" },
 ];
 
-const DiscoverPage = () => {
+const BrowsePage = () => {
   const { getArticlePreviews } = useArticles();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -126,4 +126,4 @@ const DiscoverPage = () => {
   );
 };
 
-export default DiscoverPage;
+export default BrowsePage;
