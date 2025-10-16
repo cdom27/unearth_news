@@ -103,6 +103,7 @@ const FilterMenu = ({
                     <label className="flex items-center space-x-2 cursor-pointer">
                       <input
                         type="checkbox"
+                        id={bias}
                         checked={stagedBiases.includes(bias)}
                         onChange={(e) =>
                           handleBiasChange(bias, e.target.checked)
@@ -129,6 +130,7 @@ const FilterMenu = ({
                     <label className="flex items-center space-x-2 cursor-pointer">
                       <input
                         type="checkbox"
+                        id={source}
                         checked={stagedSources.includes(source)}
                         onChange={(e) =>
                           handleSourceChange(source, e.target.checked)
