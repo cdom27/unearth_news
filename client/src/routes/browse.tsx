@@ -1,4 +1,4 @@
-import { useSearchParams } from "react-router";
+import { Link, useSearchParams } from "react-router";
 import SiteLayout from "../components/layouts/site-layout";
 import useArticles from "../hooks/use-articles";
 import { useEffect, useState, useCallback } from "react";
@@ -19,8 +19,16 @@ const SORT_OPTIONS = [
   { value: "date_asc", label: "Oldest" },
 ];
 
+const biasClasses: Record<string, string> = {
+  left: "bg-bias-left",
+  "lean-left": "bg-bias-lean-left",
+  center: "bg-stone-600",
+  "lean-right": "bg-bias-lean-right",
+  right: "bg-bias-right",
+};
+
 const BrowsePage = () => {
-  const { getArticlePreviews } = useArticles();
+  const { getArticlePreviews, previews, previewsLoading } = useArticles();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [open, setOpen] = useState(false);
@@ -88,17 +96,18 @@ const BrowsePage = () => {
         <h2 className="font-instrument text-5xl tracking-[.0125em]">
           Browse Stories
         </h2>
-        <p className="pt-2">
+        <p className="pt-2 lg:w-2/3">
           Discover articles that reveal how narratives differ between media
           outlets. Learn how framing, language, and emphasis shape public
           perception.
         </p>
 
-        <div className="flex gap-3 py-5 border-b-1 border-fg-dark-tertiary">
+        <div className="flex gap-3 py-5 sm:justify-end border-b-1 border-fg-dark-tertiary">
           <Select
             name="sort-select"
             options={SORT_OPTIONS}
             handleChange={handleSortChange}
+            defaultValue={selectedSort}
           />
 
           <FilterMenu
@@ -121,6 +130,90 @@ const BrowsePage = () => {
             }}
           />
         </div>
+      </PageSection>
+
+      <PageSection className="pt-10 gap-5 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+        {previewsLoading ? (
+          <>
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div
+                key={`skeleton-${i}`}
+                className="flex flex-col gap-5 px-5 py-7 h-100 rounded-2xl border-1 border-fg-dark-tertiary"
+                aria-hidden
+              >
+                <div className="flex items-center justify-between">
+                  <div className="h-6 w-36 rounded bg-stone-400 animate-pulse" />
+                  <div className="h-8 w-18 rounded bg-stone-400 animate-pulse" />
+                </div>
+
+                <div className="flex flex-col gap-1">
+                  <div className="h-8 w-3/4 rounded bg-stone-400 animate-pulse" />
+                  <div className="h-8 w-full rounded bg-stone-400 animate-pulse" />
+                  <div className="h-8 w-1/2 rounded bg-stone-400 animate-pulse" />
+                </div>
+
+                <div className="flex flex-col gap-1">
+                  <div className="h-6 w-full rounded bg-stone-400 animate-pulse" />
+                  <div className="h-6 w-full rounded bg-stone-400 animate-pulse" />
+                  <div className="h-6 w-5/6 rounded bg-stone-400 animate-pulse" />
+                </div>
+
+                <div className="flex justify-between mt-auto">
+                  <div className="h-5 w-24 rounded bg-stone-400 animate-pulse" />
+                  <div className="h-5 w-20 rounded bg-stone-400 animate-pulse" />
+                </div>
+              </div>
+            ))}
+          </>
+        ) : (
+          <>
+            {previews.map((p) => {
+              const pubTime = new Date(p.publishedTime);
+              const truncatedExcerpt = p.excerpt.substring(0, 200) + "...";
+
+              return (
+                <div
+                  key={p.slug}
+                  className="flex flex-col gap-5 px-5 py-7 rounded-2xl border-1 border-fg-dark-tertiary"
+                >
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-medium text-fg-dark-tertiary underline underline-offset-4 decoration-dotted hover:text-fg-dark active:text-fg-dark">
+                      <Link to={`/sources/${p.source.slug}`}>
+                        {p.source.name}
+                      </Link>
+                    </h3>
+                    <span
+                      className={`font-medium py-1 px-2 rounded-sm capitalize text-fg-light ${
+                        biasClasses[p.source.bias] ?? "bg-stone-600"
+                      }`}
+                    >
+                      {p.source.bias.replace("-", " ")}
+                    </span>
+                  </div>
+
+                  <h2 className="text-xl">{p.title}</h2>
+
+                  <p className="text-fg-dark-tertiary text-lg">
+                    {truncatedExcerpt}
+                  </p>
+
+                  <div className="flex justify-between mt-auto">
+                    <span className="font-medium text-fg-dark-tertiary">
+                      {pubTime.toLocaleDateString()}
+                    </span>
+
+                    <Link
+                      to={`/article/${p.slug}`}
+                      className="font-medium underline underline-offset-4 decoration-dotted hover:text-fg-dark-secondary active:text-fg-dark-secondary"
+                    >
+                      Read Story
+                    </Link>
+                  </div>
+                </div>
+              );
+            })}
+          </>
+        )}
       </PageSection>
     </SiteLayout>
   );
