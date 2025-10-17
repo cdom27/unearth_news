@@ -61,7 +61,7 @@ const BrowsePage = () => {
 
       setSearchParams(params);
     },
-    [setSearchParams]
+    [setSearchParams],
   );
 
   useEffect(() => {
@@ -109,7 +109,7 @@ const BrowsePage = () => {
             name="sort-select"
             options={SORT_OPTIONS}
             handleChange={handleSortChange}
-            defaultValue={selectedSort}
+            value={selectedSort}
           />
 
           <FilterMenu
