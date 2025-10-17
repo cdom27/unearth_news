@@ -95,9 +95,9 @@ const BrowsePage = () => {
       />
 
       <PageSection>
-        <h2 className="font-instrument text-5xl tracking-[.0125em]">
+        <h1 className="font-instrument text-5xl tracking-[.0125em]">
           Browse Stories
-        </h2>
+        </h1>
         <p className="pt-2 lg:w-2/3">
           Discover articles that reveal how narratives differ between media
           outlets. Learn how framing, language, and emphasis shape public
@@ -179,11 +179,11 @@ const BrowsePage = () => {
                   className="flex flex-col gap-5 px-5 py-7 rounded-2xl border-1 border-fg-dark-tertiary"
                 >
                   <div className="flex items-center justify-between">
-                    <h3 className="font-medium text-fg-dark-tertiary underline underline-offset-4 decoration-dotted hover:text-fg-dark active:text-fg-dark">
-                      <Link to={`/sources/${p.source.slug}`}>
+                    <h2 className="font-medium text-fg-dark-tertiary underline underline-offset-4 decoration-dotted hover:text-fg-dark active:text-fg-dark">
+                      <Link to={`/media-ratings/${p.source.slug}`}>
                         {p.source.name}
                       </Link>
-                    </h3>
+                    </h2>
                     <span
                       className={`font-medium py-1 px-2 rounded-sm capitalize text-fg-light ${
                         biasClasses[p.source.bias] ?? "bg-stone-600"
