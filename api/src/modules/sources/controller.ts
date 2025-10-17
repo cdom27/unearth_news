@@ -3,7 +3,6 @@ import { failure, success } from "../shared/utils/build-response";
 import { findUsedSources } from "./service";
 
 export const getSourcesHandler = async (req: Request, res: Response) => {
-  console.log("getSourcesHandler called");
   try {
     // future: params for pagination and filtered query - not needed yet
     const result = await findUsedSources();
