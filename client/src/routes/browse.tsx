@@ -1,18 +1,12 @@
 import { Link, useSearchParams } from "react-router";
 import SiteLayout from "../components/layouts/site-layout";
 import useArticles from "../hooks/use-articles";
+import useSources from "../hooks/use-sources";
 import { useEffect, useState, useCallback } from "react";
 import PageSection from "../components/layouts/page-section";
 import Select from "../components/ui/select";
 import FilterMenu from "../components/ui/filter-menu";
 
-// hard-coded arrays in lieu of hooks to get available options. for testing only.
-const AVAILABLE_SOURCES = [
-  "nbc-news",
-  "associated-press",
-  "daily-caller",
-  "cnbc",
-];
 const AVAILABLE_BIASES = ["left", "lean-left", "center", "lean-right", "right"];
 const SORT_OPTIONS = [
   { value: "date_desc", label: "Newest" },
@@ -29,6 +23,7 @@ const biasClasses: Record<string, string> = {
 
 const BrowsePage = () => {
   const { getArticlePreviews, previews, previewsLoading } = useArticles();
+  const { getUsedSources, sources } = useSources();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [open, setOpen] = useState(false);
@@ -46,8 +41,9 @@ const BrowsePage = () => {
     setSelectedSources(sources);
     setSelectedBiases(biases);
     setSelectedSort(sort);
+    getUsedSources();
     setReady(true);
-  }, []);
+  }, [searchParams, getUsedSources]);
 
   const updateURL = useCallback(
     (sources: string[], biases: string[], sort: string) => {
@@ -76,7 +72,13 @@ const BrowsePage = () => {
         sort: selectedSort,
       });
     }
-  }, [selectedSources, selectedBiases, selectedSort, getArticlePreviews]);
+  }, [
+    selectedSources,
+    selectedBiases,
+    selectedSort,
+    getArticlePreviews,
+    ready,
+  ]);
 
   const handleSortChange = (sort: string) => {
     setSelectedSort(sort);
@@ -113,7 +115,7 @@ const BrowsePage = () => {
           <FilterMenu
             setOpen={setOpen}
             open={open}
-            sourceOptions={AVAILABLE_SOURCES}
+            sourceOptions={sources}
             biasOptions={AVAILABLE_BIASES}
             selectedSources={selectedSources}
             selectedBiases={selectedBiases}

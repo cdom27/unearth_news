@@ -100,15 +100,18 @@ const useArticles = () => {
 
         if (response.data) {
           console.log("Article previews response:", response.data);
-          setPreviews(response.data.previews);
+          setPreviews(response.data.previews || []);
+        } else {
+          setPreviews([]);
         }
       } catch (error) {
         console.error("Error fetching article previews:", error);
+        setPreviews([]);
       } finally {
         setPreviewsLoading(false);
       }
     },
-    []
+    [],
   );
 
   return {

@@ -5,7 +5,7 @@ import { FunnelSimpleIcon, XIcon } from "@phosphor-icons/react";
 interface FilterMenuProps {
   setOpen: (action: boolean) => void;
   open: boolean;
-  sourceOptions: string[];
+  sourceOptions: { name: string; slug: string }[];
   biasOptions: string[];
   selectedSources: string[];
   selectedBiases: string[];
@@ -48,13 +48,13 @@ const FilterMenu = ({
 
   const handleSourceChange = (source: string, checked: boolean) => {
     setStagedSources((prev) =>
-      checked ? [...prev, source] : prev.filter((s) => s !== source)
+      checked ? [...prev, source] : prev.filter((s) => s !== source),
     );
   };
 
   const handleBiasChange = (bias: string, checked: boolean) => {
     setStagedBiases((prev) =>
-      checked ? [...prev, bias] : prev.filter((b) => b !== bias)
+      checked ? [...prev, bias] : prev.filter((b) => b !== bias),
     );
   };
 
@@ -125,24 +125,26 @@ const FilterMenu = ({
               </h2>
 
               <ul className="grid grid-cols-1 sm:grid-cols-2 pt-3 gap-1">
-                {sourceOptions.map((source) => (
-                  <li key={source} className="mr-auto">
-                    <label className="flex items-center space-x-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        id={source}
-                        checked={stagedSources.includes(source)}
-                        onChange={(e) =>
-                          handleSourceChange(source, e.target.checked)
-                        }
-                        className="cursor-pointer"
-                      />
-                      <span className="text-lg capitalize">
-                        {source.replace("-", " ")}
-                      </span>
-                    </label>
-                  </li>
-                ))}
+                {sourceOptions.map((source) => {
+                  return (
+                    <li key={source.slug} className="mr-auto">
+                      <label className="flex items-center space-x-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          id={source.slug}
+                          checked={stagedSources.includes(source.slug)}
+                          onChange={(e) =>
+                            handleSourceChange(source.slug, e.target.checked)
+                          }
+                          className="cursor-pointer"
+                        />
+                        <span className="text-lg capitalize">
+                          {source.name}
+                        </span>
+                      </label>
+                    </li>
+                  );
+                })}
               </ul>
             </section>
           </div>
