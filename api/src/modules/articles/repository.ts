@@ -83,7 +83,7 @@ export const ArticleRepository = {
     offset: number,
     sourceIds: string[] | null,
     sort?: string
-  ): Promise<ArticlePreviewDTO[]> {
+  ): Promise<{ previews: ArticlePreviewDTO[]; count: number }> {
     const sortClause =
       sort === "date_asc"
         ? "ORDER BY a.published_time ASC"
@@ -110,7 +110,8 @@ export const ArticleRepository = {
         s.name as source_name,
         s.slug as source_slug,
         s.bias as source_bias,
-        an.slug as analysis_slug
+        an.slug as analysis_slug,
+        COUNT(*) OVER() AS total_count
       FROM articles a
       JOIN sources s ON a.source_id = s.id
       LEFT JOIN analyses an ON a.id = an.article_id
@@ -120,6 +121,22 @@ export const ArticleRepository = {
     `;
 
     const result = await pool.query(query, params);
-    return result.rows;
+    const rows = result.rows;
+    const totalCount = rows[0]?.total_count ? Number(rows[0].total_count) : 0;
+
+    const previews: ArticlePreviewDTO[] = rows.map((r) => ({
+      title: r.title,
+      excerpt: r.excerpt,
+      thumbnailUrl: r.thumbnail_url,
+      publishedTime: r.published_time,
+      slug: r.analysis_slug,
+      source: {
+        name: r.source_name,
+        slug: r.source_slug,
+        bias: r.source_bias,
+      },
+    }));
+
+    return { previews, count: totalCount };
   },
 };

@@ -6,7 +6,7 @@ export const SourceRepository = {
   async findByText(column: string, value: string): Promise<Source | null> {
     const result = await pool.query(
       `SELECT * FROM sources WHERE ${column} = $1 LIMIT 1`,
-      [value]
+      [value],
     );
 
     const row = result.rows[0];
@@ -26,11 +26,26 @@ export const SourceRepository = {
     };
   },
 
+  // Find all unique sources that have been references by an article
+  async findUsed(): Promise<{ name: string; slug: string }[]> {
+    const result = await pool.query(
+      "SELECT DISTINCT s.* FROM sources AS s JOIN articles AS a ON s.id = a.source_id",
+    );
+
+    const rows = result.rows;
+    if (!rows) return [];
+
+    return rows.map((row) => ({
+      name: row.name,
+      slug: row.slug,
+    }));
+  },
+
   // Insert a newly created source and return it, else fallback to select query
   async save(name: string, url: string): Promise<Source | null> {
     const insertResult = await pool.query(
       "INSERT INTO sources (name, url) VALUES ($1, $2) ON CONFLICT (url, name) DO NOTHING RETURNING *",
-      [name, url]
+      [name, url],
     );
 
     if (insertResult.rows.length > 0) {

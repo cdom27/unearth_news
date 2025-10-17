@@ -1,7 +1,7 @@
 export const quickLinks = [
   {
-    href: "/discover",
-    label: "Discover",
+    href: "/browse",
+    label: "Browse",
   },
   {
     href: "/analyze",

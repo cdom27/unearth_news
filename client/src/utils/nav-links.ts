@@ -20,8 +20,8 @@ export const navLinks = [
     name: "News",
     links: [
       {
-        href: "/discover",
-        label: "Discover",
+        href: "/browse",
+        label: "Browse",
       },
       {
         href: "/analyze",

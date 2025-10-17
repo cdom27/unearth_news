@@ -120,24 +120,42 @@ export const getArticlePreviewsHandler = async (
     }
 
     // get sorted article previews
-    const articles = await findArticlePreviews(
+    const result = await findArticlePreviews(
       sourceIds,
       sanitized.sort,
       sanitized.page,
       sanitized.pageSize
     );
 
-    const totalCount = articles.data?.length || 0;
-    const totalPages = Math.ceil(totalCount / sanitized.pageSize);
+    if (!result.data) {
+      return success(
+        res,
+        {
+          previews: [],
+          pagination: {
+            currentPage: sanitized.page,
+            pageSize: sanitized.pageSize,
+            count: 0,
+            totalPages: 0,
+            hasNextPage: false,
+            hasPrevPage: false,
+          },
+        },
+        "No articles found"
+      );
+    }
+
+    const { previews, count } = result.data;
+    const totalPages = Math.ceil(count / sanitized.pageSize);
 
     return success(
       res,
       {
-        articles,
+        previews,
         pagination: {
           currentPage: sanitized.page,
           pageSize: sanitized.pageSize,
-          totalCount,
+          count,
           totalPages,
           hasNextPage: sanitized.page < totalPages,
           hasPrevPage: sanitized.page > 1,

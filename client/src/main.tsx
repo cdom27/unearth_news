@@ -6,7 +6,7 @@ import { BrowserRouter, Route, Routes } from "react-router";
 import ArticlePage from "./routes/article";
 import ErrorPage from "./routes/error";
 import LandingPage from "./routes/landing";
-import DiscoverPage from "./routes/discover";
+import BrowsePage from "./routes/browse";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -15,7 +15,7 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/" element={<LandingPage />} />
         <Route path="*" element={<ErrorPage />} />
         <Route path="/article/:slug" element={<ArticlePage />} />
-        <Route path="/discover" element={<DiscoverPage />} />
+        <Route path="/browse" element={<BrowsePage />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>

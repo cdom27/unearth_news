@@ -10,3 +10,8 @@ export type SourceDTO = {
   mediaType: string;
   credibility: string;
 };
+
+export type SourceFilterDTO = {
+  name: string;
+  slug: string;
+};
