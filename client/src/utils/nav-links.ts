@@ -27,10 +27,6 @@ export const navLinks = [
         href: "/analyze",
         label: "Analyze",
       },
-      //   {
-      //     href: "/local",
-      //     label: "Local News",
-      //   },
     ],
   },
 
@@ -38,13 +34,9 @@ export const navLinks = [
     name: "Information",
     links: [
       {
-        href: "/sources",
-        label: "Sources & Ratings",
+        href: "/media-ratings",
+        label: "Media Ratings",
       },
-      //   {
-      //     href: "/blindspotter",
-      //     label: "Social Blindspotter",
-      //   },
     ],
   },
 

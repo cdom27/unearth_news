@@ -8,8 +8,8 @@ export const quickLinks = [
     label: "Analyze",
   },
   {
-    href: "/sources",
-    label: "Sources & Ratings",
+    href: "/media-ratings",
+    label: "Media Ratings",
   },
   {
     href: "/methodology",
