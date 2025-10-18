@@ -8,8 +8,8 @@ import {
 const router = Router();
 
 // /api/v1/articles
-router.post("", analyzeArticleHandler);
-router.get("", getArticlePreviewsHandler);
+router.post("/", analyzeArticleHandler);
+router.get("/", getArticlePreviewsHandler);
 router.get("/:slug", getArticleDetailsHandler);
 
 export default router;
