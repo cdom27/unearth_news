@@ -5,9 +5,9 @@ import { FunnelSimpleIcon, XIcon } from "@phosphor-icons/react";
 interface FilterMenuProps {
   setOpen: (action: boolean) => void;
   open: boolean;
-  sourceOptions: { name: string; slug: string }[];
+  sourceOptions?: { name: string; slug: string }[];
   biasOptions: string[];
-  selectedSources: string[];
+  selectedSources?: string[];
   selectedBiases: string[];
   onApply: (sources: string[], biases: string[]) => void;
   onClear: () => void;
@@ -23,13 +23,15 @@ const FilterMenu = ({
   onApply,
   onClear,
 }: FilterMenuProps) => {
-  const [stagedSources, setStagedSources] = useState<string[]>(selectedSources);
+  const [stagedSources, setStagedSources] = useState<string[]>(
+    selectedSources || [],
+  );
   const [stagedBiases, setStagedBiases] = useState<string[]>(selectedBiases);
 
   // reset staged fitlers on open
   useEffect(() => {
     if (open) {
-      setStagedSources(selectedSources);
+      setStagedSources(selectedSources || []);
       setStagedBiases(selectedBiases);
     }
   }, [open, selectedSources, selectedBiases]);
@@ -88,7 +90,7 @@ const FilterMenu = ({
         <div className="flex flex-col h-screen">
           <div className="sticky top-0 flex justify-between pb-5 border-b-1 border-fg-dark-secondary">
             <h3 className="text-xl font-medium">Filter Stories</h3>
-            <button onClick={() => setOpen(false)}>
+            <button onClick={() => setOpen(false)} className="cursor-pointer">
               <XIcon className="size-6 fill-fg-light" />
             </button>
           </div>
@@ -119,34 +121,36 @@ const FilterMenu = ({
               </ul>
             </section>
 
-            <section className="py-2 border-b-1 border-fg-dark-secondary">
-              <h2 className="text-xl text-fg-dark-secondary">
-                Available Sources
-              </h2>
+            {sourceOptions && (
+              <section className="py-2 border-b-1 border-fg-dark-secondary">
+                <h2 className="text-xl text-fg-dark-secondary">
+                  Available Sources
+                </h2>
 
-              <ul className="grid grid-cols-1 sm:grid-cols-2 pt-3 gap-1">
-                {sourceOptions.map((source) => {
-                  return (
-                    <li key={source.slug} className="mr-auto">
-                      <label className="flex items-center space-x-2 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          id={source.slug}
-                          checked={stagedSources.includes(source.slug)}
-                          onChange={(e) =>
-                            handleSourceChange(source.slug, e.target.checked)
-                          }
-                          className="cursor-pointer"
-                        />
-                        <span className="text-lg capitalize">
-                          {source.name}
-                        </span>
-                      </label>
-                    </li>
-                  );
-                })}
-              </ul>
-            </section>
+                <ul className="grid grid-cols-1 sm:grid-cols-2 pt-3 gap-1">
+                  {sourceOptions.map((source) => {
+                    return (
+                      <li key={source.slug} className="mr-auto">
+                        <label className="flex items-center space-x-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            id={source.slug}
+                            checked={stagedSources.includes(source.slug)}
+                            onChange={(e) =>
+                              handleSourceChange(source.slug, e.target.checked)
+                            }
+                            className="cursor-pointer"
+                          />
+                          <span className="text-lg capitalize">
+                            {source.name}
+                          </span>
+                        </label>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </section>
+            )}
           </div>
           <div className="sticky bottom-0 pb-5 grid grid-cols-1 sm:grid-cols-2 gap-2">
             <Button variant="outline" onClick={handleClear} className="w-full">
