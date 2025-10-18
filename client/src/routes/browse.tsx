@@ -1,25 +1,15 @@
-import { Link, useSearchParams } from "react-router";
-import SiteLayout from "../components/layouts/site-layout";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router";
 import useArticles from "../hooks/use-articles";
 import useSources from "../hooks/use-sources";
-import { useEffect, useState, useCallback } from "react";
+import SiteLayout from "../components/layouts/site-layout";
 import PageSection from "../components/layouts/page-section";
 import Select from "../components/ui/select";
 import FilterMenu from "../components/ui/filter-menu";
-
-const AVAILABLE_BIASES = ["left", "lean-left", "center", "lean-right", "right"];
-const SORT_OPTIONS = [
-  { value: "date_desc", label: "Newest" },
-  { value: "date_asc", label: "Oldest" },
-];
-
-const biasClasses: Record<string, string> = {
-  left: "bg-bias-left",
-  "lean-left": "bg-bias-lean-left",
-  center: "bg-stone-600",
-  "lean-right": "bg-bias-lean-right",
-  right: "bg-bias-right",
-};
+import ArticleCard from "../components/ui/article-card/article-card";
+import ArticleCardSkeleton from "../components/ui/article-card/article-card-skeleton";
+import { ARTICLE_SORT_OPTIONS, AVAILABLE_BIASES } from "../utils/param-options";
+import { updateURL } from "../utils/update-url";
 
 const BrowsePage = () => {
   const { getArticlePreviews, previews, previewsLoading } = useArticles();
@@ -32,6 +22,7 @@ const BrowsePage = () => {
   const [selectedBiases, setSelectedBiases] = useState<string[]>([]);
   const [selectedSort, setSelectedSort] = useState<string>("date_desc");
 
+  // first fetch available sources then build filter and sort options on load
   useEffect(() => {
     const sources =
       searchParams.get("sources")?.split(",").filter(Boolean) || [];
@@ -45,27 +36,17 @@ const BrowsePage = () => {
     setReady(true);
   }, [searchParams, getUsedSources]);
 
-  const updateURL = useCallback(
-    (sources: string[], biases: string[], sort: string) => {
-      const params = new URLSearchParams();
-
-      if (sources.length > 0) {
-        params.set("sources", sources.join(","));
-      }
-      if (biases.length > 0) {
-        params.set("bias", biases.join(","));
-      }
-      if (sort !== "date_desc") {
-        params.set("sort", sort);
-      }
-
-      setSearchParams(params);
-    },
-    [setSearchParams],
-  );
-
+  // update url + fetch articles when ready
   useEffect(() => {
     if (ready) {
+      const params = updateURL(
+        selectedSort,
+        "date_desc",
+        selectedSources,
+        selectedBiases,
+      );
+      setSearchParams(params);
+
       getArticlePreviews({
         sources: selectedSources,
         bias: selectedBiases,
@@ -73,17 +54,13 @@ const BrowsePage = () => {
       });
     }
   }, [
+    selectedSort,
     selectedSources,
     selectedBiases,
-    selectedSort,
-    getArticlePreviews,
     ready,
+    setSearchParams,
+    getArticlePreviews,
   ]);
-
-  const handleSortChange = (sort: string) => {
-    setSelectedSort(sort);
-    updateURL(selectedSources, selectedBiases, sort);
-  };
 
   return (
     <SiteLayout>
@@ -107,8 +84,8 @@ const BrowsePage = () => {
         <div className="flex gap-3 py-5 sm:justify-end border-b-1 border-fg-dark-tertiary">
           <Select
             name="sort-select"
-            options={SORT_OPTIONS}
-            handleChange={handleSortChange}
+            options={ARTICLE_SORT_OPTIONS}
+            handleChange={setSelectedSort}
             value={selectedSort}
           />
 
@@ -122,13 +99,11 @@ const BrowsePage = () => {
             onApply={(sources, biases) => {
               setSelectedSources(sources);
               setSelectedBiases(biases);
-              updateURL(sources, biases, selectedSort);
             }}
             onClear={() => {
               setSelectedSources([]);
               setSelectedBiases([]);
               setSelectedSort("date_desc");
-              updateURL([], [], "date_desc");
             }}
           />
         </div>
@@ -138,83 +113,11 @@ const BrowsePage = () => {
         {previewsLoading ? (
           <>
             {Array.from({ length: 6 }).map((_, i) => (
-              <div
-                key={`skeleton-${i}`}
-                className="flex flex-col gap-5 px-5 py-7 h-100 rounded-2xl border-1 border-fg-dark-tertiary"
-                aria-hidden
-              >
-                <div className="flex items-center justify-between">
-                  <div className="h-6 w-36 rounded bg-stone-400 animate-pulse" />
-                  <div className="h-8 w-18 rounded bg-stone-400 animate-pulse" />
-                </div>
-
-                <div className="flex flex-col gap-1">
-                  <div className="h-8 w-3/4 rounded bg-stone-400 animate-pulse" />
-                  <div className="h-8 w-full rounded bg-stone-400 animate-pulse" />
-                  <div className="h-8 w-1/2 rounded bg-stone-400 animate-pulse" />
-                </div>
-
-                <div className="flex flex-col gap-1">
-                  <div className="h-6 w-full rounded bg-stone-400 animate-pulse" />
-                  <div className="h-6 w-full rounded bg-stone-400 animate-pulse" />
-                  <div className="h-6 w-5/6 rounded bg-stone-400 animate-pulse" />
-                </div>
-
-                <div className="flex justify-between mt-auto">
-                  <div className="h-5 w-24 rounded bg-stone-400 animate-pulse" />
-                  <div className="h-5 w-20 rounded bg-stone-400 animate-pulse" />
-                </div>
-              </div>
+              <ArticleCardSkeleton key={`skeleton-${i}`} />
             ))}
           </>
         ) : (
-          <>
-            {previews.map((p) => {
-              const pubTime = new Date(p.publishedTime);
-              const truncatedExcerpt = p.excerpt.substring(0, 200) + "...";
-
-              return (
-                <div
-                  key={p.slug}
-                  className="flex flex-col gap-5 px-5 py-7 rounded-2xl border-1 border-fg-dark-tertiary"
-                >
-                  <div className="flex items-center justify-between">
-                    <h2 className="font-medium text-fg-dark-tertiary underline underline-offset-4 decoration-dotted hover:text-fg-dark active:text-fg-dark">
-                      <Link to={`/media-ratings/${p.source.slug}`}>
-                        {p.source.name}
-                      </Link>
-                    </h2>
-                    <span
-                      className={`font-medium py-1 px-2 rounded-sm capitalize text-fg-light ${
-                        biasClasses[p.source.bias] ?? "bg-stone-600"
-                      }`}
-                    >
-                      {p.source.bias.replace("-", " ")}
-                    </span>
-                  </div>
-
-                  <h2 className="text-xl">{p.title}</h2>
-
-                  <p className="text-fg-dark-tertiary text-lg">
-                    {truncatedExcerpt}
-                  </p>
-
-                  <div className="flex justify-between mt-auto">
-                    <span className="font-medium text-fg-dark-tertiary">
-                      {pubTime.toLocaleDateString()}
-                    </span>
-
-                    <Link
-                      to={`/article/${p.slug}`}
-                      className="font-medium underline underline-offset-4 decoration-dotted hover:text-fg-dark-secondary active:text-fg-dark-secondary"
-                    >
-                      Read Story
-                    </Link>
-                  </div>
-                </div>
-              );
-            })}
-          </>
+          previews.map((p) => <ArticleCard p={p} key={p.slug} />)
         )}
       </PageSection>
     </SiteLayout>
