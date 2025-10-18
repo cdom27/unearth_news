@@ -15,3 +15,12 @@ export type SourceFilterDTO = {
   name: string;
   slug: string;
 };
+
+export type SourceRatingPreviewDTO = {
+  name: string;
+  slug: string;
+  mediaType: string;
+  bias: Bias;
+  factualReporting: string;
+  credibility: string;
+};
