@@ -7,7 +7,7 @@ import {
   findArticleDetails,
 } from "./service";
 import { resolveToNumber } from "../shared/utils/resolve-number";
-import { validateSort } from "./utils/validate-sort";
+import { validateSort } from "../shared/utils/validate-sort";
 import { validateArrayParams } from "../shared/utils/validate-array-params";
 import type { AnalysisRequest } from "./dtos/analysis-request";
 import type { ArticleSlugParams } from "./types/article-slug-params";
@@ -15,7 +15,7 @@ import type { ArticlePreviewQuery } from "./types/article-preview-query";
 
 export const analyzeArticleHandler = async (
   req: Request<{}, {}, AnalysisRequest>,
-  res: Response
+  res: Response,
 ) => {
   try {
     const { url } = req.body;
@@ -39,7 +39,7 @@ export const analyzeArticleHandler = async (
 
 export const getArticleDetailsHandler = async (
   req: Request<ArticleSlugParams>,
-  res: Response
+  res: Response,
 ) => {
   try {
     const { slug } = req.params;
@@ -57,7 +57,7 @@ export const getArticleDetailsHandler = async (
     return success(
       res,
       articleDetails.data,
-      "Sucessfully fetched article details"
+      "Sucessfully fetched article details",
     );
   } catch (error) {
     console.error("Error while fetching article details:", error);
@@ -67,7 +67,7 @@ export const getArticleDetailsHandler = async (
 
 export const getArticlePreviewsHandler = async (
   req: Request<{}, {}, {}, ArticlePreviewQuery>,
-  res: Response
+  res: Response,
 ) => {
   try {
     const DEFAULT_PAGE = 1;
@@ -82,7 +82,7 @@ export const getArticlePreviewsHandler = async (
       pageSize: resolveToNumber(pageSize, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE),
       sources: validateArrayParams(sources),
       bias: validateArrayParams(bias),
-      sort: validateSort(sort) ?? DEFAULT_SORT,
+      sort: validateSort(sort, ["date_asc", "date_desc"]) ?? DEFAULT_SORT,
     };
 
     let sourceIds: string[] | null = null;
@@ -93,7 +93,7 @@ export const getArticlePreviewsHandler = async (
     ) {
       const sourceIdResult = await findFilteredSourceIds(
         sanitized.sources,
-        sanitized.bias
+        sanitized.bias,
       );
 
       sourceIds = sourceIdResult.data || [];
@@ -114,7 +114,7 @@ export const getArticlePreviewsHandler = async (
               hasPrevPage: false,
             },
           },
-          "No articles found matching the specified filters"
+          "No articles found matching the specified filters",
         );
       }
     }
@@ -124,7 +124,7 @@ export const getArticlePreviewsHandler = async (
       sourceIds,
       sanitized.sort,
       sanitized.page,
-      sanitized.pageSize
+      sanitized.pageSize,
     );
 
     if (!result.data) {
@@ -141,7 +141,7 @@ export const getArticlePreviewsHandler = async (
             hasPrevPage: false,
           },
         },
-        "No articles found"
+        "No articles found",
       );
     }
 
@@ -161,7 +161,7 @@ export const getArticlePreviewsHandler = async (
           hasPrevPage: sanitized.page > 1,
         },
       },
-      "Successfully fetched article previews"
+      "Successfully fetched article previews",
     );
   } catch (error) {
     console.error("Error while fetching article previews:", error);

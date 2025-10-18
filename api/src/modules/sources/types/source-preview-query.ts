@@ -1,11 +1,10 @@
 import type { Bias } from "@shared/types/analysis-fields";
 
-type SortOptions = "date_desc" | "date_asc";
+type SortOptions = "name_desc" | "name_asc";
 
-export type ArticlePreviewQuery = {
+export type SourcePreviewQuery = {
   page?: number;
   pageSize?: number;
-  sources?: string;
   bias?: Bias;
   sort?: SortOptions;
 };

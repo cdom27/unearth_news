@@ -1,6 +1,9 @@
 import { SourceRepository } from "./repository";
 import type { Result } from "../shared/types/service-result";
-import type { SourceFilterDTO } from "@shared/dtos/source";
+import type {
+  SourceFilterDTO,
+  SourceRatingPreviewDTO,
+} from "@shared/dtos/source";
 
 // Find all unique sources that have been references by an article
 export const findUsedSources = async (): Promise<Result<SourceFilterDTO[]>> => {
@@ -37,4 +40,27 @@ export const findFilteredSourceIds = async (
   const sourceIds = await SourceRepository.filter(conditions, params);
 
   return { success: true, data: sourceIds };
+};
+
+// Find source media-rating previews
+export const buildSourcePreviews = async (
+  sourceIds: string[] | null,
+  sort: string,
+  page: number,
+  pageSize: number,
+): Promise<Result<{ previews: SourceRatingPreviewDTO[]; count: number }>> => {
+  try {
+    const offset = (page - 1) * pageSize;
+    const result = await SourceRepository.findMultipleByText(
+      "id",
+      sourceIds,
+      offset,
+      pageSize,
+      sort,
+    );
+    return { success: true, data: result };
+  } catch (error) {
+    console.error("Unexpected error: ");
+    return { success: false, error: "Internal error" };
+  }
 };

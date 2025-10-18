@@ -1,8 +1,9 @@
+import { SourceRatingPreviewDTO } from "@shared/dtos/source";
 import pool from "../../db/client";
 import type { Source } from "./types/source";
 
 export const SourceRepository = {
-  // Find an existing source record by url
+  // Find an existing source record by a text value
   async findByText(column: string, value: string): Promise<Source | null> {
     const result = await pool.query(
       `SELECT * FROM sources WHERE ${column} = $1 LIMIT 1`,
@@ -23,6 +24,58 @@ export const SourceRepository = {
       mediaType: row.media_type,
       credibility: row.credibility,
       createdAt: row.created_at,
+    };
+  },
+
+  // Find multiple existing records
+  async findMultipleByText(
+    column: string,
+    values: string[] | null,
+    offset: number,
+    limit: number,
+    sort?: string,
+  ): Promise<{ previews: SourceRatingPreviewDTO[]; count: number }> {
+    const sortClause = sort === "name_asc" ? "name ASC" : "name DESC";
+    let whereClause = "";
+    let params = [];
+    let paramIndex = 1;
+
+    if (values && values.length > 0) {
+      const placeholders = values.map(() => `$${paramIndex++}`).join(",");
+      whereClause = `WHERE ${column} IN (${placeholders})`;
+      params.push(...values);
+    }
+
+    params.push(limit, offset);
+
+    const query = `
+      SELECT
+        name,
+        slug,
+        media_type,
+        bias,
+        factual_reporting,
+        credibility,
+        COUNT(*) OVER() AS total_count
+      FROM sources
+      ${whereClause}
+      ORDER BY ${sortClause}
+      LIMIT $${paramIndex++} OFFSET $${paramIndex++}`;
+
+    const result = await pool.query(query, params);
+    const rows = result.rows;
+    const totalCount = rows[0]?.total_count ? Number(rows[0].total_count) : 0;
+
+    return {
+      previews: rows.map((row) => ({
+        name: row.name,
+        slug: row.slug,
+        mediaType: row.media_type,
+        bias: row.bias,
+        factualReporting: row.factual_reporting,
+        credibility: row.credibility,
+      })),
+      count: totalCount,
     };
   },
 
@@ -69,7 +122,11 @@ export const SourceRepository = {
   },
 
   // Filter sources by bias and slug
-  async filter(conditions: string[], params: string[]): Promise<string[]> {
+  async filter(
+    conditions: string[],
+    params: string[],
+    size?: "id" | "preview",
+  ): Promise<string[]> {
     const where = `WHERE ${conditions.join(" AND ")}`;
     const query = `SELECT id FROM sources ${where}`;
     const result = await pool.query(query, params);
