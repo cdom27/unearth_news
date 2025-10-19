@@ -14,7 +14,6 @@ const RatingsPage = () => {
   const { getSourcePreviews, previews, previewsLoading } = useSources();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [open, setOpen] = useState(false);
   const [ready, setReady] = useState(false);
   const [selectedBiases, setSelectedBiases] = useState<string[]>([]);
   const [selectedSort, setSelectedSort] = useState<string>("name_asc");
@@ -44,13 +43,6 @@ const RatingsPage = () => {
 
   return (
     <SiteLayout>
-      <div
-        onClick={() => setOpen(false)}
-        className={`fixed inset-0 transition-opacity duration-500 ease-in-out bg-fg-dark ${
-          open ? "opacity-20 z-0" : "opacity-0 -z-10"
-        }`}
-      />
-
       <PageSection>
         <h1 className="font-instrument text-5xl tracking-[.0125em]">
           Media Bias Ratings
@@ -70,8 +62,6 @@ const RatingsPage = () => {
           />
 
           <FilterMenu
-            setOpen={setOpen}
-            open={open}
             biasOptions={AVAILABLE_BIASES}
             selectedBiases={selectedBiases}
             onApply={(sources, biases) => {

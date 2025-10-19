@@ -16,7 +16,6 @@ const BrowsePage = () => {
   const { getUsedSources, sources } = useSources();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [open, setOpen] = useState(false);
   const [ready, setReady] = useState(false);
   const [selectedSources, setSelectedSources] = useState<string[]>([]);
   const [selectedBiases, setSelectedBiases] = useState<string[]>([]);
@@ -64,13 +63,6 @@ const BrowsePage = () => {
 
   return (
     <SiteLayout>
-      <div
-        onClick={() => setOpen(false)}
-        className={`fixed inset-0 transition-opacity duration-500 ease-in-out bg-fg-dark ${
-          open ? "opacity-20 z-0" : "opacity-0 -z-10"
-        }`}
-      />
-
       <PageSection>
         <h1 className="font-instrument text-5xl tracking-[.0125em]">
           Browse Stories
@@ -90,8 +82,6 @@ const BrowsePage = () => {
           />
 
           <FilterMenu
-            setOpen={setOpen}
-            open={open}
             sourceOptions={sources}
             biasOptions={AVAILABLE_BIASES}
             selectedSources={selectedSources}
