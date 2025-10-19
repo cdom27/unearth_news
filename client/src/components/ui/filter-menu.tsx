@@ -3,8 +3,6 @@ import Button from "./button";
 import { FunnelSimpleIcon, XIcon } from "@phosphor-icons/react";
 
 interface FilterMenuProps {
-  setOpen: (action: boolean) => void;
-  open: boolean;
   sourceOptions?: { name: string; slug: string }[];
   biasOptions: string[];
   selectedSources?: string[];
@@ -14,8 +12,6 @@ interface FilterMenuProps {
 }
 
 const FilterMenu = ({
-  setOpen,
-  open,
   sourceOptions,
   biasOptions,
   selectedSources,
@@ -27,6 +23,7 @@ const FilterMenu = ({
     selectedSources || [],
   );
   const [stagedBiases, setStagedBiases] = useState<string[]>(selectedBiases);
+  const [open, setOpen] = useState(false);
 
   // reset staged fitlers on open
   useEffect(() => {
@@ -74,6 +71,13 @@ const FilterMenu = ({
 
   return (
     <div>
+      <div
+        onClick={() => setOpen(false)}
+        className={`fixed inset-0 transition-opacity duration-500 ease-in-out bg-fg-dark ${
+          open ? "opacity-20 z-0" : "opacity-0 -z-10"
+        }`}
+      />
+
       <Button
         className="flex gap-2 items-center"
         variant="outline"
