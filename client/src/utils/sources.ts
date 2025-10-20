@@ -1,8 +1,8 @@
-import MBFC from "../assets/images/mbfc.svg";
-import ADFONTES from "../assets/images/ad-fontes.png";
-import ALLSIDES from "../assets/images/all-sides.svg";
-import NEWSGUARD from "../assets/images/news-guard.svg";
-import PEWRESEARCH from "../assets/images/pew.svg";
+import MBFC from "../assets/images/data-sources/mbfc.svg";
+import ADFONTES from "../assets/images/data-sources/ad-fontes.png";
+import ALLSIDES from "../assets/images/data-sources/all-sides.svg";
+import NEWSGUARD from "../assets/images/data-sources/news-guard.svg";
+import PEWRESEARCH from "../assets/images/data-sources/pew.svg";
 
 export const sources = [
   {
