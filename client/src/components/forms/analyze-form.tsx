@@ -10,7 +10,11 @@ import {
   AnalyzeUrlSchema,
 } from "../../lib/schemas/analyze-url";
 
-const AnalyzeArticleForm = () => {
+interface FormProps {
+  className?: string;
+}
+
+const AnalyzeArticleForm = ({ className = "" }: FormProps) => {
   const { analyzeArticle, isArticleLoading } = useArticles();
   const navigate = useNavigate();
 
@@ -33,7 +37,10 @@ const AnalyzeArticleForm = () => {
     reset();
   };
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className={`flex flex-col gap-2 ${className}`}
+    >
       <Input
         {...register("url")}
         id="url"

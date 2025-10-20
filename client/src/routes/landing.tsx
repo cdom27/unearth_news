@@ -15,6 +15,9 @@ const LandingPage = () => {
           everyone should learn how to spot it with a critical lens.
         </p>
 
+        {/* mobile hero graphic */}
+        <div className="size-[280px] rounded-full bg-stone-500 mt-8" />
+
         <div className="pt-8">
           <h3 className="font-medium text-lg">Get Started</h3>
           <div className="flex flex-col gap-2 pt-2">
@@ -27,9 +30,7 @@ const LandingPage = () => {
           </div>
         </div>
 
-        <div className="pt-8">
-          <AnalyzeArticleForm />
-        </div>
+        <AnalyzeArticleForm className="pt-8" />
       </PageSection>
     </SiteLayout>
   );
