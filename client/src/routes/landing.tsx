@@ -4,6 +4,8 @@ import AnalyzeArticleForm from "../components/forms/analyze-form";
 import Link from "../components/ui/link";
 import Card from "../components/ui/card";
 import { sources } from "../utils/sources";
+import Marquee from "../components/ui/marquee";
+import { mediaSources } from "../utils/media-sources";
 
 const LandingPage = () => {
   return (
@@ -21,7 +23,7 @@ const LandingPage = () => {
         <div className="size-[280px] rounded-full bg-stone-500 mt-8" />
 
         <div className="pt-8">
-          <h3 className="font-medium text-lg">Get Started</h3>
+          <h4 className="font-medium text-lg">Get Started</h4>
           <div className="flex flex-col gap-2 pt-2">
             <Link href="/login" variant="brand">
               Join Unearth Free
@@ -62,6 +64,14 @@ const LandingPage = () => {
             </Card>
           ))}
         </div>
+      </PageSection>
+
+      <PageSection className="flex flex-col mt-25 gap-8">
+        <h4 className="font-medium text-lg text-center">
+          Unearth the bias behind the headlines
+        </h4>
+
+        <Marquee items={mediaSources} />
       </PageSection>
     </SiteLayout>
   );
