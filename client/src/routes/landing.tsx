@@ -3,9 +3,10 @@ import PageSection from "../components/layouts/page-section";
 import AnalyzeArticleForm from "../components/forms/analyze-form";
 import Link from "../components/ui/link";
 import Card from "../components/ui/card";
-import { sources } from "../utils/sources";
 import Marquee from "../components/ui/marquee";
+import { sources } from "../utils/sources";
 import { mediaSources } from "../utils/media-sources";
+import { phases } from "../utils/phases";
 
 const LandingPage = () => {
   return (
@@ -53,9 +54,7 @@ const LandingPage = () => {
             <Card key={s.id}>
               <Card.Thumbnail src={s.thumbnailSrc} alt={s.heading} />
               <Card.Heading>{s.heading}</Card.Heading>
-              <Card.Body>
-                <p>{s.body}</p>
-              </Card.Body>
+              <Card.Body as="p">{s.body}</Card.Body>
               <Card.Footer>
                 <Link href={`/methodology#${s.id}`} variant="outline">
                   {s.linkLabel}
@@ -72,6 +71,43 @@ const LandingPage = () => {
         </h4>
 
         <Marquee items={mediaSources} />
+      </PageSection>
+
+      <PageSection className="mt-25">
+        <h2 className="font-instrument text-4xl tracking-[.0125em]">
+          Precision in Practice — How Unearth Works
+        </h2>
+        <p className="pt-2 lg:w-2/3">
+          Unearth turns information into clarity. By combining expert
+          frameworks, language analysis, and trusted data, it helps users
+          uncover truth in a sea of noise, one claim at a time.
+        </p>
+
+        <div className="flex flex-col gap-8 pt-8">
+          {phases.map((p) => (
+            <Card key={p.id}>
+              {/* placeholder for thumbnail */}
+              <div className="h-45 rounded-2xl bg-bg-light" />
+              <Card.Heading>{p.heading}</Card.Heading>
+              <Card.Body as="div" className="pb-8">
+                <p className="text-fg-light pb-8">{p.body}</p>
+                <ul>
+                  {p.steps.map((s) => {
+                    const Icon = s.icon;
+                    return (
+                      <li key={s.text} className="flex gap-2 items-center">
+                        <div className="size-8 p-1  bg-bg-light">
+                          <Icon className="size-6 fill-fg-dark" />
+                        </div>
+                        <span>{s.text}</span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </Card.Body>
+            </Card>
+          ))}
+        </div>
       </PageSection>
     </SiteLayout>
   );

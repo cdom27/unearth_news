@@ -15,6 +15,8 @@ interface CardHeadingProps {
 
 interface CardBodyProps {
   children: ReactNode;
+  className?: string;
+  as?: "p" | "div" | "ul";
 }
 
 interface CardFooterProps {
@@ -47,12 +49,20 @@ const CardHeading = ({ children }: CardHeadingProps) => {
   );
 };
 
-const CardBody = ({ children }: CardBodyProps) => {
-  return <div className="px-2 text-fg-dark-tertiary">{children}</div>;
+const CardBody = ({
+  children,
+  className = "",
+  as: Component = "div",
+}: CardBodyProps) => {
+  return (
+    <Component className={`px-2 text-fg-dark-tertiary ${className}`}>
+      {children}
+    </Component>
+  );
 };
 
 const CardFooter = ({ children }: CardFooterProps) => {
-  return <div className="px-2 pt-12 pb-4 text-fg-light">{children}</div>;
+  return <div className="px-2 pt-12 pb-8 text-fg-light">{children}</div>;
 };
 
 Card.Thumbnail = CardThumbnail;
