@@ -1,5 +1,6 @@
 import SiteLayout from "../components/layouts/site-layout";
 import PageSection from "../components/layouts/page-section";
+import AnalyzeArticleForm from "../components/forms/analyze-form";
 import Link from "../components/ui/link";
 
 const LandingPage = () => {
@@ -18,17 +19,17 @@ const LandingPage = () => {
           <h3 className="font-medium text-lg">Get Started</h3>
           <div className="flex flex-col gap-2 pt-2">
             <Link href="/login" variant="brand">
-              Join unearth free
+              Join Unearth Free
             </Link>
             <Link href="/methodology" variant="outline">
-              Learn more
+              Learn More
             </Link>
           </div>
         </div>
-      </PageSection>
 
-      <PageSection className="mt-100">
-        <h2 id="trust">Restoring trust</h2>
+        <div className="pt-8">
+          <AnalyzeArticleForm />
+        </div>
       </PageSection>
     </SiteLayout>
   );
