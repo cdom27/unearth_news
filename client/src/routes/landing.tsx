@@ -7,35 +7,57 @@ import Marquee from "../components/ui/marquee";
 import { sources } from "../utils/sources";
 import { mediaSources } from "../utils/media-sources";
 import { phases } from "../utils/phases";
+import HERO from "../assets/images/hero.svg";
 
 const LandingPage = () => {
   return (
     <SiteLayout>
       <PageSection>
-        <h1 className="font-instrument text-5xl tracking-[.0125em]">
-          Everyone Is Biased &mdash; and That's Okay
-        </h1>
-        <p className="pt-2 lg:w-2/3 2xl:w-2/5">
-          But hidden media bias misleads, manipulates, and divides us. So
-          everyone should learn how to spot it with a critical lens.
-        </p>
+        <div className="lg:flex lg:items-center lg:gap-20 2xl:gap-0">
+          <div>
+            <h1 className="font-instrument text-5xl tracking-[.0125em]">
+              Clarity In Every Narrative
+            </h1>
+            <p className="pt-2 2xl:w-1/2">
+              Explore how stories are built. Unearth examines language, claims,
+              and sourcing to give you a deeper understanding of the information
+              you read.
+            </p>
 
-        {/* mobile hero graphic */}
-        {/*<div className="size-[280px] rounded-full bg-stone-500 mt-8" />*/}
+            <img
+              src={HERO}
+              alt="Boy using a magnifying glass on a globe"
+              className="mt-8 sm:mx-auto lg:hidden"
+            />
 
-        <div className="pt-8 sm:pb-4 lg:pb-0">
-          <h4 className="font-medium text-lg">Get Started</h4>
-          <div className="flex flex-col sm:flex-row gap-2 pt-2">
-            <Link href="/login" variant="brand">
-              Join Unearth Free
-            </Link>
-            <Link href="/methodology" variant="outline">
-              Learn More
-            </Link>
+            <div className="flex flex-col pt-8 gap-2 sm:pb-4 lg:pb-0">
+              <h4 className="font-medium text-lg">Get Started</h4>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <Link
+                  href="/login"
+                  variant="brand"
+                  className="sm:w-full lg:w-fit"
+                >
+                  Join Unearth Free
+                </Link>
+                <Link
+                  href="/methodology"
+                  variant="outline"
+                  className="sm:w-full lg:w-fit"
+                >
+                  Learn More
+                </Link>
+              </div>
+            </div>
+
+            <AnalyzeArticleForm className="pt-8" />
           </div>
+          <img
+            src={HERO}
+            alt="Boy using a magnifying glass on a globe"
+            className="hidden w-1/3 lg:flex"
+          />
         </div>
-
-        <AnalyzeArticleForm className="pt-8" />
       </PageSection>
 
       <PageSection className="mt-25 2xl:mt-60">
@@ -88,9 +110,9 @@ const LandingPage = () => {
             <Card key={p.id}>
               <Card.Thumbnail src={p.thumbnailSrc} alt={p.thumbnailAlt} />
               <Card.Heading>{p.heading}</Card.Heading>
-              <Card.Body as="div">
+              <Card.Body as="div" className="flex flex-col h-full">
                 <p className="text-fg-light">{p.body}</p>
-                <ul className="flex flex-col gap-1 pt-10">
+                <ul className="flex flex-col gap-1 pt-10 mt-auto">
                   {p.steps.map((s) => {
                     const Icon = s.icon;
                     return (
@@ -110,7 +132,7 @@ const LandingPage = () => {
       </PageSection>
 
       <PageSection className="mt-25 2xl:mt-60 flex flex-col gap-2 sm:mx-auto">
-        <h4 className="font-medium text-lg xl:text-center">
+        <h4 className="font-medium text-lg text-center">
           What will you research today?
         </h4>
 

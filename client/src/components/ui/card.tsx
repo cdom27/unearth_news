@@ -39,7 +39,7 @@ const CardThumbnail = ({ src, alt }: CardThumbnailProps) => {
     <img
       src={src}
       alt={alt}
-      className="p-10 h-45 rounded-2xl object-contain bg-bg-light"
+      className="p-10 h-45 2xl:p-16 2xl:h-64 rounded-2xl object-contain bg-bg-light"
     />
   );
 };
@@ -65,7 +65,7 @@ const CardBody = ({
 };
 
 const CardFooter = ({ children }: CardFooterProps) => {
-  return <div className="px-2 pt-10 text-fg-light mt-auto">{children}</div>;
+  return <div className="px-2 pt-14 text-fg-light mt-auto">{children}</div>;
 };
 
 Card.Thumbnail = CardThumbnail;

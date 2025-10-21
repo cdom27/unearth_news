@@ -48,12 +48,13 @@ const AnalyzeArticleForm = ({ className = "" }: FormProps) => {
         type="text"
         placeholder="Paste in the article url here..."
         error={errors.url}
+        className="sm:w-full lg:w-full xl:w-2/3 2xl:w-2/5"
       />
 
       <Button
         variant="primary"
         disabled={!dirtyFields.url}
-        className="sm:mt-auto"
+        className="sm:mt-auto sm:w-1/2 lg:w-fit"
       >
         {isArticleLoading ? (
           <CircleNotchIcon size={20} className="animate-spin mx-auto" />
