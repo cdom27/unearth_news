@@ -39,7 +39,7 @@ const AnalyzeArticleForm = ({ className = "" }: FormProps) => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className={`flex flex-col gap-2 ${className}`}
+      className={`flex flex-col gap-2 sm:flex-row sm:items-center ${className}`}
     >
       <Input
         {...register("url")}
@@ -50,7 +50,11 @@ const AnalyzeArticleForm = ({ className = "" }: FormProps) => {
         error={errors.url}
       />
 
-      <Button variant="primary" disabled={!dirtyFields.url}>
+      <Button
+        variant="primary"
+        disabled={!dirtyFields.url}
+        className="sm:mt-auto"
+      >
         {isArticleLoading ? (
           <CircleNotchIcon size={20} className="animate-spin mx-auto" />
         ) : (

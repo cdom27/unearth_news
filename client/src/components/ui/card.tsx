@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 interface CardProps {
   children: ReactNode;
+  className?: string;
 }
 
 interface CardThumbnailProps {
@@ -23,9 +24,11 @@ interface CardFooterProps {
   children: ReactNode;
 }
 
-const Card = ({ children }: CardProps) => {
+const Card = ({ children, className = "" }: CardProps) => {
   return (
-    <div className="flex flex-col gap-5 p-2 rounded-3xl bg-bg-dark">
+    <div
+      className={`flex flex-col gap-5 p-2 pb-8 rounded-3xl bg-bg-dark ${className}`}
+    >
       {children}
     </div>
   );
@@ -62,7 +65,7 @@ const CardBody = ({
 };
 
 const CardFooter = ({ children }: CardFooterProps) => {
-  return <div className="px-2 pt-12 pb-8 text-fg-light">{children}</div>;
+  return <div className="px-2 pt-10 text-fg-light mt-auto">{children}</div>;
 };
 
 Card.Thumbnail = CardThumbnail;

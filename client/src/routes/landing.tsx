@@ -15,17 +15,17 @@ const LandingPage = () => {
         <h1 className="font-instrument text-5xl tracking-[.0125em]">
           Everyone Is Biased &mdash; and That's Okay
         </h1>
-        <p className="pt-2 lg:w-2/3">
+        <p className="pt-2 lg:w-2/3 2xl:w-2/5">
           But hidden media bias misleads, manipulates, and divides us. So
           everyone should learn how to spot it with a critical lens.
         </p>
 
         {/* mobile hero graphic */}
-        <div className="size-[280px] rounded-full bg-stone-500 mt-8" />
+        {/*<div className="size-[280px] rounded-full bg-stone-500 mt-8" />*/}
 
-        <div className="pt-8">
+        <div className="pt-8 sm:pb-4 lg:pb-0">
           <h4 className="font-medium text-lg">Get Started</h4>
-          <div className="flex flex-col gap-2 pt-2">
+          <div className="flex flex-col sm:flex-row gap-2 pt-2">
             <Link href="/login" variant="brand">
               Join Unearth Free
             </Link>
@@ -38,18 +38,18 @@ const LandingPage = () => {
         <AnalyzeArticleForm className="pt-8" />
       </PageSection>
 
-      <PageSection className="mt-25">
+      <PageSection className="mt-25 2xl:mt-60">
         <h2 className="font-instrument text-4xl tracking-[.0125em]">
           Restoring Trust in Journalism
         </h2>
-        <p className="pt-2 lg:w-2/3">
+        <p className="pt-2 lg:w-2/3 2xl:w-2/5">
           We are committed to fighting misinformation by providing transparent,
           fact-based news analysis. Our mission is to rebuild public confidence
           in media by showing people the truth behind every story, verified by
           non and multi-partisan sources.
         </p>
 
-        <div className="flex flex-col gap-8 pt-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8 pt-8">
           {sources.map((s) => (
             <Card key={s.id}>
               <Card.Thumbnail src={s.thumbnailSrc} alt={s.heading} />
@@ -65,7 +65,7 @@ const LandingPage = () => {
         </div>
       </PageSection>
 
-      <PageSection className="flex flex-col mt-25 gap-8">
+      <PageSection className="flex flex-col mt-25 2xl:mt-60 gap-8">
         <h4 className="font-medium text-lg text-center">
           Unearth the bias behind the headlines
         </h4>
@@ -73,24 +73,24 @@ const LandingPage = () => {
         <Marquee items={mediaSources} />
       </PageSection>
 
-      <PageSection className="mt-25">
+      <PageSection className="mt-25 2xl:mt-60">
         <h2 className="font-instrument text-4xl tracking-[.0125em]">
           Precision in Practice — How Unearth Works
         </h2>
-        <p className="pt-2 lg:w-2/3">
+        <p className="pt-2 lg:w-2/3 2xl:w-2/5">
           Unearth turns information into clarity. By combining expert
           frameworks, language analysis, and trusted data, it helps users
           uncover truth in a sea of noise, one claim at a time.
         </p>
 
-        <div className="flex flex-col gap-8 pt-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8 pt-8">
           {phases.map((p) => (
             <Card key={p.id}>
               <Card.Thumbnail src={p.thumbnailSrc} alt={p.thumbnailAlt} />
               <Card.Heading>{p.heading}</Card.Heading>
-              <Card.Body as="div" className="pb-8">
-                <p className="text-fg-light pb-8">{p.body}</p>
-                <ul>
+              <Card.Body as="div">
+                <p className="text-fg-light">{p.body}</p>
+                <ul className="flex flex-col gap-1 pt-10">
                   {p.steps.map((s) => {
                     const Icon = s.icon;
                     return (
@@ -109,15 +109,18 @@ const LandingPage = () => {
         </div>
       </PageSection>
 
-      <PageSection className="mt-25">
-        <AnalyzeArticleForm />
+      <PageSection className="mt-25 2xl:mt-60 flex flex-col gap-2 sm:mx-auto">
+        <h4 className="font-medium text-lg xl:text-center">
+          What will you research today?
+        </h4>
 
-        <div className="flex flex-col gap-2 pt-8">
-          <h4 className="font-medium text-lg">See Unearth in action</h4>
-          <Link href="/login" variant="brand">
-            Join Free
-          </Link>
-        </div>
+        <Link
+          href="/login"
+          variant="brand"
+          className="sm:self-start sm:mx-auto"
+        >
+          Join Unearth Free
+        </Link>
       </PageSection>
     </SiteLayout>
   );
