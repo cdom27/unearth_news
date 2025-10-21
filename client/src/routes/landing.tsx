@@ -113,7 +113,7 @@ const LandingPage = () => {
       <PageSection className="mt-25">
         <AnalyzeArticleForm />
 
-        <div className="flex flex-col gpa-2 pt-8">
+        <div className="flex flex-col gap-2 pt-8">
           <h4 className="font-medium text-lg">See Unearth in action</h4>
           <Link href="/login" variant="brand">
             Join Free
