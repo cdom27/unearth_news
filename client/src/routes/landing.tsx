@@ -86,8 +86,7 @@ const LandingPage = () => {
         <div className="flex flex-col gap-8 pt-8">
           {phases.map((p) => (
             <Card key={p.id}>
-              {/* placeholder for thumbnail */}
-              <div className="h-45 rounded-2xl bg-bg-light" />
+              <Card.Thumbnail src={p.thumbnailSrc} alt={p.thumbnailAlt} />
               <Card.Heading>{p.heading}</Card.Heading>
               <Card.Body as="div" className="pb-8">
                 <p className="text-fg-light pb-8">{p.body}</p>
