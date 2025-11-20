@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 interface CardProps {
   children: ReactNode;
   className?: string;
+  variant?: "primary" | "secondary";
 }
 
 interface CardThumbnailProps {
@@ -24,7 +25,12 @@ interface CardFooterProps {
   children: ReactNode;
 }
 
-const Card = ({ children, className = "" }: CardProps) => {
+const Card = ({ children, className = "", variant = "primary" }: CardProps) => {
+  const variantStyles: Record<string, string> = {
+    primary: "bg-bg-dark",
+    secondary: "border-1 border-fg-tertiary",
+  };
+
   return (
     <div
       className={`flex flex-col gap-5 p-2 pb-8 rounded-3xl bg-bg-dark ${className}`}

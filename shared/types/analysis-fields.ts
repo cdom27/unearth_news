@@ -26,7 +26,7 @@ export type Claim = {
   verification: Verification;
 };
 
-type Term = {
+export type Term = {
   term: string;
   tone: Tone;
   analysis: string;

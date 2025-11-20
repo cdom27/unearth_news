@@ -1,6 +1,6 @@
 import type { AnalysisDTO } from "./analysis";
 import type { ArticleDTO } from "./article";
-import { NewsApiArticleDTO } from "./news-api";
+import type { NewsApiArticleDTO } from "./news-api";
 import type { SourceDTO } from "./source";
 
 export type ArticleDetailsDTO = {
