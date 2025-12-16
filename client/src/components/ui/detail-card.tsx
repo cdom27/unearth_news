@@ -46,6 +46,7 @@ const DetailCard = ({ c }: CardProps) => {
             <span>Sources:</span>
             {c.verification.sources.map((s) => (
               <a
+                key={s.sourceName}
                 href={s.sourceUrl}
                 rel="noopener noreferrer"
                 target="_blank"

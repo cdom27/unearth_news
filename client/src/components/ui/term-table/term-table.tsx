@@ -23,7 +23,7 @@ const TermTable = ({ ts }: TermTableProps) => {
         </thead>
         <tbody>
           {ts.map((t) => (
-            <tr>
+            <tr key={t.term}>
               <td className="py-3 px-4 font-medium">{t.term}</td>
               <td className="py-3 px-4 text-fg-dark-tertiary">{t.tone}</td>
               <td className="py-3 px-4 text-fg-dark-tertiary">{t.analysis}</td>
