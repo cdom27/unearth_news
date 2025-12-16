@@ -1,37 +1,35 @@
-# build react client
+# Build react client
 FROM node:20 AS client-build
-WORKDIR /client
-COPY ./client ./client
+WORKDIR /workspace
+
 COPY ./shared ./shared
+COPY ./client ./client
+
 RUN cd client && npm install && npm run build
 
-# build express api
+# Build express api
 FROM node:20 AS server-build
-WORKDIR /app
-
-# Copy API package files and tsconfig
-COPY ./api/package*.json ./
-COPY ./api/tsconfig.json ./
-
-# Install dependencies
-RUN npm install
+WORKDIR /workspace
 
 COPY ./shared ./shared
-RUN mkdir -p node_modules/@shared
-RUN ln -s /app/shared node_modules/@shared
+COPY ./api ./api
 
-# copy API source files
-COPY ./api/src ./src
+RUN cd api && npm install && npm run build
 
-RUN npm run build
-
-# create prod image
+# Create prod image
 FROM node:18-alpine
-WORKDIR /app
+WORKDIR /workspace/api
 
-# copy compiled api and client
-COPY --from=server-build /app /app
-COPY --from=client-build /client/client/dist /app/client/dist
+# Copy built API
+COPY --from=server-build /workspace/api/dist ./dist
+COPY --from=server-build /workspace/api/node_modules ./node_modules
+COPY --from=server-build /workspace/api/package*.json ./
+
+# Copy built client to maintain the relative path structure
+COPY --from=client-build /workspace/client/dist ../client/dist
 
 ENV NODE_ENV=production
 ENV PORT=8080
+
+EXPOSE 8080
+CMD ["node", "dist/index.js"]
