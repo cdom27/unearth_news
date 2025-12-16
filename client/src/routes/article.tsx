@@ -15,9 +15,9 @@ const ArticlePage = () => {
     getArticleDetails(slug || "");
   }, [getArticleDetails, slug]);
 
-  // if (isArticleLoading) {
-  //   return <>loading...</>;
-  // }
+  if (isArticleLoading) {
+    return <>loading...</>;
+  }
 
   if (!slug || !article) {
     return <>err</>;
@@ -30,95 +30,195 @@ const ArticlePage = () => {
 
   return (
     <SiteLayout>
-      <PageSection>
-        {/*Add metadata on top with social-share links and action buttons*/}
-        <h1 className="font-instrument text-5xl tracking-[.0125em]">
-          {a.title}
-        </h1>
+      <div className="lg:flex lg:gap-5">
+        <div className="lg:w-3/4 xl:w-4/5 lg:border-r-1 lg:pr-5 border-fg-dark-tertiary">
+          <PageSection>
+            {/*Add metadata on top with social-share links and action buttons*/}
+            <h1 className="font-instrument text-5xl tracking-[.0125em]">
+              {a.title}
+            </h1>
 
-        <div className="flex flex-col pt-8 gap-2">
-          <h4 className="font-medium text-lg">Summary by Unearth</h4>
-          <p>{an.summary}</p>
+            <div className="flex flex-col pt-8 gap-2">
+              <h4 className="font-medium text-lg">Summary by Unearth</h4>
+              <p>{an.summary}</p>
+            </div>
+          </PageSection>
+
+          <PageSection className="flex flex-col gap-10 mt-25 2xl:mt-30">
+            <div>
+              <h2 className="font-instrument text-4xl tracking-[.0125em]">
+                Unearth Report
+              </h2>
+
+              <div className="flex flex-col pt-8 gap-2">
+                <h4 className="font-medium text-lg">Overall Narrative</h4>
+                <p>{an.framing.narrative}</p>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-10" id="fact-check">
+              <h3 className="font-instrument text-3xl tracking-[.0125em]">
+                Fact Check
+              </h3>
+
+              {an.framing.claims.map((c, index) => (
+                <DetailCard c={c} key={index} />
+              ))}
+            </div>
+
+            <div className="flex flex-col gap-10" id="term-analysis">
+              <h3 className="font-instrument text-3xl tracking-[.0125em]">
+                Term Analysis
+              </h3>
+
+              <TermTable ts={an.framing.terms} />
+            </div>
+
+            <h2 className="font-instrument text-4xl tracking-[.0125em] 2xl:mt-30">
+              Media Report
+            </h2>
+
+            <div className="flex flex-col gap-10" id="transcript">
+              <div className="flex flex-col gap-2">
+                <h3 className="font-instrument text-3xl tracking-[.0125em]">
+                  Transcript
+                </h3>
+
+                <p>
+                  Read full article on{" "}
+                  <a
+                    href={a.url}
+                    className="underline underline-offset-4 decoration-dotted font-medium"
+                  >
+                    {s.name}
+                  </a>
+                </p>
+              </div>
+
+              <div className="max-h-96 overflow-y-auto border-t-1 border-b-1 border-fg-dark-tertiary p-2">
+                <p className="whitespace-pre-line text-gray-800">
+                  {a.textContent}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-10" id="related-articles">
+              <h3 className="font-instrument text-3xl tracking-[.0125em]">
+                Related Articles
+              </h3>
+
+              <div className="flex flex-col gap-4">
+                {ra.map((a) => {
+                  const pub = new Date(`${a.publishedAt}`);
+                  return (
+                    <Card key={a.title} className="p-6 md:p-8">
+                      <div className="flex flex-col md:flex-row gap-4">
+                        <img
+                          src={a.urlToImage}
+                          alt={a.content}
+                          className="w-60"
+                        />
+                        <Card.Heading>{a.title}</Card.Heading>
+                      </div>
+
+                      <Card.Body>
+                        <p>{a.description}</p>
+                      </Card.Body>
+                      <Card.Footer className="flex items-center pt-8">
+                        <a
+                          href={a.url}
+                          className="mr-auto underline underline-offset-4 decoration-dotted"
+                        >
+                          {a.author}, {a.source.name}
+                        </a>
+                        <span>
+                          {pub.getUTCMonth()}/{pub.getUTCDay()}/
+                          {pub.getUTCFullYear()}
+                        </span>
+                      </Card.Footer>
+                    </Card>
+                  );
+                })}
+
+                {ra.length === 0 && (
+                  <p>No related articles found at the moment!</p>
+                )}
+              </div>
+            </div>
+          </PageSection>
         </div>
-      </PageSection>
 
-      <PageSection className="flex flex-col gap-10 mt-25 2xl:mt-60">
-        <div>
-          <h2 className="font-instrument text-4xl tracking-[.0125em]">
-            Unearth Report
-          </h2>
+        <nav
+          aria-label="Article Navigation Menu"
+          className="hidden lg:block 2xl:w-1/4 p-5 rounded-2xl border-1 border-fg-dark-tertiary self-start"
+        >
+          <h2 className="font-medium text-lg">Coverage Details</h2>
+          <ul className="pt-2 flex flex-col gap-2 list-disc pl-8">
+            <li>
+              Sentiment: {an.sentiment[0].toUpperCase()}
+              {an.sentiment.slice(1)}
+            </li>
+            <li>Source Credibility: {s.credibility}</li>
+            <li>
+              Source Bias: {s.bias[0].toUpperCase()}
+              {s.bias.slice(1)}
+            </li>
+            <li>Factual Reporting: {s.factualReporting}</li>
+            <li>Claims: {an.framing.claims.length}</li>
+            <li>Key Terms: {an.framing.terms.length}</li>
+            <li>Confidence: {an.confidence * 100}%</li>
+          </ul>
 
-          <div className="flex flex-col pt-8 gap-2">
-            <h4 className="font-medium text-lg">Overall Narrative</h4>
-            <p>{an.framing.narrative}</p>
-          </div>
-        </div>
+          <hr className="border-fg-dark-tertiary my-4" />
 
-        <div className="flex flex-col gap-10">
-          <h3 className="font-instrument text-3xl tracking-[.0125em]">
-            Fact Check
-          </h3>
+          <h2 className="font-medium text-lg">Page Content</h2>
+          <ul className="pt-2 flex flex-col gap-2">
+            <li>
+              <h3>Unearth Report</h3>
+              <ul className="pt-2 flex flex-col gap-2 list-disc pl-8">
+                <li>
+                  <a
+                    href="#fact-check"
+                    className="underline underline-offset-4 decoration-dotted"
+                  >
+                    Fact Check
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#term-analysis"
+                    className="underline underline-offset-4 decoration-dotted"
+                  >
+                    Term Analysis
+                  </a>
+                </li>
+              </ul>
+            </li>
 
-          {an.framing.claims.map((c, index) => (
-            <DetailCard c={c} key={index} />
-          ))}
-        </div>
-
-        <div className="flex flex-col gap-10">
-          <h3 className="font-instrument text-3xl tracking-[.0125em]">
-            Term Analysis
-          </h3>
-
-          <TermTable ts={an.framing.terms} />
-        </div>
-
-        <h2 className="font-instrument text-4xl tracking-[.0125em]">
-          Media Report
-        </h2>
-
-        <div className="flex flex-col gap-10">
-          <div className="flex flex-col gap-2">
-            <h3 className="font-instrument text-3xl tracking-[.0125em]">
-              Transcript
-            </h3>
-
-            <p>
-              Read full article on{" "}
-              <a
-                href={a.url}
-                className="underline underline-offset-4 decoration-dotted font-medium"
-              >
-                {s.name}
-              </a>
-            </p>
-          </div>
-
-          <div className="max-h-96 overflow-y-auto border-t-1 border-b-1 border-fg-dark-tertiary p-2">
-            <p className="whitespace-pre-line text-gray-800">{a.textContent}</p>
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-10">
-          <h3 className="font-instrument text-3xl tracking-[.0125em]">
-            Related Articles
-          </h3>
-
-          {ra.map((a) => {
-            const pub = new Date(`${a.publishedAt}`);
-            return (
-              <Card>
-                <Card.Heading>{a.title}</Card.Heading>
-                <Card.Body>
-                  <p>{a.description}</p>
-                </Card.Body>
-                <Card.Footer>
-                  <span>{pub.getUTCDay()}</span>
-                </Card.Footer>
-              </Card>
-            );
-          })}
-        </div>
-      </PageSection>
+            <li>
+              <h3>Media Coverage</h3>
+              <ul className="pt-2 flex flex-col gap-2 list-disc pl-8">
+                <li>
+                  <a
+                    href="#transcript"
+                    className="underline underline-offset-4 decoration-dotted"
+                  >
+                    Transcript
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#related-articles"
+                    className="underline underline-offset-4 decoration-dotted"
+                  >
+                    Related Articles
+                  </a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </nav>
+      </div>
     </SiteLayout>
   );
 };
