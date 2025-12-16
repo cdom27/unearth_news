@@ -15,9 +15,12 @@ COPY ./api/tsconfig.json ./
 
 RUN npm install
 
+# Create symlink to make shared modules accessible as @shared
+RUN mkdir -p node_modules/@shared
+RUN ln -s /app/shared node_modules/@shared
+
 # explicitly copy source
 COPY ./api/src ./src
-COPY ./shared ./shared
 
 # force clean build
 RUN rm -rf dist .build && npm run build
