@@ -33,7 +33,7 @@ export const GCP_REGION = process.env.GCP_REGION;
 export const GCP_PROJECT_ID = process.env.GCP_PROJECT_ID;
 
 export const SYSTEM_PROMPT_PATH = systemPromptPath;
-export const PORT = process.env.PORT || 3000;
+export const PORT = process.env.PORT;
 export const CLIENT_ORIGIN =
   process.env.CLIENT_ORIGIN || "http://localhost:5173";
 

@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import path from "path";
-import { CLIENT_ORIGIN, PORT } from "./config/env";
+import { PORT } from "./config/env";
 import articleRouter from "./modules/articles/router";
 import sourceRouter from "./modules/sources/router";
 import { initDatabase } from "./db/client";
@@ -24,11 +24,11 @@ app.use(express.static(clientBuildPath));
 app.use("/api/v1/articles", articleRouter);
 app.use("/api/v1/sources", sourceRouter);
 
-const start = async () => {
-  await initDatabase();
+const start = () => {
+  initDatabase();
 
-  app.listen(PORT, () => {
-    console.log(`Listening on http://localhost:${PORT}`);
+  app.listen(PORT || 8080, () => {
+    console.log(`Listening on ${PORT}`);
   });
 };
 
