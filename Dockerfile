@@ -10,7 +10,7 @@ FROM node:20 AS server-build
 WORKDIR /app
 
 # clean copy
-COPY package*.json ./
+COPY ./api/package*.json ./
 RUN npm install
 
 # copy only source
