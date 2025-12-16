@@ -11,10 +11,13 @@ WORKDIR /app
 
 # clean copy
 COPY ./api/package*.json ./
+COPY ./api/tsconfig.json ./
+
 RUN npm install
 
-# copy only source
-COPY . .
+# explicitly copy source
+COPY ./api/src ./src
+COPY ./shared ./shared
 
 # force clean build
 RUN rm -rf dist .build && npm run build
