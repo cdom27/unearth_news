@@ -9,6 +9,7 @@ import LandingPage from "./routes/landing";
 import BrowsePage from "./routes/browse";
 import RatingsPage from "./routes/ratings";
 import GreetingPage from "./routes/greeting";
+import AnalyzePage from "./routes/analyze";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -25,6 +26,7 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/trial" element={<GreetingPage />} />
         <Route path="/about" element={<GreetingPage />} />
         <Route path="/coming-soon" element={<GreetingPage />} />
+        <Route path="/analyze" element={<AnalyzePage />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>,
