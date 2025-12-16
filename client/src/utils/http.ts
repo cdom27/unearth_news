@@ -1,12 +1,10 @@
 import type { ApiResponse } from "@shared/types/api-response";
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
 async function http<T>(
   path: string,
-  init: RequestInit = {}
+  init: RequestInit = {},
 ): Promise<ApiResponse<T>> {
-  const response = await fetch(`${BASE_URL}${path}`, {
+  const response = await fetch(`/api/v1${path}`, {
     headers: { "Content-Type": "application/json", ...(init.headers ?? {}) },
     ...init,
   });
