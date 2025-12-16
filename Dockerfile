@@ -9,21 +9,25 @@ RUN cd client && npm install && npm run build
 FROM node:20 AS server-build
 WORKDIR /app
 
-# clean copy
+# Copy API package files and tsconfig
 COPY ./api/package*.json ./
 COPY ./api/tsconfig.json ./
 
+# Install dependencies
 RUN npm install
 
-# Create symlink to make shared modules accessible as @shared
+# create symlink to make shared modules accessible as @shared
 RUN mkdir -p node_modules/@shared
 RUN ln -s /app/shared node_modules/@shared
 
-# explicitly copy source
+# create physical copy of shared in location matching dev structure
+RUN mkdir -p ../shared
+RUN cp -r ./shared/* ../shared/
+
+# copy API source files
 COPY ./api/src ./src
 
-# force clean build
-RUN rm -rf dist .build && npm run build
+RUN npm run build
 
 # create prod image
 FROM node:18-alpine
