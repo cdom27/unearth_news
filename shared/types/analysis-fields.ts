@@ -20,13 +20,13 @@ type Verification = {
   justification: string;
 };
 
-type Claim = {
+export type Claim = {
   claim: string;
   classification: Classification;
   verification: Verification;
 };
 
-type Term = {
+export type Term = {
   term: string;
   tone: Tone;
   analysis: string;
