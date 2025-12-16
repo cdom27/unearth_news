@@ -16,11 +16,21 @@ const ArticlePage = () => {
   }, [getArticleDetails, slug]);
 
   if (isArticleLoading) {
-    return <>loading...</>;
+    return (
+      <SiteLayout>
+        <div className="lg:flex lg:gap-5"></div>
+        <div className="lg:w-3/4 xl:w-4/5 lg:border-r-1 lg:pr-5 border-fg-dark-tertiary"></div>
+      </SiteLayout>
+    );
   }
 
   if (!slug || !article) {
-    return <>err</>;
+    return (
+      <SiteLayout>
+        <div className="lg:flex lg:gap-5"></div>
+        <div className="lg:w-3/4 xl:w-4/5 lg:border-r-1 lg:pr-5 border-fg-dark-tertiary"></div>
+      </SiteLayout>
+    );
   }
 
   const a = article.article;
