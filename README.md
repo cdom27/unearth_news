@@ -5,3 +5,4 @@
 - store thumbnails
 - store related articles
 - pagination on media ratings and browse pages
+- create meta component for seo
