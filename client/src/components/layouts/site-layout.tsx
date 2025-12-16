@@ -43,7 +43,7 @@ const SiteLayout = ({ children }: SiteLayoutProps) => {
         </div>
       </header>
 
-      <main className="flex flex-col min-h-screen py-25">
+      <main className="flex flex-col min-h-screen py-25 px-5 lg:px-30 2xl:px-0 2xl:w-[1350px] 2xl:mx-auto">
         <div
           onClick={() => setOpen(false)}
           className={`fixed inset-0 transition-opacity duration-500 ease-in-out bg-fg-dark ${
