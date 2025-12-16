@@ -2,6 +2,7 @@
 FROM node:20 AS client-build
 WORKDIR /client
 COPY ./client ./client
+COPY ./shared ./shared
 RUN cd client && npm install && npm run build
 
 # build express api
