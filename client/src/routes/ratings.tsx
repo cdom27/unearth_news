@@ -64,7 +64,7 @@ const RatingsPage = () => {
           <FilterMenu
             biasOptions={AVAILABLE_BIASES}
             selectedBiases={selectedBiases}
-            onApply={(sources, biases) => {
+            onApply={(biases) => {
               setSelectedBiases(biases);
             }}
             onClear={() => {
