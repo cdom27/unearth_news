@@ -1,8 +1,7 @@
 [unearth news](https://unearth.news)
 
 # TODOS:
-
-- store fetched thumbnails in bucket
-- store fetched related-articles in temp table
-- ignore source analysis IF source already exists + is rated
-- add search param 'q' on browse endpoints
+- loading / error skeleton for article page
+- store thumbnails
+- store related articles
+- pagination on media ratings and browse pages

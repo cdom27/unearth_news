@@ -23,6 +23,7 @@ interface CardBodyProps {
 
 interface CardFooterProps {
   children: ReactNode;
+  className?: string;
 }
 
 const Card = ({ children, className = "", variant = "primary" }: CardProps) => {
@@ -33,7 +34,7 @@ const Card = ({ children, className = "", variant = "primary" }: CardProps) => {
 
   return (
     <div
-      className={`flex flex-col gap-5 p-2 pb-8 rounded-3xl bg-bg-dark ${className}`}
+      className={`flex flex-col gap-5 p-2 pb-8 rounded-3xl ${variantStyles[variant]} ${className}`}
     >
       {children}
     </div>
@@ -70,8 +71,12 @@ const CardBody = ({
   );
 };
 
-const CardFooter = ({ children }: CardFooterProps) => {
-  return <div className="px-2 pt-14 text-fg-light mt-auto">{children}</div>;
+const CardFooter = ({ children, className = "" }: CardFooterProps) => {
+  return (
+    <div className={`px-2 pt-14 text-fg-light mt-auto ${className}`}>
+      {children}
+    </div>
+  );
 };
 
 Card.Thumbnail = CardThumbnail;
