@@ -20,7 +20,7 @@ RUN cd api && npm install && npm run build
 RUN echo "=== DIST structure ===" && find /workspace/api/dist -name "*.js" | head -20
 
 # Create prod image
-FROM node:18-alpine
+FROM node:20-alpine
 WORKDIR /workspace/api
 
 COPY --from=server-build /workspace/api/dist ./dist
