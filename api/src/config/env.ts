@@ -26,7 +26,13 @@ if (!systemPromptPath) {
   throw new Error("System prompt is missing");
 }
 
+const clientBuildPath =
+  process.env.NODE_ENV === "production"
+    ? "../../../../client/dist"
+    : "../../client/dist";
+
 export const DB_URL = dbUrl;
+export const CLIENT_BUILD_PATH = clientBuildPath;
 
 export const GOOGLE_APPLICATION_CREDENTIALS = credentialsPath;
 export const GCP_REGION = process.env.GCP_REGION;
