@@ -1,16 +1,15 @@
-import fetch from "node-fetch";
 import { NEWS_API_KEY } from "../../../config/env";
 import type { NewsApiResponseDTO } from "../dtos/news-api-response";
 
 const fetchNewsApiArticles = async (query: string) => {
   try {
     const response = await fetch(
-      `https://newsapi.org/v2/everything?q=${query}&sortBy=publishedAt&pageSize=10&page=1&apiKey=${NEWS_API_KEY}`
+      `https://newsapi.org/v2/everything?q=${query}&sortBy=publishedAt&pageSize=10&page=1&apiKey=${NEWS_API_KEY}`,
     );
 
     if (!response.ok) {
       throw new Error(
-        `News API request failed with status: ${response.status}`
+        `News API request failed with status: ${response.status}`,
       );
     }
 
@@ -29,14 +28,14 @@ const fetchNewsApiArticles = async (query: string) => {
 
 export const fetchArticleThumbnail = async (
   title: string,
-  keywords: string
+  keywords: string,
 ) => {
   try {
     // q by title
     const titleResponse = await fetch(
       `https://newsapi.org/v2/everything?q=${encodeURIComponent(
-        title
-      )}&sortBy=publishedAt&pageSize=1&page=1&apiKey=${NEWS_API_KEY}`
+        title,
+      )}&sortBy=publishedAt&pageSize=1&page=1&apiKey=${NEWS_API_KEY}`,
     );
 
     if (titleResponse.ok) {
@@ -55,8 +54,8 @@ export const fetchArticleThumbnail = async (
     // q by keyword if title yeilded zero results
     const keywordsResponse = await fetch(
       `https://newsapi.org/v2/everything?q=${encodeURIComponent(
-        keywords
-      )}&sortBy=publishedAt&pageSize=1&page=1&apiKey=${NEWS_API_KEY}`
+        keywords,
+      )}&sortBy=publishedAt&pageSize=1&page=1&apiKey=${NEWS_API_KEY}`,
     );
 
     if (keywordsResponse.ok) {

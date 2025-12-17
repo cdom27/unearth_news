@@ -1,4 +1,3 @@
-import fetch from "node-fetch";
 import nlp from "compromise";
 import { Readability } from "@mozilla/readability";
 import { JSDOM } from "jsdom";
