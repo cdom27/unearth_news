@@ -16,15 +16,19 @@ app.use(cors());
 
 app.use(express.json());
 
-// serve client
-const clientBuildPath = path.join(__dirname, CLIENT_BUILD_PATH);
-app.use(express.static(clientBuildPath));
-
 // routers
 app.use("/api/v1/articles", articleRouter);
 app.use("/api/v1/sources", sourceRouter);
 
+// serve client
+const clientBuildPath = path.join(__dirname, CLIENT_BUILD_PATH);
+app.use(express.static(clientBuildPath));
+
+// catch all non-api routes
 app.use((req, res) => {
+  if (req.path.startsWith("/api")) {
+    return res.status(404).json({ error: "API endpoint not found" });
+  }
   res.sendFile(path.join(clientBuildPath, "index.html"));
 });
 

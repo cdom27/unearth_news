@@ -55,6 +55,7 @@ const AnalyzeArticleForm = ({ className = "" }: FormProps) => {
         variant="primary"
         disabled={!dirtyFields.url}
         className="sm:mt-auto sm:w-1/2 lg:w-fit"
+        type="submit"
       >
         {isArticleLoading ? (
           <CircleNotchIcon size={20} className="animate-spin mx-auto" />
