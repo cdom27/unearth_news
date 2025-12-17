@@ -27,6 +27,7 @@ COPY --from=server-build /workspace/api/dist ./dist
 COPY --from=server-build /workspace/api/node_modules ./node_modules
 COPY --from=server-build /workspace/api/package*.json ./
 
+COPY --from=server-build /workspace/api/src/config ./src/config
 COPY --from=server-build /workspace/shared ../shared
 COPY --from=client-build /workspace/client/dist ../client/dist
 
