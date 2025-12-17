@@ -24,7 +24,7 @@ app.use(express.static(clientBuildPath));
 app.use("/api/v1/articles", articleRouter);
 app.use("/api/v1/sources", sourceRouter);
 
-app.get("*", (req, res) => {
+app.get("/*", (req, res) => {
   res.sendFile(path.join(clientBuildPath, "index.html"));
 });
 
