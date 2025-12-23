@@ -28,7 +28,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           id={id}
           type={type}
           placeholder={placeholder}
-          className={`px-5 py-2 rounded-full border-1 focus:outline-none focus:border-fg-dark placeholder:text-fg-dark-secondary  bg-bg-light-secondary ${error ? "text-red-500 border-red-500 focus:border-red-500" : "border-fg-dark-tertiary"}`}
+          className={`px-5 py-2 rounded-full border-1 focus:outline-none focus:border-fg-dark placeholder:text-fg-dark-secondary  bg-bg-light-secondary ${error ? "border-red-500 focus:border-red-500" : "border-fg-dark-tertiary"}`}
           {...rest}
         />
       </div>
