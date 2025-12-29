@@ -7,14 +7,15 @@ import type { AnalyzeMetaDTO } from "@shared/dtos/analyze-meta";
 import type { PaginationInfo } from "@shared/types/pagination-info";
 
 const useArticles = () => {
-  const [isArticleLoading, setIsArticleLoading] = useState(false);
+  const [isArticleLoading, setIsArticleLoading] = useState(true);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [previews, setPreviews] = useState<ArticlePreviewDTO[]>([]);
   const [previewsLoading, setPreviewsLoading] = useState(false);
   const [article, setArticle] = useState<ArticleDetailsDTO | null>(null);
 
   // Queue a user-submitted article for analysis
   const analyzeArticle = useCallback(async (data: AnalyzeUrlData) => {
-    setIsArticleLoading(true);
+    setIsAnalyzing(true);
 
     try {
       const response = await http<AnalyzeMetaDTO>("/articles", {
@@ -39,6 +40,7 @@ const useArticles = () => {
 
   // Fetch full data of an article including analysis and source
   const getArticleDetails = useCallback(async (slug: string) => {
+    setArticle(null);
     setIsArticleLoading(true);
 
     try {
@@ -116,6 +118,7 @@ const useArticles = () => {
     getArticleDetails,
     getArticlePreviews,
     isArticleLoading,
+    isAnalyzing,
     article,
     previews,
     previewsLoading,

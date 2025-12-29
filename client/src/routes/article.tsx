@@ -14,6 +14,8 @@ import {
   RedditLogoIcon,
   XLogoIcon,
 } from "@phosphor-icons/react";
+import ArticlePageSkeleton from "../components/ui/skeletons/article-loading";
+import ArticleError from "../components/ui/skeletons/article-error";
 
 const ArticlePage = () => {
   const { slug } = useParams();
@@ -23,22 +25,16 @@ const ArticlePage = () => {
     getArticleDetails(slug || "");
   }, [getArticleDetails, slug]);
 
-  if (isArticleLoading) {
-    return (
-      <SiteLayout>
-        <div className="lg:flex lg:gap-5"></div>
-        <div className="lg:w-3/4 xl:w-4/5 lg:border-r-1 lg:pr-5 border-fg-dark-tertiary"></div>
-      </SiteLayout>
-    );
+  if (!slug) {
+    return <ArticleError />;
   }
 
-  if (!slug || !article) {
-    return (
-      <SiteLayout>
-        <div className="lg:flex lg:gap-5"></div>
-        <div className="lg:w-3/4 xl:w-4/5 lg:border-r-1 lg:pr-5 border-fg-dark-tertiary"></div>
-      </SiteLayout>
-    );
+  if (isArticleLoading) {
+    return <ArticlePageSkeleton />;
+  }
+
+  if (!article) {
+    return <ArticleError />;
   }
 
   const a = article.article;
