@@ -24,7 +24,6 @@ const useArticles = () => {
 
       if (response.data) {
         const analysis: AnalyzeMetaDTO = response.data;
-        console.log("data retrieved:", analysis);
 
         return analysis.slug;
       }
@@ -48,7 +47,6 @@ const useArticles = () => {
       });
 
       if (response.data) {
-        console.log("data retrieved:", response.data);
         setArticle(response.data);
       }
     } catch (error) {
@@ -99,7 +97,6 @@ const useArticles = () => {
         });
 
         if (response.data) {
-          console.log("Article previews response:", response.data);
           setPreviews(response.data.previews || []);
         } else {
           setPreviews([]);
