@@ -71,7 +71,7 @@ const useArticles = () => {
         const queryParams = new URLSearchParams();
 
         const page = params?.page || "1";
-        const pageSize = params?.pageSize || "20";
+        const pageSize = params?.pageSize || "21";
         const sort = params?.sort || "date_desc";
 
         queryParams.append("page", page);

@@ -11,6 +11,7 @@ import ArticleCardSkeleton from "../components/ui/article-card/article-card-skel
 import { ARTICLE_SORT_OPTIONS, AVAILABLE_BIASES } from "../utils/param-options";
 import { updateURL } from "../utils/update-url";
 import Meta from "../components/layouts/meta";
+import { CaretLeftIcon, CaretRightIcon } from "@phosphor-icons/react";
 
 const BrowsePage = () => {
   const { getArticlePreviews, previews, previewsLoading } = useArticles();
@@ -21,6 +22,7 @@ const BrowsePage = () => {
   const [selectedSources, setSelectedSources] = useState<string[]>([]);
   const [selectedBiases, setSelectedBiases] = useState<string[]>([]);
   const [selectedSort, setSelectedSort] = useState<string>("date_desc");
+  const [selectedPage, setSelectedPage] = useState<number>(1);
 
   // first fetch available sources then build filter and sort options on load
   useEffect(() => {
@@ -28,10 +30,12 @@ const BrowsePage = () => {
       searchParams.get("sources")?.split(",").filter(Boolean) || [];
     const biases = searchParams.get("bias")?.split(",").filter(Boolean) || [];
     const sort = searchParams.get("sort") || "date_desc";
+    const page = parseInt(searchParams.get("page") || "1") || 1;
 
     setSelectedSources(sources);
     setSelectedBiases(biases);
     setSelectedSort(sort);
+    setSelectedPage(page);
     getUsedSources();
     setReady(true);
   }, [searchParams, getUsedSources]);
@@ -44,6 +48,7 @@ const BrowsePage = () => {
         "date_desc",
         selectedSources,
         selectedBiases,
+        selectedPage,
       );
       setSearchParams(params);
 
@@ -51,12 +56,14 @@ const BrowsePage = () => {
         sources: selectedSources,
         bias: selectedBiases,
         sort: selectedSort,
+        page: selectedPage.toString(),
       });
     }
   }, [
     selectedSort,
     selectedSources,
     selectedBiases,
+    selectedPage,
     ready,
     setSearchParams,
     getArticlePreviews,
@@ -116,6 +123,28 @@ const BrowsePage = () => {
           previews.map((p) => <ArticleCard p={p} key={p.slug} />)
         )}
       </PageSection>
+
+      <div className="flex items-center gap-2 mx-auto pt-10">
+        <button
+          onClick={() => setSelectedPage(selectedPage - 1)}
+          disabled={selectedPage === 1}
+          className="group border-1 border-fg-dark-tertiary text-fg-light p-2 rounded-full hover:border-fg-dark cursor-pointer disabled:cursor-not-allowed disabled:border-fg-dark-tertiary"
+        >
+          <CaretLeftIcon className="size-6 fill-fg-dark-tertiary group-hover:fill-fg-dark group-disabled:fill-fg-dark-tertiary" />
+        </button>
+
+        <div className="bg-bg-dark text-fg-light p-2 size-10 rounded-full text-2xl items-center justify-center flex">
+          <span>{selectedPage || 1}</span>
+        </div>
+
+        <button
+          onClick={() => setSelectedPage(selectedPage + 1)}
+          disabled={previews.length < 21}
+          className="group border-1 border-fg-dark-tertiary text-fg-light p-2 rounded-full hover:border-fg-dark cursor-pointer disabled:cursor-not-allowed disabled:border-fg-dark-tertiary"
+        >
+          <CaretRightIcon className="size-6 fill-fg-dark-tertiary group-hover:fill-fg-dark group-disabled:fill-fg-dark-tertiary" />
+        </button>
+      </div>
     </SiteLayout>
   );
 };

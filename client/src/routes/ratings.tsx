@@ -10,6 +10,7 @@ import SourceTableSkeleton from "../components/ui/source-table/source-table-skel
 import { AVAILABLE_BIASES, RATING_SORT_OPTIONS } from "../utils/param-options";
 import { updateURL } from "../utils/update-url";
 import Meta from "../components/layouts/meta";
+import { CaretLeftIcon, CaretRightIcon } from "@phosphor-icons/react";
 
 const RatingsPage = () => {
   const { getSourcePreviews, previews, previewsLoading } = useSources();
@@ -18,29 +19,46 @@ const RatingsPage = () => {
   const [ready, setReady] = useState(false);
   const [selectedBiases, setSelectedBiases] = useState<string[]>([]);
   const [selectedSort, setSelectedSort] = useState<string>("name_asc");
+  const [selectedPage, setSelectedPage] = useState<number>(1);
 
   // first build filter and sort options on load
   useEffect(() => {
     const biases = searchParams.get("bias")?.split(",").filter(Boolean) || [];
     const sort = searchParams.get("sort") || "name_asc";
+    const page = parseInt(searchParams.get("page") || "1") || 1;
 
     setSelectedBiases(biases);
     setSelectedSort(sort);
+    setSelectedPage(page);
     setReady(true);
   }, [searchParams]);
 
   // update url + fetch sources when ready
   useEffect(() => {
     if (ready) {
-      const params = updateURL(selectedSort, "name_asc", [], selectedBiases);
+      const params = updateURL(
+        selectedSort,
+        "name_asc",
+        [],
+        selectedBiases,
+        selectedPage,
+      );
       setSearchParams(params);
 
       getSourcePreviews({
         bias: selectedBiases,
         sort: selectedSort,
+        page: selectedPage.toString(),
       });
     }
-  }, [getSourcePreviews, selectedBiases, selectedSort, ready, setSearchParams]);
+  }, [
+    getSourcePreviews,
+    selectedBiases,
+    selectedSort,
+    selectedPage,
+    ready,
+    setSearchParams,
+  ]);
 
   return (
     <SiteLayout>
@@ -88,6 +106,28 @@ const RatingsPage = () => {
           <SourceTable ps={previews} />
         )}
       </PageSection>
+
+      <div className="flex items-center gap-2 mx-auto pt-10">
+        <button
+          onClick={() => setSelectedPage(selectedPage - 1)}
+          disabled={selectedPage === 1}
+          className="group border-1 border-fg-dark-tertiary text-fg-light p-2 rounded-full hover:border-fg-dark cursor-pointer disabled:cursor-not-allowed disabled:border-fg-dark-tertiary"
+        >
+          <CaretLeftIcon className="size-6 fill-fg-dark-tertiary group-hover:fill-fg-dark group-disabled:fill-fg-dark-tertiary" />
+        </button>
+
+        <div className="bg-bg-dark text-fg-light p-2 size-10 rounded-full text-2xl items-center justify-center flex">
+          <span>{selectedPage || 1}</span>
+        </div>
+
+        <button
+          onClick={() => setSelectedPage(selectedPage + 1)}
+          disabled={previews.length < 21}
+          className="group border-1 border-fg-dark-tertiary text-fg-light p-2 rounded-full hover:border-fg-dark cursor-pointer disabled:cursor-not-allowed disabled:border-fg-dark-tertiary"
+        >
+          <CaretRightIcon className="size-6 fill-fg-dark-tertiary group-hover:fill-fg-dark group-disabled:fill-fg-dark-tertiary" />
+        </button>
+      </div>
     </SiteLayout>
   );
 };
