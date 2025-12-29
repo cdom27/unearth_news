@@ -34,6 +34,7 @@ const LandingPage = () => {
               src={HERO}
               alt="Boy using a magnifying glass on a globe"
               className="mt-8 sm:mx-auto lg:hidden"
+              fetchPriority="high"
             />
 
             <div className="flex flex-col pt-8 gap-2 sm:pb-4 lg:pb-0">

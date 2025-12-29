@@ -19,6 +19,7 @@ const GreetingPage = () => {
           src={GREETING}
           alt="A computer screen being painted. Bolts and tools fixing it."
           className="mx-auto"
+          fetchPriority="high"
         />
         <p className="pt-2 2xl:w-1/2 mx-auto text-center">
           Unearth is actively being developed. But while we refine things on the
