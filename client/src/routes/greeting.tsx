@@ -1,10 +1,16 @@
 import PageSection from "../components/layouts/page-section";
 import SiteLayout from "../components/layouts/site-layout";
 import GREETING from "../assets/images/misc/greeting.svg";
+import Meta from "../components/layouts/meta";
 
 const GreetingPage = () => {
   return (
     <SiteLayout>
+      <Meta
+        title="Unearth - News Analysis Platform"
+        description="Explore Unearth, the AI-powered platform for analyzing news article credibility and detecting misinformation bias."
+        canonicalUrl="https://unearth.news"
+      />
       <PageSection className="flex flex-col gap-10">
         <h1 className="font-instrument text-5xl tracking-[.0125em] text-center">
           Almost there!

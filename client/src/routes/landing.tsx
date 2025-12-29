@@ -8,10 +8,16 @@ import { sources } from "../utils/sources";
 import { mediaSources } from "../utils/media-sources";
 import { phases } from "../utils/phases";
 import HERO from "../assets/images/hero.svg";
+import Meta from "../components/layouts/meta";
 
 const LandingPage = () => {
   return (
     <SiteLayout>
+      <Meta
+        title="Unearth - News Analysis & Bias Detection Platform"
+        description="Analyze news articles for misinformation, bias, and credibility. Unearth uses AI and third-party media ratings to help you find trustworthy news sources."
+        canonicalUrl="https://unearth.news/"
+      />
       <PageSection>
         <div className="lg:flex lg:items-center lg:gap-20 2xl:gap-0">
           <div>
@@ -45,7 +51,7 @@ const LandingPage = () => {
                   variant="outline"
                   className="sm:w-full lg:w-fit"
                 >
-                  Learn More
+                  Read Our Methodology
                 </Link>
               </div>
             </div>

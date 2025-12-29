@@ -6,6 +6,7 @@ import PageSection from "../components/layouts/page-section";
 import DetailCard from "../components/ui/detail-card";
 import TermTable from "../components/ui/term-table/term-table";
 import Card from "../components/ui/card";
+import Meta from "../components/layouts/meta";
 
 const ArticlePage = () => {
   const { slug } = useParams();
@@ -40,6 +41,11 @@ const ArticlePage = () => {
 
   return (
     <SiteLayout>
+      <Meta
+        title={`${a.title} - Bias & Credibility Analysis | Unearth`}
+        description={`${s.name}: ${an.summary}`}
+        canonicalUrl={`https://unearth.news/article/${an.slug}`}
+      />
       <div className="lg:flex lg:gap-5">
         <div className="lg:w-3/4 xl:w-4/5 lg:border-r-1 lg:pr-5 border-fg-dark-tertiary">
           <PageSection>

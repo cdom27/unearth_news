@@ -1,3 +1,4 @@
+import Meta from "../components/layouts/meta";
 import AnalyzeArticleForm from "../components/forms/analyze-form";
 import PageSection from "../components/layouts/page-section";
 import SiteLayout from "../components/layouts/site-layout";
@@ -5,6 +6,11 @@ import SiteLayout from "../components/layouts/site-layout";
 const AnalyzePage = () => {
   return (
     <SiteLayout>
+      <Meta
+        title="Analyze Any Article - Check for Bias & Misinformation | Unearth"
+        description="Submit any news article URL for instant AI analysis. Get detailed reports on media bias, factual accuracy, and credibility ratings from trusted sources."
+        canonicalUrl="https://unearth.news/analyze"
+      />
       <PageSection className="flex flex-col gap-10">
         <h1 className="font-instrument text-5xl tracking-[.0125em] text-center">
           See the Whole Picture
