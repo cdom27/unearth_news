@@ -46,6 +46,7 @@ const CardThumbnail = ({ src, alt }: CardThumbnailProps) => {
     <img
       src={src}
       alt={alt}
+      loading="lazy"
       className="p-10 h-45 2xl:p-16 2xl:h-64 rounded-2xl object-contain bg-bg-light"
     />
   );
