@@ -21,7 +21,6 @@ const useSources = () => {
       });
 
       if (response.data) {
-        console.log("data retrieved:", response.data);
         setSources(response.data);
       }
     } catch (error) {
@@ -58,8 +57,6 @@ const useSources = () => {
 
         const queryString = queryParams.toString();
         const url = `/sources/ratings?${queryString}`;
-
-        console.log("URL:", url);
 
         const response = await http<{
           paginationInfo: PaginationInfo;

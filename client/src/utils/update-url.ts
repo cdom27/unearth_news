@@ -3,6 +3,7 @@ export const updateURL = (
   sortDefault: string,
   sources: string[],
   biases: string[],
+  page: number,
 ) => {
   const params = new URLSearchParams();
 
@@ -16,6 +17,10 @@ export const updateURL = (
 
   if (sortValue !== sortDefault) {
     params.set("sort", sortValue);
+  }
+
+  if (page !== 1) {
+    params.set("page", page.toString());
   }
 
   return params;
