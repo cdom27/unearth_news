@@ -1,5 +1,5 @@
 import MBFC from "../assets/images/data-sources/mbfc.svg";
-import ADFONTES from "../assets/images/data-sources/ad-fontes.png";
+import ADFONTES from "../assets/images/data-sources/ad-fontes.webp";
 import ALLSIDES from "../assets/images/data-sources/all-sides.svg";
 import NEWSGUARD from "../assets/images/data-sources/news-guard.svg";
 import PEWRESEARCH from "../assets/images/data-sources/pew.svg";

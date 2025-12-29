@@ -36,6 +36,7 @@ const SiteLayout = ({ children }: SiteLayoutProps) => {
 
           <button
             onClick={() => setOpen(!open)}
+            aria-label="Open menu"
             className="hover:cursor-pointer"
           >
             <ListIcon className="size-6 fill-fg-dark" />

@@ -18,6 +18,7 @@ const Marquee = ({ items }: MarqueeProps) => {
             <img
               src={item.imageSrc}
               alt={item.alt}
+              loading="lazy"
               className="max-h-full max-w-full object-contain"
             />
           </div>
@@ -31,6 +32,7 @@ const Marquee = ({ items }: MarqueeProps) => {
             <img
               src={item.imageSrc}
               alt={item.alt}
+              loading="lazy"
               className="max-h-full max-w-full object-contain"
             />
           </div>

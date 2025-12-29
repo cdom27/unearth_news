@@ -9,6 +9,7 @@ import SourceTable from "../components/ui/source-table/source-table";
 import SourceTableSkeleton from "../components/ui/source-table/source-table-skeleton";
 import { AVAILABLE_BIASES, RATING_SORT_OPTIONS } from "../utils/param-options";
 import { updateURL } from "../utils/update-url";
+import Meta from "../components/layouts/meta";
 
 const RatingsPage = () => {
   const { getSourcePreviews, previews, previewsLoading } = useSources();
@@ -43,6 +44,11 @@ const RatingsPage = () => {
 
   return (
     <SiteLayout>
+      <Meta
+        title="Media Outlet Ratings & Credibility Scores | Unearth"
+        description="Compare news source credibility, factual accuracy ratings, and bias scores across major media outlets. Find trustworthy journalism with data-backed ratings."
+        canonicalUrl="https://unearth.news/media-ratings"
+      />
       <PageSection>
         <h1 className="font-instrument text-5xl tracking-[.0125em]">
           Media Bias Ratings

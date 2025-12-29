@@ -40,6 +40,7 @@ const Nav = ({ setOpen, open }: NavProps) => {
           <button
             onClick={() => setOpen(!open)}
             className="hover:cursor-pointer"
+            aria-label="Close menu"
           >
             <XIcon className="size-6 fill-fg-light" />
           </button>

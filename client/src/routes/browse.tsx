@@ -10,6 +10,7 @@ import ArticleCard from "../components/ui/article-card/article-card";
 import ArticleCardSkeleton from "../components/ui/article-card/article-card-skeleton";
 import { ARTICLE_SORT_OPTIONS, AVAILABLE_BIASES } from "../utils/param-options";
 import { updateURL } from "../utils/update-url";
+import Meta from "../components/layouts/meta";
 
 const BrowsePage = () => {
   const { getArticlePreviews, previews, previewsLoading } = useArticles();
@@ -63,6 +64,11 @@ const BrowsePage = () => {
 
   return (
     <SiteLayout>
+      <Meta
+        title="Analyzed Articles - News Bias & Credibility Reports | Unearth"
+        description="Browse AI-analyzed news articles with bias detection, misinformation alerts, and credibility scores. See how mainstream media outlets rate across factual accuracy."
+        canonicalUrl="https://unearth.news/browse"
+      />
       <PageSection>
         <h1 className="font-instrument text-5xl tracking-[.0125em]">
           Browse Stories
