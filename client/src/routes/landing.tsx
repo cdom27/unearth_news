@@ -31,7 +31,7 @@ const LandingPage = () => {
             />
 
             <div className="flex flex-col pt-8 gap-2 sm:pb-4 lg:pb-0">
-              <h4 className="font-medium text-lg">Get Started</h4>
+              <h2 className="font-medium text-lg">Get Started</h2>
               <div className="flex flex-col sm:flex-row gap-2">
                 <Link
                   href="/login"
@@ -88,9 +88,9 @@ const LandingPage = () => {
       </PageSection>
 
       <PageSection className="flex flex-col mt-25 2xl:mt-60 gap-8">
-        <h4 className="font-medium text-lg text-center">
+        <h2 className="font-medium text-lg text-center">
           Unearth the bias behind the headlines
-        </h4>
+        </h2>
 
         <Marquee items={mediaSources} />
       </PageSection>
@@ -132,9 +132,9 @@ const LandingPage = () => {
       </PageSection>
 
       <PageSection className="mt-25 2xl:mt-60 flex flex-col gap-2 sm:mx-auto">
-        <h4 className="font-medium text-lg text-center">
+        <h2 className="font-medium text-lg text-center">
           What will you research today?
-        </h4>
+        </h2>
 
         <Link
           href="/login"
