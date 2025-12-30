@@ -15,7 +15,7 @@ import {
   XLogoIcon,
 } from "@phosphor-icons/react";
 import ArticlePageSkeleton from "../components/ui/skeletons/article-loading";
-import ArticleError from "../components/ui/skeletons/article-error";
+import ErrorPage from "./error";
 
 const ArticlePage = () => {
   const { slug } = useParams();
@@ -26,7 +26,7 @@ const ArticlePage = () => {
   }, [getArticleDetails, slug]);
 
   if (!slug) {
-    return <ArticleError />;
+    return <ErrorPage />;
   }
 
   if (isArticleLoading) {
@@ -34,7 +34,7 @@ const ArticlePage = () => {
   }
 
   if (!article) {
-    return <ArticleError />;
+    return <ErrorPage />;
   }
 
   const a = article.article;
