@@ -7,6 +7,15 @@ import DetailCard from "../components/ui/detail-card";
 import TermTable from "../components/ui/term-table/term-table";
 import Card from "../components/ui/card";
 import Meta from "../components/layouts/meta";
+import { LinkIcon } from "@phosphor-icons/react/dist/ssr";
+import {
+  EnvelopeIcon,
+  LinkedinLogoIcon,
+  RedditLogoIcon,
+  XLogoIcon,
+} from "@phosphor-icons/react";
+import ArticlePageSkeleton from "../components/ui/skeletons/article-loading";
+import ArticleError from "../components/ui/skeletons/article-error";
 
 const ArticlePage = () => {
   const { slug } = useParams();
@@ -16,28 +25,24 @@ const ArticlePage = () => {
     getArticleDetails(slug || "");
   }, [getArticleDetails, slug]);
 
-  if (isArticleLoading) {
-    return (
-      <SiteLayout>
-        <div className="lg:flex lg:gap-5"></div>
-        <div className="lg:w-3/4 xl:w-4/5 lg:border-r-1 lg:pr-5 border-fg-dark-tertiary"></div>
-      </SiteLayout>
-    );
+  if (!slug) {
+    return <ArticleError />;
   }
 
-  if (!slug || !article) {
-    return (
-      <SiteLayout>
-        <div className="lg:flex lg:gap-5"></div>
-        <div className="lg:w-3/4 xl:w-4/5 lg:border-r-1 lg:pr-5 border-fg-dark-tertiary"></div>
-      </SiteLayout>
-    );
+  if (isArticleLoading) {
+    return <ArticlePageSkeleton />;
+  }
+
+  if (!article) {
+    return <ArticleError />;
   }
 
   const a = article.article;
   const an = article.analysis;
   const ra = article.relatedArticles;
   const s = article.source;
+
+  const date = new Date(a.publishedTime);
 
   return (
     <SiteLayout>
@@ -46,10 +51,63 @@ const ArticlePage = () => {
         description={`${s.name}: ${an.summary}`}
         canonicalUrl={`https://unearth.news/article/${an.slug}`}
       />
+
       <div className="lg:flex lg:gap-5">
         <div className="lg:w-3/4 xl:w-4/5 lg:border-r-1 lg:pr-5 border-fg-dark-tertiary">
           <PageSection>
-            {/*Add metadata on top with social-share links and action buttons*/}
+            <div className="flex items-center justify-between pb-10">
+              <span>
+                {s.name},{" "}
+                {`${date.getUTCDay()}/${date.getUTCMonth() + 1}/${date.getUTCFullYear()}`}
+              </span>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() =>
+                    navigator.clipboard.writeText(
+                      `https://unearth.news/article/${slug}`,
+                    )
+                  }
+                  role="button"
+                  title="Copy article link"
+                  className="cursor-pointer"
+                >
+                  <LinkIcon className="size-6 fill-fg-dark" />
+                </button>
+
+                <a
+                  href={`https://www.reddit.com/submit?title=${a.title}&url=https://unearth.news/article/${slug}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <RedditLogoIcon className="size-6 fill-fg-dark" />
+                </a>
+
+                <a
+                  href={`https://twitter.com/intent/tweet?url=https://unearth.news/article/${slug}&text=${a.title}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <XLogoIcon className="size-6 fill-fg-dark" />
+                </a>
+
+                <a
+                  href={`https://www.linkedin.com/sharing/share-offsite/?url=https://unearth.news/article/${slug}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <LinkedinLogoIcon className="size-6 fill-fg-dark" />
+                </a>
+
+                <a
+                  href={`mailto:?subject=${a.title}&body=Check this out https://unearth.news/article/${slug}`}
+                  rel="noopener noreferrer"
+                >
+                  <EnvelopeIcon className="size-6 fill-fg-dark" />
+                </a>
+              </div>
+            </div>
+
             <h1 className="font-instrument text-5xl tracking-[.0125em]">
               {a.title}
             </h1>

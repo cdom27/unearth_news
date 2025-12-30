@@ -17,7 +17,7 @@ interface FormProps {
 }
 
 const AnalyzeArticleForm = ({ className = "" }: FormProps) => {
-  const { analyzeArticle, isArticleLoading } = useArticles();
+  const { analyzeArticle, isAnalyzing } = useArticles();
   const [openModal, setOpenModal] = useState(false);
   const navigate = useNavigate();
 
@@ -103,7 +103,7 @@ const AnalyzeArticleForm = ({ className = "" }: FormProps) => {
         className="sm:mt-auto sm:w-1/2 lg:w-fit"
         type="submit"
       >
-        {isArticleLoading ? (
+        {isAnalyzing ? (
           <CircleNotchIcon size={20} className="animate-spin mx-auto" />
         ) : (
           <span>Analyze</span>
