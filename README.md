@@ -31,7 +31,7 @@ Key features include:
 
 ### Installation
 ```bash
-git clone https://github.com/yourusername/unearth-news.git
+git clone https://github.com/cdom27/unearth_news.git
 cd unearth-news
 ```
 
