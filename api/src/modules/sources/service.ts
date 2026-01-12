@@ -1,6 +1,7 @@
 import { SourceRepository } from "./repository";
 import type { Result } from "../shared/types/service-result";
 import type {
+  SourceDTO,
   SourceFilterDTO,
   SourceRatingPreviewDTO,
 } from "@shared/dtos/source";
@@ -40,6 +41,19 @@ export const findFilteredSourceIds = async (
   const sourceIds = await SourceRepository.filter(conditions, params);
 
   return { success: true, data: sourceIds };
+};
+
+// Find full source details by slug
+export const findSourceDetails = async (
+  slug: string,
+): Promise<Result<SourceDTO>> => {
+  const sourceDetails = await SourceRepository.findByText("slug", slug);
+
+  if (!sourceDetails) {
+    return { success: false, error: "Unable to find article or analysis" };
+  }
+
+  return { success: true, data: sourceDetails };
 };
 
 // Find source media-rating previews

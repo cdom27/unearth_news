@@ -3,12 +3,14 @@ import { failure, success } from "../shared/utils/build-response";
 import {
   buildSourcePreviews,
   findFilteredSourceIds,
+  findSourceDetails,
   findUsedSources,
 } from "./service";
 import { SourcePreviewQuery } from "./types/source-preview-query";
 import { resolveToNumber } from "../shared/utils/resolve-number";
 import { validateArrayParams } from "../shared/utils/validate-array-params";
 import { validateSort } from "../shared/utils/validate-sort";
+import { SourceSlugParams } from "./types/source-slug-params";
 
 export const getSourcesHandler = async (req: Request, res: Response) => {
   try {
@@ -18,6 +20,34 @@ export const getSourcesHandler = async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Error while fetching sources:", error);
     return failure(res, "Internal error while fetching sources");
+  }
+};
+
+export const getSourceDetailsHandler = async (
+  req: Request<SourceSlugParams>,
+  res: Response,
+) => {
+  try {
+    const { slug } = req.params;
+
+    if (!slug) {
+      return failure(res, "Request params are missing", 422);
+    }
+
+    const sourceDetails = await findSourceDetails(slug);
+
+    if (!sourceDetails.data) {
+      return failure(res, "No data found", 404);
+    }
+
+    return success(
+      res,
+      sourceDetails.data,
+      "Successfully fetched course details",
+    );
+  } catch (error) {
+    console.error("Error while fetching source details:", error);
+    return failure(res, "Internal errro while fetching source details");
   }
 };
 
