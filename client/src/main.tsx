@@ -10,6 +10,7 @@ import BrowsePage from "./routes/browse";
 import RatingsPage from "./routes/ratings";
 import GreetingPage from "./routes/greeting";
 import AnalyzePage from "./routes/analyze";
+import SourcePage from "./routes/source";
 
 const ScrollToTop = () => {
   const { pathname, search } = useLocation();
@@ -31,6 +32,7 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/article/:slug" element={<ArticlePage />} />
         <Route path="/browse" element={<BrowsePage />} />
         <Route path="/media-ratings" element={<RatingsPage />} />
+        <Route path="/media-ratings/:slug" element={<SourcePage />} />
         <Route path="/subscribe" element={<GreetingPage />} />
         <Route path="/login" element={<GreetingPage />} />
         <Route path="/methodology" element={<GreetingPage />} />
