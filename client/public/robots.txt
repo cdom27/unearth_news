@@ -1,5 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /greeting
-
-Sitemap: https://unearth.news/sitemap.xml
