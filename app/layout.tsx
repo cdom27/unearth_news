@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import MobileNav from "./_components/navigation/mobile-nav";
+import Header from "./_components/navigation/header";
 
 const archivo = localFont({
   src: [
@@ -58,6 +59,7 @@ export default function RootLayout({
       className={`${archivo.variable} ${besleyCondensed.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        <Header />
         <main>{children}</main>
         <MobileNav />
       </body>
