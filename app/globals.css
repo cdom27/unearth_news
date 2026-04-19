@@ -1,24 +1,24 @@
 @import "tailwindcss";
 
-:root {
-    --clay-50: #fffdf6;
-    --clay-100: #f3f1ea;
-    --clay-150: #ebe9e0;
-    --clay-200: #e5e1d4;
-    --clay-400: #9c9787;
-    --clay-500: #716b59;
-    --clay-600: #3e3c36;
-    --clay-800: #2d281b;
-    --clay-900: #110f09;
+@theme {
+    --color-clay-50: #fffdf6;
+    --color-clay-100: #f3f1ea;
+    --color-clay-150: #ebe9e0;
+    --color-clay-200: #e5e1d4;
+    --color-clay-400: #9c9787;
+    --color-clay-500: #716b59;
+    --color-clay-600: #3e3c36;
+    --color-clay-800: #2d281b;
+    --color-clay-900: #110f09;
 
-    --brand-500: #ffd400;
+    --color-brand-500: #ffd400;
 
-    --left-500: #1655ae;
-    --right-500: #ae1616;
+    --color-left-500: #1655ae;
+    --color-right-500: #ae1616;
 
-    --rating-low: #b24545;
-    --rating-mixed: #f2e094;
-    --rating-high: #4faf4f;
+    --color-rating-low: #b24545;
+    --color-rating-mixed: #f2e094;
+    --color-rating-very-high: #4faf4f;
 
     --font-sans:
         var(--font-archivo), system-ui, -apple-system, BlinkMacSystemFont,
@@ -28,7 +28,7 @@
 }
 
 body {
-    background: var(--clay-50);
-    color: var(--clay-900);
+    background: var(--color-clay-50);
+    color: var(--color-clay-900);
     font-family: var(--font-sans);
 }
