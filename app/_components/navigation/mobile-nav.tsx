@@ -36,7 +36,7 @@ export default function MobileNav() {
               >
                 {Icon && (
                   <Icon
-                    className={`size-6 ${isActive ? "text-brand-500" : "text-stone-50"}`}
+                    className={`size-6 ${isActive ? "text-brand-500" : "text-clay-50"}`}
                     filled={isActive}
                   />
                 )}
