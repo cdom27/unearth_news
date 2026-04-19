@@ -1,15 +1,15 @@
 @import "tailwindcss";
 
 :root {
-    --stone-50: #fffdf6;
-    --stone-100: #f3f1ea;
-    --stone-150: #ebe9e0;
-    --stone-200: #e5e1d4;
-    --stone-400: #9c9787;
-    --stone-500: #716b59;
-    --stone-600: #3e3c36;
-    --stone-800: #2d281b;
-    --stone-900: #110f09;
+    --clay-50: #fffdf6;
+    --clay-100: #f3f1ea;
+    --clay-150: #ebe9e0;
+    --clay-200: #e5e1d4;
+    --clay-400: #9c9787;
+    --clay-500: #716b59;
+    --clay-600: #3e3c36;
+    --clay-800: #2d281b;
+    --clay-900: #110f09;
 
     --brand-500: #ffd400;
 
@@ -18,7 +18,7 @@
 
     --rating-low: #b24545;
     --rating-mixed: #f2e094;
-    --rating-very-high: #4faf4f;
+    --rating-high: #4faf4f;
 
     --font-sans:
         var(--font-archivo), system-ui, -apple-system, BlinkMacSystemFont,
@@ -28,7 +28,7 @@
 }
 
 body {
-    background: var(--stone-50);
-    color: var(--stone-900);
+    background: var(--clay-50);
+    color: var(--clay-900);
     font-family: var(--font-sans);
 }
