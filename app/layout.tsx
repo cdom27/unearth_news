@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import MobileNav from "./_components/navigation/mobile-nav";
 import Header from "./_components/navigation/header";
+import Footer from "./_components/navigation/footer";
 
 const archivo = localFont({
   src: [
@@ -60,8 +61,9 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <Header />
-        <main>{children}</main>
+        <main className="min-h-screen">{children}</main>
         <MobileNav />
+        <Footer />
       </body>
     </html>
   );
