@@ -11,3 +11,4 @@ The MVP rewrite moves to Next.js primarily to reduce overhead as managing two se
 ### things i messed up on earlier and need to go back and fix (eventually...)
 - [ ] update footer m/p to match page section spacing
 - [ ] horizontally center nav links on page (NO justify-between! this makes them a little offset in the desktop nav)
+- [ ] add quick-analysis hook to breaking news cards (currently has a placeholder log)
