@@ -18,7 +18,7 @@ export default function ArticleCardBase({
 }: ArticleCardBaseProps) {
   return (
     <article className="flex flex-col gap-6">
-      <div className="bg-clay-600">
+      <div className="bg-clay-600 rounded-md">
         {thumbnailURL ? (
           <div className="overflow-clip">
             <Image
