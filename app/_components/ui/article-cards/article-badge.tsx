@@ -15,7 +15,10 @@ export default function ArticleBadge({
   if (variant === "time") {
     if (timeStamp) {
       return (
-        <div className="flex items-center gap-3 text-brand-500">
+        <div
+          className="flex items-center gap-3 text-brand-500"
+          title={`Published ${timeSince(timeStamp)} ago`}
+        >
           <ClockIcon className="size-6" />
           <time className="text-lg" dateTime={timeStamp}>
             {timeSince(timeStamp)}
@@ -25,7 +28,10 @@ export default function ArticleBadge({
     }
   } else if (variant === "bias") {
     return (
-      <div className="flex items-center gap-1.5 bg-left-500 py-1 px-4 rounded-full">
+      <div
+        className="flex items-center gap-1.5 bg-left-500 py-1 px-4 rounded-full"
+        title={`Source typically leans ${bias}`}
+      >
         <span>{bias}</span>
         <InfoIcon className="size-3" />
       </div>
