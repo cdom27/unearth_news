@@ -1,4 +1,5 @@
 import BreakingNewsGallery from "./_components/ui/breaking-news/breaking-news-gallery";
+import AnalyzeArticleForm from "./_components/ui/forms/analyze-article-form";
 
 export default function Home() {
   return (
@@ -15,7 +16,7 @@ export default function Home() {
           </p>
         </div>
 
-        <div>{/*ANALYSIS FORM*/}</div>
+        <AnalyzeArticleForm />
       </section>
 
       <article className="mx-4 mt-4 sm:mt-6 sm:mx-12 md:mt-10 xl:mt-16 2xl:mt-22 pt-4 sm:pt-6 lg:mx-18 xl:mx-24 2xl:mx-auto 2xl:max-w-325 flex flex-col gap-12">
