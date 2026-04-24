@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import MagicWandIcon from "../../icons/magic-wand";
+import Button from "../button/button";
 
 export default function AnalyzeArticleForm() {
   const [url, setUrl] = useState("");
@@ -45,28 +46,23 @@ export default function AnalyzeArticleForm() {
             name="articleURL"
             type="url"
             defaultValue={url}
+            required
             placeholder="Enter article URL"
             onChange={(e) => setUrl(e.target.value)}
             className="w-full focus:outline-none"
           />
         </div>
 
-        <button
-          type="submit"
-          className="hidden sm:block py-2 px-6 rounded-md bg-clay-800 text-clay-50 hover:cursor-pointer hover:bg-brand-500 hover:text-clay-900 transition-colors duration-250"
-        >
+        <Button type="submit" disabled={url === ""} className="hidden sm:block">
           Analyze Article
-        </button>
+        </Button>
       </div>
 
       <span>{message}</span>
 
-      <button
-        type="submit"
-        className="sm:hidden w-full py-3 rounded-md bg-clay-800 text-clay-50 hover:cursor-pointer hover:bg-brand-500 hover:text-clay-900 transition-colors duration-250"
-      >
+      <Button type="submit" disabled={url === ""} className="sm:hidden w-full">
         Analyze Article
-      </button>
+      </Button>
     </form>
   );
 }
