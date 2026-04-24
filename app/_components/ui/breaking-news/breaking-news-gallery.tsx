@@ -6,6 +6,7 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import CircleNotchIcon from "../../icons/circle-notch";
 import BreakingNewsCard from "../article-cards/breaking-news-card";
 import ArticleBadge from "../article-cards/article-badge";
+import Tooltip from "../tooltip/tooltip";
 
 export default function BreakingNewsGallery() {
   const [breakingNewsArticles, setBreakingNewsArticles] = useState<
@@ -78,31 +79,32 @@ export default function BreakingNewsGallery() {
     <article className="flex flex-col gap-4">
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-12">
         {breakingNewsArticles.map((article) => (
-          <button
-            key={article.url}
-            onClick={() =>
-              console.log("analyzing article URL: ", article.url || "")
-            }
-            className="group hover:cursor-pointer rounded-sm flex"
-            aria-label={`Analyze: ${article.title}`}
-          >
-            <BreakingNewsCard
-              title={article.title}
-              excerpt={article.description}
-              sourceName={article.source.name}
-              publishedTime={article.publishedAt}
-              thumbnailURL={article.urlToImage}
-              articleURL={article.url}
-              badge={
-                article.publishedAt && (
-                  <ArticleBadge
-                    variant="time"
-                    timeStamp={article.publishedAt}
-                  />
-                )
+          <Tooltip key={article.url} content="Analyze Article">
+            <button
+              onClick={() =>
+                console.log("analyzing article URL: ", article.url || "")
               }
-            />
-          </button>
+              className="group hover:cursor-pointer rounded-sm flex"
+              aria-label={`Analyze: ${article.title}`}
+            >
+              <BreakingNewsCard
+                title={article.title}
+                excerpt={article.description}
+                sourceName={article.source.name}
+                publishedTime={article.publishedAt}
+                thumbnailURL={article.urlToImage}
+                articleURL={article.url}
+                badge={
+                  article.publishedAt && (
+                    <ArticleBadge
+                      variant="time"
+                      timeStamp={article.publishedAt}
+                    />
+                  )
+                }
+              />
+            </button>
+          </Tooltip>
         ))}
       </div>
 
