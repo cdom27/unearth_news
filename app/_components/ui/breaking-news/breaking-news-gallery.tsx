@@ -1,17 +1,18 @@
 "use client";
 
 import { breakingNews } from "@/app/_lib/static/temp/breaking-news";
-import { NewsAPIArticle } from "@/app/_lib/types/news-api";
 import { useEffect, useState, useRef, useCallback } from "react";
 import CircleNotchIcon from "../../icons/circle-notch";
 import BreakingNewsCard from "../article-cards/breaking-news-card";
 import ArticleBadge from "../article-cards/article-badge";
 import Tooltip from "../tooltip/tooltip";
+import mapNewsApiToArticle from "@/app/_lib/utils/map-news-api-to-article";
+import type { Article } from "@/app/_lib/types/article";
 
 export default function BreakingNewsGallery() {
-  const [breakingNewsArticles, setBreakingNewsArticles] = useState<
-    NewsAPIArticle[]
-  >([]);
+  const [breakingNewsArticles, setBreakingNewsArticles] = useState<Article[]>(
+    [],
+  );
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const pageSize = 9;
@@ -26,21 +27,25 @@ export default function BreakingNewsGallery() {
         (pageNumber + 1) * pageSize,
       );
 
-      if (newArticles.length === 0) {
+      const validArticles = newArticles
+        .map(mapNewsApiToArticle)
+        .filter((article): article is Article => article !== null);
+
+      if (validArticles.length === 0) {
         setHasMore(false);
         return;
       }
 
-      if (newArticles.length < pageSize) {
+      if (validArticles.length < pageSize) {
         setHasMore(false);
       }
 
       setTimeout(
         () => {
           setBreakingNewsArticles((prev) => {
-            const existingUrls = new Set(prev.map((a) => a.url));
-            const filteredNewArticles = newArticles.filter(
-              (a) => !existingUrls.has(a.url),
+            const existingUrls = new Set(prev.map((a) => a.articleURL));
+            const filteredNewArticles = validArticles.filter(
+              (a) => !existingUrls.has(a.articleURL),
             );
             return [...prev, ...filteredNewArticles];
           });
@@ -79,28 +84,26 @@ export default function BreakingNewsGallery() {
     <article className="flex flex-col gap-4">
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-12">
         {breakingNewsArticles.map((article) => (
-          <Tooltip key={article.url} content="Analyze Article">
+          <Tooltip key={article.articleURL} content="Analyze Article">
             <button
               onClick={() =>
-                console.log("analyzing article URL: ", article.url || "")
+                console.log("analyzing article URL: ", article.articleURL)
               }
               className="group hover:cursor-pointer rounded-sm flex"
               aria-label={`Analyze: ${article.title}`}
             >
               <BreakingNewsCard
                 title={article.title}
-                excerpt={article.description}
-                sourceName={article.source.name}
-                publishedTime={article.publishedAt}
-                thumbnailURL={article.urlToImage}
-                articleURL={article.url}
+                excerpt={article.excerpt}
+                sourceName={article.sourceName}
+                publishedTime={article.publishedTime}
+                thumbnailURL={article.thumbnailURL}
+                articleURL={article.articleURL}
                 badge={
-                  article.publishedAt && (
-                    <ArticleBadge
-                      variant="time"
-                      timeStamp={article.publishedAt}
-                    />
-                  )
+                  <ArticleBadge
+                    variant="time"
+                    timeStamp={article.publishedTime}
+                  />
                 }
               />
             </button>

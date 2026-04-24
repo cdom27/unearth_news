@@ -37,9 +37,7 @@ export default function ArticleCardBase({
         <div className="text-clay-50 bg-clay-900 rounded-b-sm min-h-10 flex items-center justify-center gap-3 p-3">
           <div className="flex items-center gap-3">
             <QuoteIcon className="size-6" />
-            <span className="text-lg">
-              {sourceName ? sourceName : "Unnamed Source"}
-            </span>
+            <span className="text-lg">{sourceName}</span>
           </div>
 
           {badge && (
@@ -53,7 +51,7 @@ export default function ArticleCardBase({
       </div>
 
       <h3 className="font-serif text-3xl text-left underline decoration-clay-50 group-hover:underline-offset-4 group-hover:decoration-brand-500 transition-colors duration-250">
-        {title || "Untitled Report"}
+        {title}
       </h3>
 
       <p className="text-lg text-left">{excerpt}</p>
