@@ -1,23 +1,17 @@
 "use client";
 
-import React, { ReactNode, useState, useEffect, ReactElement } from "react";
+import React, { ReactNode, useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 
 const tooltipVariants: Record<string, string> = {
-  default: "text-clay-900 bg-brand-500 text-lg font-semibold",
+  default: "text-clay-900 bg-brand-500 font-semibold",
+  secondary: "bg-clay-600 text-clay-50",
 };
-
-interface TooltipChildProps {
-  onMouseEnter?: React.MouseEventHandler<HTMLElement>;
-  onMouseLeave?: React.MouseEventHandler<HTMLElement>;
-  onMouseMove?: React.MouseEventHandler<HTMLElement>;
-  [key: string]: unknown;
-}
 
 interface TooltipProps {
   variant?: keyof typeof tooltipVariants;
   content: ReactNode;
-  children: ReactElement<TooltipChildProps>;
+  children: ReactNode;
   className?: string;
 }
 
@@ -37,42 +31,29 @@ export default function Tooltip({
     return () => clearTimeout(timeoutId);
   }, []);
 
-  const childProps = children.props as TooltipChildProps;
-
   const handleMouseEnter = (e: React.MouseEvent<HTMLElement>) => {
     setIsVisible(true);
     setPosition({ x: e.clientX, y: e.clientY });
-    if (childProps.onMouseEnter) {
-      childProps.onMouseEnter(e);
-    }
   };
 
-  const handleMouseLeave = (e: React.MouseEvent<HTMLElement>) => {
+  const handleMouseLeave = () => {
     setIsVisible(false);
-    if (childProps.onMouseLeave) {
-      childProps.onMouseLeave(e);
-    }
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
     setPosition({ x: e.clientX, y: e.clientY });
-    if (childProps.onMouseMove) {
-      childProps.onMouseMove(e);
-    }
   };
-
-  const clonedChild = React.cloneElement(
-    children as React.ReactElement<TooltipChildProps>,
-    {
-      onMouseEnter: handleMouseEnter,
-      onMouseLeave: handleMouseLeave,
-      onMouseMove: handleMouseMove,
-    },
-  );
 
   return (
     <>
-      {clonedChild}
+      <span
+        className="inline-block"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onMouseMove={handleMouseMove}
+      >
+        {children}
+      </span>
       {mounted &&
         isVisible &&
         createPortal(
