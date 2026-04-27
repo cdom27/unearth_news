@@ -3,19 +3,31 @@
 import { useRef, useState } from "react";
 import MagicWandIcon from "../../icons/magic-wand";
 import Button from "../button/button";
+import { normalizeURL } from "@/app/_lib/normalize-url";
+import useArticle from "@/app/_hooks/use-article";
+import { useRouter } from "next/navigation";
 
 export default function AnalyzeArticleForm() {
   const [url, setUrl] = useState("");
   const [message, setMessage] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
+  const { analyzeArticle } = useArticle();
 
-  // TODO: implement hook with real api call
-  function handleSubmit() {
+  async function handleSubmit() {
     try {
-      const submittedURL = new URL(url);
-      const normalizedURL = submittedURL.href.split("?")[0];
+      const normalizedURL = normalizeURL(url);
 
-      console.log(normalizedURL);
+      //TODO:
+      // - create a 'blacklist' of domains that are unable to be parsed
+      // - send the normalized url to the backend for processing
+      const slug = await analyzeArticle(normalizedURL);
+
+      if (slug) {
+        router.push(`/article/${slug}`);
+      } else {
+        // inform user something went wrong
+      }
     } catch {
       setMessage("Please enter a valid URL");
     }
