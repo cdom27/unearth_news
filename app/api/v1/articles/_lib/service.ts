@@ -2,6 +2,7 @@ import { articles, sources } from "@/app/_lib/db/schema";
 import type { ParsedArticle } from "./types/article";
 import { parseArticle } from "./utils/parse-article";
 import { db } from "@/app/_lib/db/client";
+import { slugify } from "./utils/slugify";
 
 export async function analyzeArticle(url: string) {
   try {
@@ -65,6 +66,8 @@ export async function analyzeArticle(url: string) {
       }
     }
 
+    const analysisSlug = slugify(article.title);
+
     // avoid duplicate analysis with precheck
     // let analysis = await db.query.analyses.findFirst({
     //   where: (analyses, { eq }) => eq(analyses.articleId, article.id),
@@ -76,8 +79,9 @@ export async function analyzeArticle(url: string) {
     //   // save analysis
     //   // return analysis slug
     // }
+    //
 
-    return { slug: "some-analysis-slug" };
+    return { slug: analysisSlug };
   } catch (error) {
     console.error("unexpected error: ", error);
     return null;
