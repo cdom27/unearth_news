@@ -43,7 +43,7 @@ export default function BreakingNewsCard(props: ArticleCardBaseProps) {
     >
       <button
         onClick={() => handleSubmit()}
-        className="group hover:cursor-pointer rounded-sm flex"
+        className="group hover:cursor-pointer rounded-sm flex disabled:cursor-not-allowed"
         aria-label={`Analyze: ${props.title} by ${props.sourceName}`}
         disabled={message != "" ? true : false}
       >
