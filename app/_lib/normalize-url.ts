@@ -3,7 +3,12 @@ import { urlBlocklist } from "./static/url-blocklist";
 export function normalizeURL(input: string): string | null {
   const url = new URL(input);
 
-  if (urlBlocklist.includes(url.hostname)) {
+  if (
+    urlBlocklist.some(
+      (domain) =>
+        url.hostname === domain || url.hostname.endsWith(`.${domain}`),
+    )
+  ) {
     return null;
   }
 
