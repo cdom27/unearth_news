@@ -5,7 +5,6 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import CircleNotchIcon from "../../icons/circle-notch";
 import BreakingNewsCard from "../article-cards/breaking-news-card";
 import ArticleBadge from "../article-cards/article-badge";
-import Tooltip from "../tooltip/tooltip";
 import mapNewsApiToArticle from "@/app/_lib/utils/map-news-api-to-article";
 import type { Article } from "@/app/_lib/types/article";
 
@@ -84,30 +83,18 @@ export default function BreakingNewsGallery() {
     <article className="flex flex-col gap-4">
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-12">
         {breakingNewsArticles.map((article) => (
-          <Tooltip key={article.articleURL} content="Analyze Article">
-            <button
-              onClick={() =>
-                console.log("analyzing article URL: ", article.articleURL)
-              }
-              className="group hover:cursor-pointer rounded-sm flex"
-              aria-label={`Analyze: ${article.title}`}
-            >
-              <BreakingNewsCard
-                title={article.title}
-                excerpt={article.excerpt}
-                sourceName={article.sourceName}
-                publishedTime={article.publishedTime}
-                thumbnailURL={article.thumbnailURL}
-                articleURL={article.articleURL}
-                badge={
-                  <ArticleBadge
-                    variant="time"
-                    timeStamp={article.publishedTime}
-                  />
-                }
-              />
-            </button>
-          </Tooltip>
+          <BreakingNewsCard
+            key={article.title}
+            title={article.title}
+            excerpt={article.excerpt}
+            sourceName={article.sourceName}
+            publishedTime={article.publishedTime}
+            thumbnailURL={article.thumbnailURL}
+            articleURL={article.articleURL}
+            badge={
+              <ArticleBadge variant="time" timeStamp={article.publishedTime} />
+            }
+          />
         ))}
       </div>
 
