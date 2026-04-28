@@ -4,6 +4,7 @@ import { normalizeURL } from "../_lib/normalize-url";
 
 export default function useArticle() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [message, setMessage] = useState("");
 
   const analyzeArticle = useCallback(async (url: string) => {
     setIsAnalyzing(true);
@@ -12,6 +13,7 @@ export default function useArticle() {
     const normalizedURL = normalizeURL(url);
     if (!normalizedURL) {
       setIsAnalyzing(false);
+      setMessage("Unable to process source");
       return null;
     }
 
@@ -32,11 +34,12 @@ export default function useArticle() {
 
       return null;
     } catch {
+      setMessage("Unable to process source");
       return null;
     } finally {
       setIsAnalyzing(false);
     }
   }, []);
 
-  return { analyzeArticle, isAnalyzing };
+  return { analyzeArticle, isAnalyzing, message };
 }

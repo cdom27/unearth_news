@@ -11,7 +11,7 @@ export default function AnalyzeArticleForm() {
   const [url, setUrl] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
-  const { analyzeArticle, isAnalyzing } = useArticle();
+  const { analyzeArticle, isAnalyzing, message } = useArticle();
 
   async function handleSubmit() {
     try {
@@ -19,11 +19,9 @@ export default function AnalyzeArticleForm() {
 
       if (slug) {
         router.push(`/article/${slug}`);
-      } else {
-        console.log("Unexpected Error while processing URL");
       }
     } catch {
-      console.log("Please enter a valid URL");
+      console.log("Unable to process source");
     }
   }
 
@@ -71,7 +69,7 @@ export default function AnalyzeArticleForm() {
         </Button>
       </div>
 
-      {/*<span>{message}</span>*/}
+      <span className="text-red-500">{message}</span>
 
       <Button type="submit" disabled={url === ""} className="sm:hidden w-full">
         {isAnalyzing ? (
