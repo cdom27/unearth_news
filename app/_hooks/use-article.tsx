@@ -1,11 +1,19 @@
 import { useCallback, useState } from "react";
 import { ApiResponse } from "../api/_lib/build-response";
+import { normalizeURL } from "../_lib/normalize-url";
 
 export default function useArticle() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const analyzeArticle = useCallback(async (url: string) => {
     setIsAnalyzing(true);
+
+    // avoid duplicate analyses and api calls if source in known to be unprocessable
+    const normalizedURL = normalizeURL(url);
+    if (!normalizedURL) {
+      setIsAnalyzing(false);
+      return null;
+    }
 
     try {
       const response = await fetch("/api/v1/articles", {

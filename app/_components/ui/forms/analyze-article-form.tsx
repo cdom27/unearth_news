@@ -3,33 +3,27 @@
 import { useRef, useState } from "react";
 import MagicWandIcon from "../../icons/magic-wand";
 import Button from "../button/button";
-import { normalizeURL } from "@/app/_lib/normalize-url";
 import useArticle from "@/app/_hooks/use-article";
 import { useRouter } from "next/navigation";
+import CircleNotchIcon from "../../icons/circle-notch";
 
 export default function AnalyzeArticleForm() {
   const [url, setUrl] = useState("");
-  const [message, setMessage] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
-  const { analyzeArticle } = useArticle();
+  const { analyzeArticle, isAnalyzing } = useArticle();
 
   async function handleSubmit() {
     try {
-      const normalizedURL = normalizeURL(url);
-
-      //TODO:
-      // - create a 'blacklist' of domains that are unable to be parsed
-      // - send the normalized url to the backend for processing
-      const slug = await analyzeArticle(normalizedURL);
+      const slug = await analyzeArticle(url);
 
       if (slug) {
         router.push(`/article/${slug}`);
       } else {
-        // inform user something went wrong
+        console.log("Unexpected Error while processing URL");
       }
     } catch {
-      setMessage("Please enter a valid URL");
+      console.log("Please enter a valid URL");
     }
   }
 
@@ -66,14 +60,25 @@ export default function AnalyzeArticleForm() {
         </div>
 
         <Button type="submit" disabled={url === ""} className="hidden sm:block">
-          Analyze Article
+          {isAnalyzing ? (
+            <span className="flex items-center gap-1.5">
+              <span>Analyzing</span>
+              <CircleNotchIcon className="size-6 animate-spin" />
+            </span>
+          ) : (
+            <span>Analyze Article</span>
+          )}
         </Button>
       </div>
 
-      <span>{message}</span>
+      {/*<span>{message}</span>*/}
 
       <Button type="submit" disabled={url === ""} className="sm:hidden w-full">
-        Analyze Article
+        {isAnalyzing ? (
+          <CircleNotchIcon className="size-6 animate-spin" />
+        ) : (
+          <span>Analyze Article</span>
+        )}
       </Button>
     </form>
   );
