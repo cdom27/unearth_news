@@ -60,7 +60,7 @@ export const analyses = pgTable("analyses", {
     .unique()
     .references(() => articles.id, { onDelete: "cascade" }),
   slug: text("slug").notNull().unique(),
-  summary: text("summary"),
+  summary: jsonb("summary"),
   sentiment: text("sentiment"),
   framing: jsonb("framing"),
   claims: jsonb("claims"),
