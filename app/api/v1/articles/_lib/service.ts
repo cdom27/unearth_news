@@ -1,10 +1,10 @@
-import { articles, sources } from "@/app/_lib/db/schema";
+import { articles, sources, analyses } from "@/app/_lib/db/schema";
 import type { ParsedArticle } from "./types/article";
 import { parseArticle } from "./utils/parse-article";
 import { db } from "@/app/_lib/db/client";
 import { slugify } from "./utils/slugify";
 import { anthropic } from "./utils/ai/anthropic/anthropic";
-import { AnalysisResult } from "./types/analysis-result";
+import type { AnalysisResult } from "./types/analysis-result";
 
 export async function analyzeArticle(url: string): Promise<AnalysisResult> {
   try {
@@ -72,20 +72,79 @@ export async function analyzeArticle(url: string): Promise<AnalysisResult> {
       }
     }
 
-    const analysisSlug = slugify(article.title);
-
     // avoid duplicate analysis with precheck
-    const analysis = await db.query.analyses.findFirst({
+    let analysis = await db.query.analyses.findFirst({
       where: (analyses, { eq }) => eq(analyses.articleId, article.id),
     });
 
+    let currentStatus = analysis?.status;
+    let analysisId = analysis?.id;
+    let analysisSlug = analysis?.slug ?? "";
+
+    if (currentStatus === "completed") {
+      return { success: true, slug: analysisSlug };
+    }
+
     if (!analysis) {
+      analysisSlug = slugify(article.title);
+
       // summarize article (currently getting thrown into the void!!!)
-      const summary = await anthropic(
+      const summaryResponse = await anthropic(
         "claude-sonnet-4-6",
         "summarize",
         article.textContent,
       );
+
+      let parsedSummary = null;
+      try {
+        // Attempt to parse the JSON response from Claude
+        parsedSummary = JSON.parse(summaryResponse.text);
+      } catch (err) {
+        console.error("Failed to parse AI summary response as JSON:", err);
+      }
+
+      const newAnalysis = await db
+        .insert(analyses)
+        .values({
+          articleId: article.id,
+          slug: analysisSlug,
+          summary: parsedSummary,
+          status: "summarized",
+          meta: {
+            summary: summaryResponse.meta,
+            analysis: null,
+            claimExtraction: null,
+            claimVerification: null,
+          },
+        })
+        .returning();
+
+      analysisId = newAnalysis[0].id;
+      currentStatus = "summarized";
+
+      analysis = newAnalysis[0];
+
+      console.log("Completed summary for analysis: ", analysisId);
+    }
+
+    if (currentStatus === "summarized") {
+      // continue with rhetorical analysis of the article
+      // goal: populate sentiment, framing, and bias_score columns
+    }
+
+    if (currentStatus === "analyzed") {
+      // continue with falsifiable claim extraction
+      // goal: populate claims column with falsifiable claims
+    }
+
+    if (currentStatus === "claims_extracted") {
+      // continue with claim verification
+      // goal: verify claims from the last step and provide status?
+    }
+
+    if (currentStatus === "claims_verified") {
+      // finalize analysis by calculating factual score given
+      // the claim verification data
     }
 
     return { success: true, slug: analysisSlug };

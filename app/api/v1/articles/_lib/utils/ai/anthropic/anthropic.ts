@@ -26,7 +26,15 @@ export async function anthropic(
     ],
   });
 
+  const meta = {
+    model: msg.model,
+    usage: msg.usage,
+    dateGeneratedISO: new Date().toISOString(),
+  };
+
   const firstBlock = msg.content[0];
 
-  return firstBlock.type === "text" ? firstBlock.text : "";
+  const response = firstBlock.type === "text" ? firstBlock.text : "";
+
+  return { text: response, meta };
 }
