@@ -13,11 +13,25 @@ export async function POST(request: Request) {
 
     const normalizedURL = normalizeURL(url);
 
-    const data = await analyzeArticle(normalizedURL);
+    if (!normalizedURL) {
+      return apiResponse(
+        { message: "Unable to process source", data: null },
+        500,
+      );
+    }
 
-    return apiResponse({ message: "article analyzed", data });
+    const analysisResult = await analyzeArticle(normalizedURL);
+
+    if (!analysisResult.success) {
+      return apiResponse({ message: analysisResult.error, data: null }, 400);
+    }
+
+    return apiResponse({
+      message: "Analysis Complete!",
+      data: { slug: analysisResult.slug },
+    });
   } catch (error) {
     console.error("error while processing article: ", error);
-    return apiResponse({ message: "unable to process", data: null }, 500);
+    return apiResponse({ message: "Unexpected Error", data: null }, 500);
   }
 }

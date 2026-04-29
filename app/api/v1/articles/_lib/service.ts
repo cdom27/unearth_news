@@ -3,8 +3,10 @@ import type { ParsedArticle } from "./types/article";
 import { parseArticle } from "./utils/parse-article";
 import { db } from "@/app/_lib/db/client";
 import { slugify } from "./utils/slugify";
+import { anthropic } from "./utils/ai/anthropic/anthropic";
+import { AnalysisResult } from "./types/analysis-result";
 
-export async function analyzeArticle(url: string) {
+export async function analyzeArticle(url: string): Promise<AnalysisResult> {
   try {
     const hostname = new URL(url).hostname;
 
@@ -19,6 +21,7 @@ export async function analyzeArticle(url: string) {
       parsedData = (await parseArticle(url)) as ParsedArticle;
 
       if (!parsedData || !parsedData.article) {
+        // future: save fail data in db
         return { success: false, error: "Unable to parse article" };
       }
 
@@ -62,28 +65,36 @@ export async function analyzeArticle(url: string) {
       article = newArticle[0];
 
       if (!article) {
-        return { success: false, error: "Unable to parse article" };
+        return {
+          success: false,
+          error: "Unexpected error while processing article",
+        };
       }
     }
 
     const analysisSlug = slugify(article.title);
 
     // avoid duplicate analysis with precheck
-    // let analysis = await db.query.analyses.findFirst({
-    //   where: (analyses, { eq }) => eq(analyses.articleId, article.id),
-    // });
+    const analysis = await db.query.analyses.findFirst({
+      where: (analyses, { eq }) => eq(analyses.articleId, article.id),
+    });
 
-    // if (!analysis) {
-    //   // send parsed data to an llm
-    //   // parse response
-    //   // save analysis
-    //   // return analysis slug
-    // }
-    //
+    if (!analysis) {
+      // summarize article (currently getting thrown into the void!!!)
+      const summary = await anthropic(
+        "claude-sonnet-4-6",
+        "summarize",
+        article.textContent,
+      );
+    }
 
-    return { slug: analysisSlug };
+    return { success: true, slug: analysisSlug };
   } catch (error) {
-    console.error("unexpected error: ", error);
-    return null;
+    console.error("Unexpected error when processing the URL:", url, error);
+
+    return {
+      success: false,
+      error: "Unexpected error while processing article",
+    };
   }
 }

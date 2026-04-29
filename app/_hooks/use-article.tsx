@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { ApiResponse } from "../api/_lib/build-response";
+import type { ApiResponse } from "../api/_lib/build-response";
 import { normalizeURL } from "../_lib/normalize-url";
 
 export default function useArticle() {
@@ -29,12 +29,14 @@ export default function useArticle() {
       const result = (await response.json()) as ApiResponse<{ slug: string }>;
 
       if (result.data && response.ok) {
+        setMessage(result.message);
         return result.data.slug;
       }
 
+      setMessage(result.message);
       return null;
     } catch {
-      setMessage("Unable to process source");
+      setMessage("Unexpected error while processing article");
       return null;
     } finally {
       setIsAnalyzing(false);
