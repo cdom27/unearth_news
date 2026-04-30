@@ -3,21 +3,25 @@
 import { useRef, useState } from "react";
 import MagicWandIcon from "../../icons/magic-wand";
 import Button from "../button/button";
+import useArticle from "@/app/_hooks/use-article";
+import { useRouter } from "next/navigation";
+import CircleNotchIcon from "../../icons/circle-notch";
 
 export default function AnalyzeArticleForm() {
   const [url, setUrl] = useState("");
-  const [message, setMessage] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
+  const { analyzeArticle, isAnalyzing, message } = useArticle();
 
-  // TODO: implement hook with real api call
-  function handleSubmit() {
+  async function handleSubmit() {
     try {
-      const submittedURL = new URL(url);
-      const normalizedURL = submittedURL.href.split("?")[0];
+      const slug = await analyzeArticle(url);
 
-      console.log(normalizedURL);
+      if (slug) {
+        router.push(`/article/${slug}`);
+      }
     } catch {
-      setMessage("Please enter a valid URL");
+      console.log("Unable to process source");
     }
   }
 
@@ -54,14 +58,25 @@ export default function AnalyzeArticleForm() {
         </div>
 
         <Button type="submit" disabled={url === ""} className="hidden sm:block">
-          Analyze Article
+          {isAnalyzing ? (
+            <span className="flex items-center gap-1.5">
+              <span>Analyzing</span>
+              <CircleNotchIcon className="size-6 animate-spin" />
+            </span>
+          ) : (
+            <span>Analyze Article</span>
+          )}
         </Button>
       </div>
 
-      <span>{message}</span>
+      <span className="text-red-500">{message}</span>
 
       <Button type="submit" disabled={url === ""} className="sm:hidden w-full">
-        Analyze Article
+        {isAnalyzing ? (
+          <CircleNotchIcon className="size-6 animate-spin" />
+        ) : (
+          <span>Analyze Article</span>
+        )}
       </Button>
     </form>
   );
