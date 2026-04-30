@@ -5,7 +5,6 @@ import { db } from "@/app/_lib/db/client";
 import { slugify } from "./utils/slugify";
 import { anthropic } from "./utils/ai/anthropic/anthropic";
 import type { AnalysisResult } from "./types/analysis-result";
-import type { Summary } from "./types/summary";
 
 export async function analyzeArticle(url: string): Promise<AnalysisResult> {
   try {
@@ -96,20 +95,12 @@ export async function analyzeArticle(url: string): Promise<AnalysisResult> {
         article.textContent,
       );
 
-      let parsedSummary = null;
-      try {
-        // Attempt to parse the JSON response from Claude
-        parsedSummary = JSON.parse(summaryResponse.text) as Summary;
-      } catch (error) {
-        console.error("Failed to parse AI summary response as JSON:", error);
-      }
-
       const newAnalysis = await db
         .insert(analyses)
         .values({
           articleId: article.id,
           slug: analysisSlug,
-          summary: parsedSummary,
+          summary: summaryResponse.data,
           status: "summarized",
           meta: {
             summary: summaryResponse.meta,
