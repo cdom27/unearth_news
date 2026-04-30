@@ -84,7 +84,7 @@ export default function BreakingNewsGallery() {
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-12">
         {breakingNewsArticles.map((article) => (
           <BreakingNewsCard
-            key={article.title}
+            key={article.title.concat(", ", article.sourceName)}
             title={article.title}
             excerpt={article.excerpt}
             sourceName={article.sourceName}
