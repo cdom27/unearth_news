@@ -80,7 +80,5 @@ export async function anthropic(
   const toolBlock = msg.content.find((block) => block.type === "tool_use");
   const data = toolBlock?.type === "tool_use" ? toolBlock.input : null;
 
-  console.log(data);
-
   return { data, meta };
 }
