@@ -38,6 +38,75 @@ function getToolForMode(mode: string): Tool {
           required: ["tldr", "insights", "quotes"],
         },
       };
+    case "analyze":
+      return {
+        name: "record_analysis",
+        description:
+          "Record the analysis of sentiment, framing, and bias for the article.",
+        input_schema: {
+          type: "object",
+          properties: {
+            sentiment: {
+              type: "string",
+              enum: ["mixed", "positive", "negative"],
+              description: "The overall sentiment of the article.",
+            },
+            framing: {
+              type: "object",
+              properties: {
+                narrative: {
+                  type: "string",
+                  description: "The overarching narrative presented.",
+                },
+                terms: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      term: { type: "string" },
+                      tone: {
+                        type: "string",
+                        enum: ["negative", "neutral", "positive"],
+                      },
+                      analysis: { type: "string" },
+                    },
+                    required: ["term", "tone", "analysis"],
+                  },
+                },
+                devices: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      device: { type: "string" },
+                      example: { type: "string" },
+                      explanation: { type: "string" },
+                    },
+                    required: ["device", "example", "explanation"],
+                  },
+                },
+                sourcing: {
+                  type: "object",
+                  properties: {
+                    balance: {
+                      type: "string",
+                      enum: ["one-sided", "mostly-one-sided", "balanced"],
+                    },
+                    notes: { type: "string" },
+                  },
+                  required: ["balance", "notes"],
+                },
+              },
+              required: ["narrative", "terms", "devices", "sourcing"],
+            },
+            biasScore: {
+              type: "number",
+              description: "A score representing the level of bias.",
+            },
+          },
+          required: ["sentiment", "framing", "biasScore"],
+        },
+      };
     default:
       throw new Error(`Unsupported mode: ${mode}`);
   }
@@ -59,7 +128,7 @@ export async function anthropic(
 
   const msg = await anth.messages.create({
     model: model,
-    max_tokens: 1000,
+    max_tokens: 8192,
     system: systemPrompt,
     tools: [tool],
     tool_choice: { type: "tool", name: tool.name },

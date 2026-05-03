@@ -5,6 +5,10 @@ import { db } from "@/app/_lib/db/client";
 import { slugify } from "./utils/slugify";
 import { anthropic } from "./utils/ai/anthropic/anthropic";
 import type { AnalysisResult } from "./types/analysis-result";
+import type { Summary } from "./types/summary";
+import type { Analysis } from "./types/analysis";
+import { eq } from "drizzle-orm";
+import { AnalysisMeta } from "./types/meta";
 
 export async function analyzeArticle(url: string): Promise<AnalysisResult> {
   try {
@@ -78,7 +82,7 @@ export async function analyzeArticle(url: string): Promise<AnalysisResult> {
     });
 
     let currentStatus = analysis?.status;
-    let analysisId = analysis?.id;
+    let analysisId = analysis?.id ?? "";
     let analysisSlug = analysis?.slug ?? "";
 
     if (currentStatus === "completed") {
@@ -88,19 +92,24 @@ export async function analyzeArticle(url: string): Promise<AnalysisResult> {
     if (!analysis) {
       analysisSlug = slugify(article.title);
 
-      // summarize article (currently getting thrown into the void!!!)
       const summaryResponse = await anthropic(
-        "claude-sonnet-4-6",
+        "claude-haiku-4-5",
         "summarize",
         article.textContent,
       );
+
+      if (!summaryResponse.data) {
+        console.error("No summary data returned for: ", article.id);
+        return { success: false, error: "Unexpected error" };
+      }
+      const parsedSummaryData = summaryResponse.data as Summary;
 
       const newAnalysis = await db
         .insert(analyses)
         .values({
           articleId: article.id,
           slug: analysisSlug,
-          summary: summaryResponse.data,
+          summary: parsedSummaryData,
           status: "summarized",
           meta: {
             summary: summaryResponse.meta,
@@ -116,12 +125,45 @@ export async function analyzeArticle(url: string): Promise<AnalysisResult> {
 
       analysis = newAnalysis[0];
 
-      console.log("Completed summary for analysis: ", analysisId);
+      console.log("Completed summary for: ", analysisId);
     }
 
     if (currentStatus === "summarized") {
       // continue with rhetorical analysis of the article
       // goal: populate sentiment, framing, and bias_score columns
+      const analysisResponse = await anthropic(
+        "claude-sonnet-4-6",
+        "analyze",
+        article.textContent,
+      );
+
+      if (!analysisResponse.data) {
+        console.error("No analysis data returned for: ", analysis.id);
+        return { success: false, error: "Unexpected error" };
+      }
+      const parsedAnalysisData = analysisResponse.data as Analysis;
+
+      const updatedAnalysis = await db
+        .update(analyses)
+        .set({
+          sentiment: parsedAnalysisData.sentiment,
+          framing: parsedAnalysisData.framing,
+          biasScore: parsedAnalysisData.biasScore,
+          status: "analyzed",
+          meta: {
+            ...(analysis.meta as AnalysisMeta),
+            analysis: analysisResponse.meta,
+          },
+          updatedAt: new Date(),
+        })
+        .where(eq(analyses.id, analysisId))
+        .returning();
+
+      currentStatus = "analyzed";
+
+      analysis = updatedAnalysis[0];
+
+      console.log("Completed analysis for: ", analysisId);
     }
 
     if (currentStatus === "analyzed") {
