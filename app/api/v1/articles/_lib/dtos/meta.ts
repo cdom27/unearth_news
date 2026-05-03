@@ -1,4 +1,4 @@
-export type AnalysisMeta = {
+export type MetaDTO = {
   summary: JSON;
   analysis: JSON | null;
   claimExtraction: JSON | null;

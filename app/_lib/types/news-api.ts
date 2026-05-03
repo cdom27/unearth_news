@@ -1,10 +1,10 @@
 export type NewsAPIResponse = {
   status: string;
   totalResults: number;
-  articles: NewsAPIArticle[];
+  articles: NewsAPIArticleDTO[];
 };
 
-export type NewsAPIArticle = {
+export type NewsAPIArticleDTO = {
   source: {
     id: string | null;
     name: string | null;

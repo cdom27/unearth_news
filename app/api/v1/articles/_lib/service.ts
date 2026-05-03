@@ -1,16 +1,16 @@
 import { articles, sources, analyses } from "@/app/_lib/db/schema";
-import type { ParsedArticle } from "./types/article";
+import type { ParsedArticleDTO } from "./dtos/article";
 import { parseArticle } from "./utils/parse-article";
 import { db } from "@/app/_lib/db/client";
 import { slugify } from "./utils/slugify";
 import { anthropic } from "./utils/ai/anthropic/anthropic";
-import type { AnalysisResult } from "./types/analysis-result";
-import type { Summary } from "./types/summary";
-import type { Analysis } from "./types/analysis";
+import type { AnalysisResultDTO } from "./dtos/analysis-result";
+import type { SummaryDTO } from "./dtos/summary";
+import type { AnalysisDTO } from "./dtos/analysis";
 import { eq } from "drizzle-orm";
-import { AnalysisMeta } from "./types/meta";
+import { MetaDTO } from "./dtos/meta";
 
-export async function analyzeArticle(url: string): Promise<AnalysisResult> {
+export async function analyzeArticle(url: string): Promise<AnalysisResultDTO> {
   try {
     const hostname = new URL(url).hostname;
 
@@ -22,7 +22,7 @@ export async function analyzeArticle(url: string): Promise<AnalysisResult> {
 
     // ensure an article record exists prior to attempting analysis
     if (!article) {
-      parsedData = (await parseArticle(url)) as ParsedArticle;
+      parsedData = (await parseArticle(url)) as ParsedArticleDTO;
 
       if (!parsedData || !parsedData.article) {
         // future: save fail data in db
@@ -102,7 +102,7 @@ export async function analyzeArticle(url: string): Promise<AnalysisResult> {
         console.error("No summary data returned for: ", article.id);
         return { success: false, error: "Unexpected error" };
       }
-      const parsedSummaryData = summaryResponse.data as Summary;
+      const parsedSummaryData = summaryResponse.data as SummaryDTO;
 
       const newAnalysis = await db
         .insert(analyses)
@@ -141,7 +141,7 @@ export async function analyzeArticle(url: string): Promise<AnalysisResult> {
         console.error("No analysis data returned for: ", analysis.id);
         return { success: false, error: "Unexpected error" };
       }
-      const parsedAnalysisData = analysisResponse.data as Analysis;
+      const parsedAnalysisData = analysisResponse.data as AnalysisDTO;
 
       const updatedAnalysis = await db
         .update(analyses)
@@ -151,7 +151,7 @@ export async function analyzeArticle(url: string): Promise<AnalysisResult> {
           biasScore: parsedAnalysisData.biasScore,
           status: "analyzed",
           meta: {
-            ...(analysis.meta as AnalysisMeta),
+            ...(analysis.meta as MetaDTO),
             analysis: analysisResponse.meta,
           },
           updatedAt: new Date(),
