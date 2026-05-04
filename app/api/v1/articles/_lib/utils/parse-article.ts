@@ -1,6 +1,6 @@
 import { Readability } from "@mozilla/readability";
 import { parseHTML } from "linkedom";
-import { ParsedArticle } from "../types/article";
+import type { ParsedArticleDTO } from "../dtos/article";
 import nlp from "compromise";
 import { slugify } from "./slugify";
 
@@ -52,5 +52,5 @@ export async function parseArticle(url: string) {
     article,
     keywords,
     slug,
-  } as ParsedArticle;
+  } as ParsedArticleDTO;
 }

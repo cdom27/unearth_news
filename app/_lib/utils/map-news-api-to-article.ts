@@ -1,8 +1,8 @@
-import { NewsAPIArticle } from "@/app/_lib/types/news-api";
+import { NewsAPIArticleDTO } from "@/app/_lib/types/news-api";
 import { Article } from "@/app/_lib/types/article";
 
 export default function mapNewsApiToArticle(
-  apiArticle: NewsAPIArticle,
+  apiArticle: NewsAPIArticleDTO,
 ): Article | null {
   // avoid showing the user an article with critical data missing
   if (!apiArticle.title || !apiArticle.url) {

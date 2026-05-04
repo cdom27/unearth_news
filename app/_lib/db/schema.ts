@@ -71,7 +71,7 @@ export const analyses = pgTable("analyses", {
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
-  updatedAt: timestamp("updateed_at", { withTimezone: true })
+  updatedAt: timestamp("updated_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
 });
