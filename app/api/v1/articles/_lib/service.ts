@@ -8,7 +8,9 @@ import type { AnalysisResultDTO } from "./dtos/analysis-result";
 import type { SummaryDTO } from "./dtos/summary";
 import type { AnalysisDTO } from "./dtos/analysis";
 import { eq } from "drizzle-orm";
-import { MetaDTO } from "./dtos/meta";
+import type { MetaDTO } from "./dtos/meta";
+import type { ClaimExtractionDTO } from "./dtos/claim-extraction";
+import { search } from "./utils/ai/exa/exa";
 
 export async function analyzeArticle(url: string): Promise<AnalysisResultDTO> {
   try {
@@ -129,8 +131,6 @@ export async function analyzeArticle(url: string): Promise<AnalysisResultDTO> {
     }
 
     if (currentStatus === "summarized") {
-      // continue with rhetorical analysis of the article
-      // goal: populate sentiment, framing, and bias_score columns
       const analysisResponse = await anthropic(
         "claude-sonnet-4-6",
         "analyze",
@@ -167,8 +167,34 @@ export async function analyzeArticle(url: string): Promise<AnalysisResultDTO> {
     }
 
     if (currentStatus === "analyzed") {
-      // continue with falsifiable claim extraction
-      // goal: populate claims column with falsifiable claims
+      const extractionResponse = await anthropic(
+        "claude-sonnet-4-6",
+        "extract",
+        article.textContent,
+      );
+
+      if (!extractionResponse.data) {
+        console.error("No analysis data returned for: ", analysis.id);
+        return { success: false, error: "Unexpected error" };
+      }
+      const parsedExtractionData =
+        extractionResponse.data as ClaimExtractionDTO;
+
+      const updatedAnalysis = await db
+        .update(analyses)
+        .set({
+          claims: parsedExtractionData.claims,
+          status: "claims_extracted",
+          updatedAt: new Date(),
+        })
+        .where(eq(analyses.id, analysisId))
+        .returning();
+
+      currentStatus = "claims_extracted";
+
+      analysis = updatedAnalysis[0];
+
+      console.log("Completed claim extraction for: ", analysisId);
     }
 
     if (currentStatus === "claims_extracted") {

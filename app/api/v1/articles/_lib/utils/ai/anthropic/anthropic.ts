@@ -107,6 +107,22 @@ function getToolForMode(mode: string): Tool {
           required: ["sentiment", "framing", "biasScore"],
         },
       };
+    case "extract":
+      return {
+        name: "record_claims_extraction",
+        description: "Record the claims extraction for the article",
+        input_schema: {
+          type: "object",
+          properties: {
+            claims: {
+              type: "array",
+              items: { type: "string" },
+              description: "Up to 6 falsifiable claims made by the article",
+            },
+          },
+          required: ["claims"],
+        },
+      };
     default:
       throw new Error(`Unsupported mode: ${mode}`);
   }
