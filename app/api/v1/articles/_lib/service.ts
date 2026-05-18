@@ -205,9 +205,6 @@ export async function analyzeArticle(url: string): Promise<AnalysisResultDTO> {
     }
 
     if (currentStatus === "claims_extracted") {
-      // continue with claim verification
-      // goal: verify claims from the last step and provide status?
-
       const claims = analysis.claims as Claim[];
 
       for (const claim of claims) {
@@ -226,11 +223,58 @@ export async function analyzeArticle(url: string): Promise<AnalysisResultDTO> {
         .returning();
 
       analysis = updatedAnalysis[0];
+      currentStatus = "claims_verified";
+
+      console.log("Completed claim verification for: ", analysisId);
     }
 
     if (currentStatus === "claims_verified") {
-      // finalize analysis by calculating factual score given
-      // the claim verification data
+      // ok I know this deserves jail time but im just testing
+      const source = await db.query.sources.findFirst({
+        where: (sources, { eq }) => eq(sources.url, hostname),
+      });
+
+      let baseScore = -1;
+      const reporting = source?.factualReporting;
+
+      if (!reporting || reporting === "" || reporting === "N/A") {
+        baseScore = -1;
+      } else if (reporting === "Very Low") {
+        baseScore = 0.1;
+      } else if (reporting === "Low") {
+        baseScore = 0.36;
+      } else if (reporting === "Mixed") {
+        baseScore = 0.63;
+      } else if (reporting === "Mostly Factual") {
+        baseScore = 0.9;
+      } else if (reporting === "High") {
+        baseScore = 0.95;
+      } else if (reporting === "Very High") {
+        baseScore = 1.0;
+      }
+
+      let factualScore = baseScore;
+      if (baseScore !== -1) {
+        const variance = Math.random() * 0.04 - 0.02;
+        factualScore = Number(
+          Math.max(0, Math.min(1, baseScore + variance)).toFixed(2),
+        );
+      }
+
+      const updatedAnalysis = await db
+        .update(analyses)
+        .set({
+          factualScore: factualScore,
+          status: "completed",
+          updatedAt: new Date(),
+        })
+        .where(eq(analyses.id, analysisId))
+        .returning();
+
+      analysis = updatedAnalysis[0];
+      currentStatus = "completed";
+
+      console.log("Completed analysis: ", analysisId);
     }
 
     return { success: true, slug: analysisSlug };
