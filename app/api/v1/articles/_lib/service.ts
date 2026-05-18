@@ -11,6 +11,8 @@ import { eq } from "drizzle-orm";
 import type { MetaDTO } from "./dtos/meta";
 import type { ClaimExtractionDTO } from "./dtos/claim-extraction";
 import { search } from "./utils/ai/exa/exa";
+import { ClaimVerificationDTO } from "./dtos/claim-verification";
+import { Claim } from "./types/claim";
 
 export async function analyzeArticle(url: string): Promise<AnalysisResultDTO> {
   try {
@@ -180,10 +182,15 @@ export async function analyzeArticle(url: string): Promise<AnalysisResultDTO> {
       const parsedExtractionData =
         extractionResponse.data as ClaimExtractionDTO;
 
+      const parsedClaimArr = parsedExtractionData.claims.map((claim) => ({
+        content: claim,
+        verification: null,
+      }));
+
       const updatedAnalysis = await db
         .update(analyses)
         .set({
-          claims: parsedExtractionData.claims,
+          claims: parsedClaimArr,
           status: "claims_extracted",
           updatedAt: new Date(),
         })
@@ -200,6 +207,25 @@ export async function analyzeArticle(url: string): Promise<AnalysisResultDTO> {
     if (currentStatus === "claims_extracted") {
       // continue with claim verification
       // goal: verify claims from the last step and provide status?
+
+      const claims = analysis.claims as Claim[];
+
+      for (const claim of claims) {
+        const searchResult = await search(claim.content);
+        claim.verification = searchResult as unknown as ClaimVerificationDTO;
+      }
+
+      const updatedAnalysis = await db
+        .update(analyses)
+        .set({
+          claims: claims,
+          status: "claims_verified",
+          updatedAt: new Date(),
+        })
+        .where(eq(analyses.id, analysisId))
+        .returning();
+
+      analysis = updatedAnalysis[0];
     }
 
     if (currentStatus === "claims_verified") {

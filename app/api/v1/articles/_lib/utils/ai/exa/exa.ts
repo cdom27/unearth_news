@@ -6,11 +6,14 @@ export async function search(query: string) {
   const result = await exa.search(query, {
     numResults: 10,
     outputSchema: {
-      type: "object",
+      type: "text",
     },
     systemPrompt:
       "You are a rigorous, non-partisan fact-checker. Analyze the following claim with strict neutrality — do not favor any political party, ideology, or agenda.",
     type: "deep-lite",
+    contents: {
+      highlights: true,
+    },
   });
 
   return result;
