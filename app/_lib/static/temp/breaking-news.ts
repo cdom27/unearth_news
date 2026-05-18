@@ -1,6 +1,6 @@
-import { NewsAPIArticle } from "../../types/news-api";
+import { NewsAPIArticleDTO } from "../../types/news-api";
 
-export const breakingNews: NewsAPIArticle[] = [
+export const breakingNews: NewsAPIArticleDTO[] = [
   {
     source: {
       id: "bbc-news",

@@ -1,0 +1,37 @@
+import { normalizeURL } from "@/app/_lib/normalize-url";
+import { apiResponse } from "@/app/api/_lib/build-response";
+import { analyzeArticle } from "./_lib/service";
+
+export async function POST(request: Request) {
+  try {
+    const body = (await request.json()) as { url: string };
+    const url = body.url;
+
+    if (!url) {
+      return apiResponse({ message: "error", data: null }, 400);
+    }
+
+    const normalizedURL = normalizeURL(url);
+
+    if (!normalizedURL) {
+      return apiResponse(
+        { message: "Unable to process source", data: null },
+        500,
+      );
+    }
+
+    const analysisResult = await analyzeArticle(normalizedURL);
+
+    if (!analysisResult.success) {
+      return apiResponse({ message: analysisResult.error, data: null }, 400);
+    }
+
+    return apiResponse({
+      message: "Analysis Complete!",
+      data: { slug: analysisResult.slug },
+    });
+  } catch (error) {
+    console.error("error while processing article: ", error);
+    return apiResponse({ message: "Unexpected Error", data: null }, 500);
+  }
+}

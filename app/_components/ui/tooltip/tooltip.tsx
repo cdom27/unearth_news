@@ -4,13 +4,14 @@ import React, { ReactNode, useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 
 const tooltipVariants: Record<string, string> = {
-  default: "text-clay-900 bg-brand-500 font-semibold",
+  default: "text-clay-900 bg-brand-500",
   secondary: "bg-clay-600 text-clay-50",
 };
 
 interface TooltipProps {
   variant?: keyof typeof tooltipVariants;
   content: ReactNode;
+  icon?: ReactNode;
   children: ReactNode;
   className?: string;
 }
@@ -18,6 +19,7 @@ interface TooltipProps {
 export default function Tooltip({
   variant = "default",
   content,
+  icon,
   children,
   className = "",
 }: TooltipProps) {
@@ -58,14 +60,17 @@ export default function Tooltip({
         isVisible &&
         createPortal(
           <div
-            className={`fixed pointer-events-none z-50 rounded-full py-1.5 px-3.5 shadow-md transition-all duration-250 ease-out ${variantClasses} ${className}`.trim()}
+            className={`fixed pointer-events-none z-50 rounded-full py-2 px-6 shadow-xs animate-in fade-in flex items-center gap-2 ${variantClasses} ${className}`.trim()}
             style={{
               top: position.y - 5,
               left: position.x + 5,
               transform: "translate(0, -100%)",
             }}
           >
-            {content}
+            {icon && (
+              <span className="flex items-center justify-center">{icon}</span>
+            )}
+            <span className="font-mediumt">{content}</span>
           </div>,
           document.body,
         )}
