@@ -1,6 +1,7 @@
 "use client";
 
-import { breakingNews } from "@/app/_lib/static/temp/breaking-news";
+import useNewsAPI from "@/app/_hooks/use-news-api";
+// import { breakingNews } from "@/app/_lib/static/temp/breaking-news";
 import { useEffect, useState, useRef, useCallback } from "react";
 import CircleNotchIcon from "../../icons/circle-notch";
 import BreakingNewsCard from "../article-cards/breaking-news-card";
@@ -9,6 +10,8 @@ import mapNewsApiToArticle from "@/app/_lib/utils/map-news-api-to-article";
 import type { Article } from "@/app/_lib/types/article";
 
 export default function BreakingNewsGallery() {
+  const { isFetching, newsResult, message, fetchNews } = useNewsAPI();
+
   const [breakingNewsArticles, setBreakingNewsArticles] = useState<Article[]>(
     [],
   );
@@ -18,45 +21,46 @@ export default function BreakingNewsGallery() {
 
   const observer = useRef<IntersectionObserver | null>(null);
 
-  // temp static-data fetching with debounce within 200ms - 1000ms
+  // Fetch news data on component mount
   useEffect(() => {
-    async function getArticles(pageNumber: number) {
-      const newArticles = breakingNews.slice(
-        pageNumber * pageSize,
-        (pageNumber + 1) * pageSize,
-      );
+    fetchNews();
+  }, [fetchNews]);
 
-      const validArticles = newArticles
-        .map(mapNewsApiToArticle)
-        .filter((article): article is Article => article !== null);
+  // Process fetched news data into paginated articles
+  useEffect(() => {
+    if (!newsResult || !newsResult.articles) return;
 
-      if (validArticles.length === 0) {
-        setHasMore(false);
-        return;
-      }
+    const newArticles = newsResult.articles.slice(
+      page * pageSize,
+      (page + 1) * pageSize,
+    );
 
-      if (validArticles.length < pageSize) {
-        setHasMore(false);
-      }
+    const validArticles = newArticles
+      .map(mapNewsApiToArticle)
+      .filter((article): article is Article => article !== null);
 
-      setTimeout(
-        () => {
-          setBreakingNewsArticles((prev) => {
-            const existingUrls = new Set(prev.map((a) => a.articleURL));
-            const filteredNewArticles = validArticles.filter(
-              (a) => !existingUrls.has(a.articleURL),
-            );
-            return [...prev, ...filteredNewArticles];
-          });
-        },
-        Math.floor(Math.random() * (1000 - 200 + 1)) + 200,
-      );
+    if (validArticles.length === 0 && page > 0) {
+      setHasMore(false);
+      return;
     }
 
-    if (hasMore) {
-      getArticles(page);
+    if (validArticles.length < pageSize) {
+      setHasMore(false);
     }
-  }, [page, hasMore]);
+
+    setTimeout(
+      () => {
+        setBreakingNewsArticles((prev) => {
+          const existingUrls = new Set(prev.map((a) => a.articleURL));
+          const filteredNewArticles = validArticles.filter(
+            (a) => !existingUrls.has(a.articleURL),
+          );
+          return [...prev, ...filteredNewArticles];
+        });
+      },
+      Math.floor(Math.random() * (1000 - 200 + 1)) + 200,
+    );
+  }, [page, newsResult]);
 
   const lastArticleRef = useCallback(
     (node: HTMLDivElement | null) => {
@@ -101,8 +105,8 @@ export default function BreakingNewsGallery() {
       <div className="grid grid-cols-1 col-span-3 gap-1.5">
         {hasMore && <CircleNotchIcon className="size-6 animate-spin mx-auto" />}
         <p ref={lastArticleRef} className="text-center">
-          Showing {breakingNewsArticles.length} of {breakingNews.length}{" "}
-          articles
+          Showing {breakingNewsArticles.length} of{" "}
+          {newsResult?.articles?.length || 0} articles
         </p>
       </div>
     </article>

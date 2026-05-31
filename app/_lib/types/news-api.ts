@@ -1,4 +1,4 @@
-export type NewsAPIResponse = {
+export type NewsAPIResponseDTO = {
   status: string;
   totalResults: number;
   articles: NewsAPIArticleDTO[];
