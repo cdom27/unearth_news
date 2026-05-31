@@ -11,9 +11,6 @@ export async function search(query: string) {
     systemPrompt:
       "You are a rigorous, non-partisan fact-checker. Analyze the following claim with strict neutrality — do not favor any political party, ideology, or agenda.",
     type: "deep-lite",
-    contents: {
-      highlights: true,
-    },
   });
 
   return result;
