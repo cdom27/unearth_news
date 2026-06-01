@@ -12,3 +12,5 @@ The MVP rewrite moves to Next.js primarily to reduce overhead as managing two se
 - [ ] update footer m/p to match page section spacing
 - [ ] horizontally center nav links on page (NO justify-between! this makes them a little offset in the desktop nav)
 - [ ] Update score calc
+- [ ] Detect videos and reject analysis (in url, metadata)
+- [ ] Websockets to show progress & display results as they come

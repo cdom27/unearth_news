@@ -183,7 +183,7 @@ export async function analyzeArticle(url: string): Promise<AnalysisResultDTO> {
         extractionResponse.data as ClaimExtractionDTO;
 
       const parsedClaimArr = parsedExtractionData.claims.map((claim) => ({
-        content: `${claim}`,
+        content: claim,
         verification: null,
       }));
 
