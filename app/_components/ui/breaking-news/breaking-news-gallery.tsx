@@ -1,7 +1,6 @@
 "use client";
 
 import useNewsAPI from "@/app/_hooks/use-news-api";
-// import { breakingNews } from "@/app/_lib/static/temp/breaking-news";
 import { useEffect, useState, useRef, useCallback } from "react";
 import CircleNotchIcon from "../../icons/circle-notch";
 import BreakingNewsCard from "../article-cards/breaking-news-card";
@@ -10,7 +9,7 @@ import mapNewsApiToArticle from "@/app/_lib/utils/map-news-api-to-article";
 import type { Article } from "@/app/_lib/types/article";
 
 export default function BreakingNewsGallery() {
-  const { isFetching, newsResult, message, fetchNews } = useNewsAPI();
+  const { isFetching, newsResult, fetchNews } = useNewsAPI();
 
   const [breakingNewsArticles, setBreakingNewsArticles] = useState<Article[]>(
     [],
@@ -39,17 +38,16 @@ export default function BreakingNewsGallery() {
       .map(mapNewsApiToArticle)
       .filter((article): article is Article => article !== null);
 
-    if (validArticles.length === 0 && page > 0) {
-      setHasMore(false);
-      return;
-    }
+    const isDone =
+      (validArticles.length === 0 && page > 0) ||
+      validArticles.length < pageSize;
 
-    if (validArticles.length < pageSize) {
-      setHasMore(false);
-    }
+    if (validArticles.length === 0 && page > 0) return;
 
     setTimeout(
       () => {
+        if (isDone) setHasMore(false);
+
         setBreakingNewsArticles((prev) => {
           const existingUrls = new Set(prev.map((a) => a.articleURL));
           const filteredNewArticles = validArticles.filter(
@@ -105,8 +103,10 @@ export default function BreakingNewsGallery() {
       <div className="grid grid-cols-1 col-span-3 gap-1.5">
         {hasMore && <CircleNotchIcon className="size-6 animate-spin mx-auto" />}
         <p ref={lastArticleRef} className="text-center">
-          Showing {breakingNewsArticles.length} of{" "}
-          {newsResult?.articles?.length || 0} articles
+          {isFetching
+            ? "Fetching articles"
+            : `Showing ${breakingNewsArticles.length} of
+          ${newsResult?.articles?.length || 0} articles`}
         </p>
       </div>
     </article>
