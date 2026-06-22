@@ -25,7 +25,7 @@ export default function useNewsAPI() {
         setNewsResult(result.data);
       }
     } catch {
-      setMessage("An unexpected error has occured.");
+      setMessage("An unexpected error has occurred.");
       setNewsResult(null);
     } finally {
       setIsFetching(false);
