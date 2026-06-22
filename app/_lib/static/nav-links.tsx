@@ -4,8 +4,8 @@ export const navLinks = [
     label: "Analyze",
   },
   {
-    href: "/stories",
-    label: "Stories",
+    href: "/discover",
+    label: "Discover",
   },
   {
     href: "/media-ratings",

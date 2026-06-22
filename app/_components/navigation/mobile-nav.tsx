@@ -12,7 +12,7 @@ const iconMap: Record<
   React.ComponentType<{ className?: string; filled?: boolean }>
 > = {
   Analyze: MagicWandIcon,
-  Stories: GridIcon,
+  Discover: GridIcon,
   Ratings: BarChartIcon,
 };
 
