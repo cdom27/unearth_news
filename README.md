@@ -15,3 +15,4 @@ The MVP rewrite moves to Next.js primarily to reduce overhead as managing two se
 - [ ] Detect videos and reject analysis (in url, metadata)
 - [ ] Websockets to show progress & display results as they come
 - [ ] Remove articles from breaking news gallery if unprocessable (currently only disabling)
+- [ ] Component loading skeletons
