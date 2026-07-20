@@ -1,11 +1,8 @@
-import { NewsAPIResponseDTO } from "@/app/_lib/types/news-api";
-
-type NewsFetchResultDTO =
-  | {
-      success: true;
-      data: NewsAPIResponseDTO;
-    }
-  | { success: false; error: string };
+import type { BreakingNews } from "@/app/_lib/types/breaking-news";
+import type {
+  NewsFetchResultDTO,
+  NewsAPIResponseDTO,
+} from "@/app/api/v1/breaking-news/_lib/dtos/news-api";
 
 export async function fetchBreakingNews(
   pageSize: number = 100,
@@ -34,7 +31,6 @@ export async function fetchBreakingNews(
       };
     }
 
-    // If we need more results and there are more available, fetch additional pages
     if (pageSize > 100 && result.totalResults > 100) {
       const totalPages = Math.ceil(result.totalResults / 100);
       const pagesToFetch = Math.min(Math.ceil(pageSize / 100), totalPages);
@@ -61,7 +57,6 @@ export async function fetchBreakingNews(
           }
         } catch (error) {
           console.error(`Error fetching page ${page} of breaking news:`, error);
-          // Continue with what we have
           break;
         }
       }
@@ -69,7 +64,30 @@ export async function fetchBreakingNews(
       result.articles.push(...additionalArticles);
     }
 
-    return { success: true, data: result };
+    const structuredArticles: BreakingNews[] = result.articles
+      .filter((a) => a.title && a.url)
+      .map((article) => ({
+        source: {
+          name: article.source.name ?? "Unnamed Source",
+          bias: null,
+        },
+        article: {
+          title: article.title!,
+          thumbnailUrl: article.urlToImage ?? null,
+          publishedAt: article.publishedAt ?? null,
+          excerpt: article.description ?? null,
+          byline: article.author ?? null,
+          url: article.url!,
+        },
+      }));
+
+    return {
+      success: true,
+      data: {
+        articles: structuredArticles,
+        totalResults: result.totalResults,
+      },
+    };
   } catch (error) {
     console.error("Unexpected error while fetching breaking news: ", error);
 

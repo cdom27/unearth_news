@@ -1,3 +1,12 @@
+import type { BreakingNewsResult } from "@/app/_lib/types/breaking-news";
+
+export type NewsFetchResultDTO =
+  | {
+      success: true;
+      data: BreakingNewsResult;
+    }
+  | { success: false; error: string };
+
 export type NewsAPIResponseDTO = {
   status: string;
   totalResults: number;

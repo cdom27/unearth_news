@@ -5,15 +5,14 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import CircleNotchIcon from "../../icons/circle-notch";
 import BreakingNewsCard from "../article-cards/breaking-news-card";
 import ArticleBadge from "../article-cards/article-badge";
-import mapNewsApiToArticle from "@/app/_lib/utils/map-news-api-to-article";
-import type { Article } from "@/app/_lib/types/article";
+import type { BreakingNews } from "@/app/_lib/types/breaking-news";
 
 export default function BreakingNewsGallery() {
   const { isFetching, newsResult, fetchNews } = useNewsAPI();
 
-  const [breakingNewsArticles, setBreakingNewsArticles] = useState<Article[]>(
-    [],
-  );
+  const [breakingNewsArticles, setBreakingNewsArticles] = useState<
+    BreakingNews[]
+  >([]);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const pageSize = 9;
@@ -34,24 +33,19 @@ export default function BreakingNewsGallery() {
       (page + 1) * pageSize,
     );
 
-    const validArticles = newArticles
-      .map(mapNewsApiToArticle)
-      .filter((article): article is Article => article !== null);
-
     const isDone =
-      (validArticles.length === 0 && page > 0) ||
-      validArticles.length < pageSize;
+      (newArticles.length === 0 && page > 0) || newArticles.length < pageSize;
 
-    if (validArticles.length === 0 && page > 0) return;
+    if (newArticles.length === 0 && page > 0) return;
 
     setTimeout(
       () => {
         if (isDone) setHasMore(false);
 
         setBreakingNewsArticles((prev) => {
-          const existingUrls = new Set(prev.map((a) => a.articleURL));
-          const filteredNewArticles = validArticles.filter(
-            (a) => !existingUrls.has(a.articleURL),
+          const existingUrls = new Set(prev.map((bn) => bn.article.url));
+          const filteredNewArticles = newArticles.filter(
+            (bn) => !existingUrls.has(bn.article.url || ""),
           );
           return [...prev, ...filteredNewArticles];
         });
@@ -84,17 +78,16 @@ export default function BreakingNewsGallery() {
   return (
     <article className="flex flex-col gap-4">
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-12">
-        {breakingNewsArticles.map((article) => (
+        {breakingNewsArticles.map((news) => (
           <BreakingNewsCard
-            key={article.title.concat(", ", article.sourceName)}
-            title={article.title}
-            excerpt={article.excerpt}
-            sourceName={article.sourceName}
-            publishedTime={article.publishedTime}
-            thumbnailURL={article.thumbnailURL}
-            articleURL={article.articleURL}
+            key={news.article.title.concat(", ", news.source.name)}
+            article={news.article}
+            source={news.source}
             badge={
-              <ArticleBadge variant="time" timeStamp={article.publishedTime} />
+              <ArticleBadge
+                variant="time"
+                timeStamp={news.article.publishedAt || ""}
+              />
             }
           />
         ))}
