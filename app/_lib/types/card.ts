@@ -8,6 +8,7 @@ export type CardArticle = {
   thumbnailUrl?: string | null;
   publishedAt?: string | null;
   excerpt?: string | null;
+  url: string;
 };
 
 export type BaseCard = {
