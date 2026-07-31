@@ -1,3 +1,5 @@
+import Search from "../_components/ui/forms/search";
+
 export default function Discover() {
   return (
     <>
@@ -12,18 +14,29 @@ export default function Discover() {
           </p>
         </div>
 
-        <div>Search + Filters Bar</div>
-
-        <article className="mx-4 mt-4 sm:mt-6 sm:mx-12 md:mt-10 xl:mt-16 2xl:mt-22 pt-4 sm:pt-6 lg:mx-18 xl:mx-24 2xl:mx-auto 2xl:max-w-325 flex flex-col gap-12">
-          <div className="flex justify-between items-center">
-            <h2 className="sr-only">Article Gallery</h2>
-            <p className="sr-only">
-              Read through stories covering current events
-            </p>
-          </div>
-
-        </article>
+        <Search/>
       </section>
+
+      <article className="mx-4 mt-4 sm:mt-6 sm:mx-12 md:mt-10 xl:mt-16 2xl:mt-22 pt-4 sm:pt-6 lg:mx-18 xl:mx-24 2xl:mx-auto 2xl:max-w-325 flex flex-col gap-12">
+        <span>results:</span>
+        <ul>
+          <li>test 1</li>
+          <li>test 2</li>
+          <li>test 3</li>
+          <li>test 1</li>
+          <li>test 2</li>
+          <li>test 3</li>
+          <li>test 1</li>
+          <li>test 2</li>
+          <li>test 3</li>
+          <li>test 1</li>
+          <li>test 2</li>
+          <li>test 3</li>
+          <li>test 1</li>
+          <li>test 2</li>
+          <li>test 3</li>
+        </ul>
+      </article>
     </>
   );
 }
