@@ -24,7 +24,7 @@ export const sources = pgTable("sources", {
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
-  slug: text("slug"),
+  slug: text("slug").notNull(),
   bias: varchar("bias", { length: 50 }).notNull().default("center"),
   factualReporting: varchar("factual_reporting", { length: 50 }),
   country: varchar("country", { length: 100 }),

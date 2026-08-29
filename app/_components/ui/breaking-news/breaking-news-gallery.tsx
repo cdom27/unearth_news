@@ -19,12 +19,10 @@ export default function BreakingNewsGallery() {
 
   const observer = useRef<IntersectionObserver | null>(null);
 
-  // Fetch news data on component mount
   useEffect(() => {
     fetchNews();
   }, [fetchNews]);
 
-  // Process fetched news data into paginated articles
   useEffect(() => {
     if (!newsResult || !newsResult.articles) return;
 
@@ -95,12 +93,14 @@ export default function BreakingNewsGallery() {
 
       <div className="grid grid-cols-1 col-span-3 gap-1.5">
         {hasMore && <CircleNotchIcon className="size-6 animate-spin mx-auto" />}
-        <p ref={lastArticleRef} className="text-center">
-          {isFetching
-            ? "Fetching articles"
-            : `Showing ${breakingNewsArticles.length} of
-          ${newsResult?.articles?.length || 0} articles`}
-        </p>
+        <div ref={lastArticleRef}>
+          <p className="text-center">
+            {isFetching
+              ? "Fetching articles"
+              : `Showing ${breakingNewsArticles.length} of
+            ${newsResult?.articles?.length || 0} articles`}
+          </p>
+        </div>
       </div>
     </article>
   );
