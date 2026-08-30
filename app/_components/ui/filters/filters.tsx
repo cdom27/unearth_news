@@ -1,12 +1,25 @@
 "use client";
 
 import { useState } from "react";
+import type { Params } from "@/app/_lib/types/preview-params";
+import { useDiscover } from "@/app/discover/_components/discover-provider";
 import FiltersIcon from "../../icons/filters";
 import Button from "../button/button";
 import SideMenu from "../side-menu/side-menu";
 
 export default function Filters() {
+  const { sorting, saveFilters } = useDiscover();
   const [isOpen, setIsOpen] = useState(false);
+  const [draftSorting, setDraftSorting] = useState(sorting);
+
+  function applyFilters() {
+    saveFilters(draftSorting);
+    setIsOpen(false);
+  }
+
+  function clearFilters() {
+    setDraftSorting("newest");
+  }
 
   return (
     <div className="w-full md:w-auto">
@@ -19,6 +32,10 @@ export default function Filters() {
           <select
             name="sorting"
             id="sorting"
+            value={draftSorting}
+            onChange={(event) =>
+              setDraftSorting(event.target.value as Params["sorting"])
+            }
             className="min-h-11 bg-clay-600 border-r-[1.25rem] border-clay-600 rounded-md hover:cursor-pointer py-2 px-6 transition-colors duration-250 "
           >
             <option value="newest">Newest</option>
@@ -32,11 +49,11 @@ export default function Filters() {
         </div>
 
         <div className="sticky bottom-0 flex flex-col gap-3">
-          <Button type="button" variant="secondary">
+          <Button type="button" variant="secondary" onClick={clearFilters}>
             <span>Clear Filters</span>
           </Button>
 
-          <Button type="button" variant="brand">
+          <Button type="button" variant="brand" onClick={applyFilters}>
             <span>Apply Changes</span>
           </Button>
         </div>

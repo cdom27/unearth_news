@@ -1,10 +1,14 @@
 import { useCallback, useRef, useState } from "react";
 import type { Preview, PreviewsResult } from "../_lib/types/analyses-previews";
 import type { ApiResponse } from "../api/_lib/build-response";
+import type { Params } from "../_lib/types/preview-params";
 
 const DEFAULT_PAGE_SIZE = 9;
 
-export default function useAnalyses(pageSize = DEFAULT_PAGE_SIZE) {
+export default function useAnalyses(
+  pageSize = DEFAULT_PAGE_SIZE,
+  sorting: Params["sorting"] = "newest",
+) {
   const [isFetching, setIsFetching] = useState(false);
   const [previewsResult, setPreviewsResult] = useState<PreviewsResult>({
     previews: [],
@@ -26,6 +30,7 @@ export default function useAnalyses(pageSize = DEFAULT_PAGE_SIZE) {
       const params = new URLSearchParams({
         page: String(nextPage.current),
         pageSize: String(pageSize),
+        sort: sorting,
       });
       const response = await fetch(`/api/v1/analyses/previews?${params}`);
 
@@ -60,7 +65,7 @@ export default function useAnalyses(pageSize = DEFAULT_PAGE_SIZE) {
       isRequestInFlight.current = false;
       setIsFetching(false);
     }
-  }, [hasMore, pageSize]);
+  }, [hasMore, pageSize, sorting]);
 
   return {
     fetchAnalysisPreviews,

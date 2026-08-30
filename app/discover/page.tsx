@@ -1,10 +1,29 @@
 import AnalysesGallery from "../_components/ui/analyses/analyses-gallery";
 import Filters from "../_components/ui/filters/filters";
 import Search from "../_components/ui/forms/search";
+import type { Params } from "../_lib/types/preview-params";
+import { DiscoverProvider } from "./_components/discover-provider";
 
-export default function Discover() {
+const VALID_SORTS: Params["sorting"][] = [
+  "newest",
+  "oldest",
+  "factualScore",
+];
+
+function resolveSorting(value: string | string[] | undefined): Params["sorting"] {
+  return typeof value === "string" && VALID_SORTS.includes(value as Params["sorting"])
+    ? (value as Params["sorting"])
+    : "newest";
+}
+
+export default async function Discover({
+  searchParams,
+}: PageProps<"/discover">) {
+  const { sort } = await searchParams;
+  const initialSorting = resolveSorting(sort);
+
   return (
-    <>
+    <DiscoverProvider key={initialSorting} initialSorting={initialSorting}>
       <section className="m-4 sm:my-6 sm:mx-12 md:my-10 xl:my-16 2xl:my-22 pb-8 sm:pb-12 md:pb-16 xl:pb-22 2xl:pb-28 lg:mx-18 xl:mx-24 2xl:mx-auto 2xl:max-w-325 flex flex-col gap-12 border-b border-clay-200">
         <div className="flex flex-col gap-6">
           <h1 className="text-6xl lg:text-7xl font-serif">Discover</h1>
@@ -15,13 +34,14 @@ export default function Discover() {
         </div>
 
         <div className="flex flex-col md:flex-row gap-6 justify-between items-center">
-          <Search /> <Filters />
+          <Search />
+          <Filters />
         </div>
       </section>
 
       <article className="mx-4 mt-4 sm:mt-6 sm:mx-12 md:mt-10 xl:mt-16 2xl:mt-22 pt-4 sm:pt-6 lg:mx-18 xl:mx-24 2xl:mx-auto 2xl:max-w-325 flex flex-col gap-12">
         <AnalysesGallery />
       </article>
-    </>
+    </DiscoverProvider>
   );
 }

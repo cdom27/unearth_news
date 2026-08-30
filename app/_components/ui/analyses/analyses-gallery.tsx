@@ -1,12 +1,29 @@
 "use client";
 
 import useAnalyses from "@/app/_hooks/use-analyses";
+import type { Params } from "@/app/_lib/types/preview-params";
+import { useDiscover } from "@/app/discover/_components/discover-provider";
 import { useCallback, useEffect, useRef } from "react";
 import CircleNotchIcon from "../../icons/circle-notch";
 
+type AnalysesGalleryResultsProps = {
+  sorting: Params["sorting"];
+};
+
 export default function AnalysesGallery() {
+  const { sorting, resultsVersion } = useDiscover();
+
+  return (
+    <AnalysesGalleryResults
+      key={`${sorting}-${resultsVersion}`}
+      sorting={sorting}
+    />
+  );
+}
+
+function AnalysesGalleryResults({ sorting }: AnalysesGalleryResultsProps) {
   const { isFetching, previewsResult, hasMore, fetchAnalysisPreviews } =
-    useAnalyses(9);
+    useAnalyses(9, sorting);
 
   const observer = useRef<IntersectionObserver | null>(null);
 
