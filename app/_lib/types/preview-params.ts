@@ -6,7 +6,9 @@ export type Params = {
   filters?: {
     // analysis table
     minFactualScore?: number;
+    maxFactualScore?: number;
     minBiasScore?: number;
+    maxBiasScore?: number;
     sentiments?: string[];
     // article table
     minPublishedAt?: string;

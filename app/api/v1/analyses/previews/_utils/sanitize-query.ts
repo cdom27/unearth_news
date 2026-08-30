@@ -45,8 +45,10 @@ function validateSentiments(value: string | null): string[] | undefined {
 function resolveScore(value: string | null): number | undefined {
   if (!value) return undefined;
   const parsed = Number(value);
-  if (!Number.isFinite(parsed)) return undefined;
-  return Math.min(Math.max(parsed, SCORE_MIN), SCORE_MAX);
+  if (!Number.isFinite(parsed) || parsed < SCORE_MIN || parsed > SCORE_MAX) {
+    return undefined;
+  }
+  return parsed;
 }
 
 function isValidDateString(value: string): boolean {
@@ -73,6 +75,10 @@ export function sanitizePreviewsQuery(searchParams: URLSearchParams): Params {
     searchParams.get("minPublishedAt"),
     searchParams.get("maxPublishedAt"),
   );
+  const minFactualScore = resolveScore(searchParams.get("minFactualScore"));
+  const maxFactualScore = resolveScore(searchParams.get("maxFactualScore"));
+  const minBiasScore = resolveScore(searchParams.get("minBiasScore"));
+  const maxBiasScore = resolveScore(searchParams.get("maxBiasScore"));
 
   return {
     pagination: {
@@ -85,8 +91,22 @@ export function sanitizePreviewsQuery(searchParams: URLSearchParams): Params {
     },
     sorting: validateSort(searchParams.get("sort")),
     filters: {
-      minFactualScore: resolveScore(searchParams.get("minFactualScore")),
-      minBiasScore: resolveScore(searchParams.get("minBiasScore")),
+      minFactualScore:
+        minFactualScore !== undefined && maxFactualScore !== undefined && minFactualScore > maxFactualScore
+          ? undefined
+          : minFactualScore,
+      maxFactualScore:
+        minFactualScore !== undefined && maxFactualScore !== undefined && minFactualScore > maxFactualScore
+          ? undefined
+          : maxFactualScore,
+      minBiasScore:
+        minBiasScore !== undefined && maxBiasScore !== undefined && minBiasScore > maxBiasScore
+          ? undefined
+          : minBiasScore,
+      maxBiasScore:
+        minBiasScore !== undefined && maxBiasScore !== undefined && minBiasScore > maxBiasScore
+          ? undefined
+          : maxBiasScore,
       sentiments: validateSentiments(searchParams.get("sentiments")),
       minPublishedAt,
       maxPublishedAt,

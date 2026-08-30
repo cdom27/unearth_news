@@ -8,6 +8,7 @@ const DEFAULT_PAGE_SIZE = 9;
 export default function useAnalyses(
   pageSize = DEFAULT_PAGE_SIZE,
   sorting: Params["sorting"] = "newest",
+  filters: NonNullable<Params["filters"]> = {},
 ) {
   const [isFetching, setIsFetching] = useState(false);
   const [previewsResult, setPreviewsResult] = useState<PreviewsResult>({
@@ -31,6 +32,23 @@ export default function useAnalyses(
         page: String(nextPage.current),
         pageSize: String(pageSize),
         sort: sorting,
+      });
+      const scalarFilters = [
+        "minFactualScore",
+        "maxFactualScore",
+        "minBiasScore",
+        "maxBiasScore",
+        "minPublishedAt",
+        "maxPublishedAt",
+      ] as const;
+      scalarFilters.forEach((filter) => {
+        const value = filters[filter];
+        if (value !== undefined && value !== "") params.set(filter, String(value));
+      });
+      const arrayFilters = ["sources", "sentiments", "credibilities"] as const;
+      arrayFilters.forEach((filter) => {
+        const values = filters[filter];
+        if (values?.length) params.set(filter, values.join(","));
       });
       const response = await fetch(`/api/v1/analyses/previews?${params}`);
 
@@ -65,7 +83,7 @@ export default function useAnalyses(
       isRequestInFlight.current = false;
       setIsFetching(false);
     }
-  }, [hasMore, pageSize, sorting]);
+  }, [filters, hasMore, pageSize, sorting]);
 
   return {
     fetchAnalysisPreviews,

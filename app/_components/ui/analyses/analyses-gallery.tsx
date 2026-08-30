@@ -8,22 +8,24 @@ import CircleNotchIcon from "../../icons/circle-notch";
 
 type AnalysesGalleryResultsProps = {
   sorting: Params["sorting"];
+  filters: NonNullable<Params["filters"]>;
 };
 
 export default function AnalysesGallery() {
-  const { sorting, resultsVersion } = useDiscover();
+  const { sorting, filters, resultsVersion } = useDiscover();
 
   return (
     <AnalysesGalleryResults
-      key={`${sorting}-${resultsVersion}`}
+      key={`${sorting}-${JSON.stringify(filters)}-${resultsVersion}`}
       sorting={sorting}
+      filters={filters}
     />
   );
 }
 
-function AnalysesGalleryResults({ sorting }: AnalysesGalleryResultsProps) {
+function AnalysesGalleryResults({ sorting, filters }: AnalysesGalleryResultsProps) {
   const { isFetching, previewsResult, hasMore, fetchAnalysisPreviews } =
-    useAnalyses(9, sorting);
+    useAnalyses(9, sorting, filters);
 
   const observer = useRef<IntersectionObserver | null>(null);
 

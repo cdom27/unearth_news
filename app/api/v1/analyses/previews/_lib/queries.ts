@@ -21,8 +21,14 @@ function buildWhereClause(filters: Params["filters"]): SQL | undefined {
   if (filters.minFactualScore !== undefined) {
     conditions.push(gte(analyses.factualScore, filters.minFactualScore));
   }
+  if (filters.maxFactualScore !== undefined) {
+    conditions.push(lte(analyses.factualScore, filters.maxFactualScore));
+  }
   if (filters.minBiasScore !== undefined) {
     conditions.push(gte(analyses.biasScore, filters.minBiasScore));
+  }
+  if (filters.maxBiasScore !== undefined) {
+    conditions.push(lte(analyses.biasScore, filters.maxBiasScore));
   }
   if (filters.sentiments?.length) {
     conditions.push(inArray(analyses.sentiment, filters.sentiments));
@@ -34,7 +40,14 @@ function buildWhereClause(filters: Params["filters"]): SQL | undefined {
   }
   if (filters.maxPublishedAt) {
     conditions.push(
-      lte(articles.publishedTime, new Date(filters.maxPublishedAt)),
+      lte(
+        articles.publishedTime,
+        new Date(
+          /^\d{4}-\d{2}-\d{2}$/.test(filters.maxPublishedAt)
+            ? `${filters.maxPublishedAt}T23:59:59.999Z`
+            : filters.maxPublishedAt,
+        ),
+      ),
     );
   }
   if (filters.sources?.length) {
