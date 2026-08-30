@@ -40,7 +40,7 @@ export default function ArticleCardBase({
 
           {badge && (
             <>
-              <div className="bg-stone-50 rounded-full size-1.5" />
+              <div className="bg-clay-50 rounded-full size-1.5" />
 
               {badge}
             </>
