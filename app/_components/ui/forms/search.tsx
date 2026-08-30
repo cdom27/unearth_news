@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState} from "react";
+import { useRef, useState } from "react";
 import Button from "../button/button";
 import MagnifyingGlassIcon from "../../icons/magnifying-glass";
 import FiltersIcon from "../../icons/filters";
@@ -10,55 +10,69 @@ export default function Search() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   async function handleSubmit() {
-    console.log(`query: ${query}`)
+    console.log(`query: ${query}`);
   }
 
-  return <div className="flex justify-between items-center">
-
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        handleSubmit();
-      }}
-      className="flex flex-col gap-3 w-full lg:max-w-150"
-    >
-      <div
-        className="flex items-center gap-6 justify-between rounded-md p-1.5 bg-clay-150 border border-clay-200 focus-within:border-stone-800 transition-colors duration-250"
-        onClick={() => inputRef.current?.focus()}
+  return (
+    <div className="flex flex-col md:flex-row gap-6 justify-between items-center">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+        className="flex flex-col gap-3 w-full lg:max-w-150"
       >
-        <label htmlFor="query" className="sr-only">
-          Search by topic, outlet, claim, or keyword...
-        </label>
+        <div
+          className="flex items-center gap-6 justify-between rounded-md p-1.5 bg-clay-150 border border-clay-200 focus-within:border-stone-800 transition-colors duration-250"
+          onClick={() => inputRef.current?.focus()}
+        >
+          <label htmlFor="query" className="sr-only">
+            Search by topic, outlet, claim, or keyword...
+          </label>
 
-        <div className="flex items-center gap-3 pl-3 flex-1">
-          <MagnifyingGlassIcon className="size-6" />
+          <div className="flex items-center gap-3 pl-3 flex-1">
+            <MagnifyingGlassIcon className="size-6" />
 
-          <input
-            ref={inputRef}
-            id="query"
-            name="query"
-            type="text"
-            defaultValue={query}
-            required
-            placeholder="Search by topic, outlet, claim, or keyword..."
-            onChange={(e) => setQuery(e.target.value)}
-            className="w-full focus:outline-none"
-          />
+            <input
+              ref={inputRef}
+              id="query"
+              name="query"
+              type="text"
+              defaultValue={query}
+              required
+              placeholder="Search by topic, outlet, claim, or keyword..."
+              onChange={(e) => setQuery(e.target.value)}
+              className="w-full focus:outline-none"
+            />
+          </div>
+
+          <Button
+            type="submit"
+            disabled={query === ""}
+            className="hidden sm:block"
+          >
+            <span>Search Stories</span>
+          </Button>
         </div>
 
-        <Button type="submit" disabled={query === ""} className="hidden sm:block">
+        {/*<span className="text-red-500">{message}</span>*/}
+
+        <Button
+          type="submit"
+          disabled={query === ""}
+          className="sm:hidden w-full"
+        >
           <span>Search Stories</span>
         </Button>
-      </div>
+      </form>
 
-      {/*<span className="text-red-500">{message}</span>*/}
-
-      <Button type="submit" disabled={query === ""} className="sm:hidden w-full">
-        <span>Search Stories</span>
+      <Button
+        type="button"
+        variant="secondary"
+        className="flex items-center gap-2 w-full md:w-auto justify-center"
+      >
+        <FiltersIcon /> <span>Filters</span>
       </Button>
-    </form>
-
-    <Button type="button" variant="secondary" className="flex items-center gap-2"><FiltersIcon /> <span>Filters</span></Button>
-
-  </div>
+    </div>
+  );
 }
