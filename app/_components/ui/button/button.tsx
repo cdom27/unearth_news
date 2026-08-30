@@ -3,7 +3,9 @@ import { ButtonHTMLAttributes, forwardRef } from "react";
 const buttonVariants: Record<string, string> = {
   primary:
     "bg-clay-800 text-clay-50 hover:bg-brand-500 hover:text-clay-900 disabled:bg-clay-600 disabled:text-clay-50",
-  secondary: "bg-clay-100 border border-clay-200 hover:bg-clay-150"
+  secondary:
+    "bg-clay-100 border border-clay-200 hover:bg-clay-150 text-clay-900",
+  brand: "bg-brand-500 text-clay-900 hover:bg-brand-500/95",
 };
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -17,7 +19,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button
         ref={ref}
-        className={`rounded-md hover:cursor-pointer py-2 px-6 transition-colors duration-250 disabled:cursor-not-allowed ${variantClasses} ${className}`.trim()}
+        className={`min-h-11 rounded-md hover:cursor-pointer py-2 px-6 transition-colors duration-250 disabled:cursor-not-allowed ${variantClasses} ${className}`.trim()}
         {...props}
       >
         {children}
