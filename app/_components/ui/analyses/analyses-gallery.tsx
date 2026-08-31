@@ -5,6 +5,7 @@ import type { Params } from "@/app/_lib/types/preview-params";
 import { useDiscover } from "@/app/discover/_components/discover-provider";
 import { useCallback, useEffect, useRef } from "react";
 import CircleNotchIcon from "../../icons/circle-notch";
+import AnalysisPreviewCard from "../article-cards/analysis-preview-card";
 
 type AnalysesGalleryResultsProps = {
   sorting: Params["sorting"];
@@ -23,7 +24,10 @@ export default function AnalysesGallery() {
   );
 }
 
-function AnalysesGalleryResults({ sorting, filters }: AnalysesGalleryResultsProps) {
+function AnalysesGalleryResults({
+  sorting,
+  filters,
+}: AnalysesGalleryResultsProps) {
   const { isFetching, previewsResult, hasMore, fetchAnalysisPreviews } =
     useAnalyses(9, sorting, filters);
 
@@ -58,13 +62,7 @@ function AnalysesGalleryResults({ sorting, filters }: AnalysesGalleryResultsProp
     <article className="flex flex-col gap-4">
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-12">
         {previewsResult.previews.map((ap) => (
-          <a
-            key={ap.analysis.slug}
-            href={`/article/${ap.analysis.slug}`}
-            className="text-7xl text-purple-600 block"
-          >
-            {ap.article.title}
-          </a>
+          <AnalysisPreviewCard key={ap.analysis.slug} preview={ap} />
         ))}
       </div>
 
