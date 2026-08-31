@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-@theme {
+@theme static {
     --color-clay-50: #fffdf6;
     --color-clay-100: #f3f1ea;
     --color-clay-150: #ebe9e0;
