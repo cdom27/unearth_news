@@ -14,6 +14,12 @@ export default function ArticleCardBase({
   badge,
   footerExtension,
 }: ArticleCardBaseProps) {
+  if (article.excerpt) {
+    if (article.excerpt.length > 250) {
+      article.excerpt = article.excerpt.slice(0, 250) + "...";
+    }
+  }
+
   return (
     <article className="h-full flex flex-col gap-6">
       <div>
