@@ -7,6 +7,23 @@ interface ArticleBadgeProps {
   timeStamp?: string;
   bias?: string;
 }
+
+function getBiasColor(bias?: string) {
+  switch (bias) {
+    case "Lean Left":
+    case "Left":
+      return "bg-left-500";
+    case "Lean Right":
+    case "Right":
+      return "bg-right-500";
+    case "Mixed":
+    case "Center":
+      return "bg-clay-600";
+    default:
+      return "bg-clay-600";
+  }
+}
+
 export default function ArticleBadge({
   variant,
   timeStamp,
@@ -29,7 +46,7 @@ export default function ArticleBadge({
   } else if (variant === "bias") {
     return (
       <div
-        className="flex items-center gap-1.5 bg-left-500 py-1 px-4 rounded-full"
+        className={`flex items-center gap-1.5 ${getBiasColor(bias)} py-1 px-4 rounded-full`}
         title={`Source typically leans ${bias}`}
       >
         <span>{bias}</span>
