@@ -15,7 +15,7 @@ export default function ArticleCardBase({
   footerExtension,
 }: ArticleCardBaseProps) {
   return (
-    <article className="flex flex-col gap-6">
+    <article className="h-full flex flex-col gap-6">
       <div>
         {article.thumbnailUrl ? (
           <div className="overflow-clip rounded-t-sm">
@@ -54,7 +54,7 @@ export default function ArticleCardBase({
 
       <p className="text-lg text-left">{article.excerpt}</p>
 
-      {footerExtension && footerExtension}
+      {footerExtension}
     </article>
   );
 }
