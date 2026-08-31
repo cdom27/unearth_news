@@ -11,7 +11,6 @@ The MVP rewrite moves to Next.js primarily to reduce overhead as managing two se
 ### things i fudged earlier or didnt need at the time of building
 
 - [ ] update footer m/p to match page section spacing
-- [ ] horizontally center nav links on page (NO justify-between! this makes them a little offset in the desktop nav)
 - [ ] Update score calc
 - [ ] Detect videos (and non article/post) and reject analysis (for now). major issue with tiktok videos being submitted..
 - [ ] Websockets to stream analysis progress. two options: modal with timeline -> redirect once complete. or create analysis page before anything -> redirect user -> fill in data as is comes in.
