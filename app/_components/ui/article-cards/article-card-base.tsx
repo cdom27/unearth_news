@@ -14,9 +14,11 @@ export default function ArticleCardBase({
   badge,
   footerExtension,
 }: ArticleCardBaseProps) {
+  let truncatedExcerpt = article.excerpt;
+
   if (article.excerpt) {
     if (article.excerpt.length > 250) {
-      article.excerpt = article.excerpt.slice(0, 250) + "...";
+      truncatedExcerpt = article.excerpt.slice(0, 250) + "...";
     }
   }
 
@@ -58,7 +60,7 @@ export default function ArticleCardBase({
         {article.title}
       </h3>
 
-      <p className="text-lg text-left">{article.excerpt}</p>
+      <p className="text-lg text-left">{truncatedExcerpt}</p>
 
       {footerExtension}
     </article>
