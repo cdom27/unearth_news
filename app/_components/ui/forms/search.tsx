@@ -1,16 +1,31 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Button from "../button/button";
 import MagnifyingGlassIcon from "../../icons/magnifying-glass";
+import { useDiscover } from "@/app/discover/_components/discover-provider";
 
 export default function Search() {
-  const [query, setQuery] = useState("");
+  const { search, sorting, filters, saveFilters } = useDiscover();
+  const [query, setQuery] = useState(search);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  async function handleSubmit() {
-    console.log(`query: ${query}`);
+  function handleSubmit() {
+    const nextSearch = query.trim();
+    if (nextSearch === search) return;
+    saveFilters(sorting, filters, nextSearch);
   }
+
+  useEffect(() => {
+    const nextSearch = query.trim();
+    if (nextSearch === search) return;
+
+    const timeout = window.setTimeout(() => {
+      saveFilters(sorting, filters, nextSearch);
+    }, 700);
+
+    return () => window.clearTimeout(timeout);
+  }, [filters, query, saveFilters, search, sorting]);
 
   return (
     <form
@@ -36,8 +51,7 @@ export default function Search() {
             id="query"
             name="query"
             type="text"
-            defaultValue={query}
-            required
+            value={query}
             placeholder="Search story content..."
             onChange={(e) => setQuery(e.target.value)}
             className="w-full focus:outline-none"
@@ -46,7 +60,7 @@ export default function Search() {
 
         <Button
           type="submit"
-          disabled={query === ""}
+          disabled={!query.trim()}
           className="hidden sm:block"
         >
           <span>Search Stories</span>
@@ -57,7 +71,7 @@ export default function Search() {
 
       <Button
         type="submit"
-        disabled={query === ""}
+        disabled={!query.trim()}
         className="sm:hidden w-full"
       >
         <span>Search Stories</span>

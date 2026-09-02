@@ -7,7 +7,9 @@ import {
   jsonb,
   doublePrecision,
   pgEnum,
+  index,
 } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
 
 export const statusEnum = pgEnum("status", [
   "summarized",
@@ -32,26 +34,38 @@ export const sources = pgTable("sources", {
   credibility: varchar("credibility", { length: 50 }),
 });
 
-export const articles = pgTable("articles", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  sourceId: uuid("source_id")
-    .notNull()
-    .references(() => sources.id, { onDelete: "cascade" }),
-  url: text("url").notNull().unique(),
-  title: text("title").notNull(),
-  language: text("language").notNull(),
-  byline: text("byline").notNull(),
-  excerpt: text("excerpt").notNull(),
-  textContent: text("text_content").notNull(),
-  keywords: text("keywords"),
-  publishedTime: timestamp("published_time", { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-  thumbnailUrl: text("thumbnail_url"),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-});
+export const articles = pgTable(
+  "articles",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    sourceId: uuid("source_id")
+      .notNull()
+      .references(() => sources.id, { onDelete: "cascade" }),
+    url: text("url").notNull().unique(),
+    title: text("title").notNull(),
+    language: text("language").notNull(),
+    byline: text("byline").notNull(),
+    excerpt: text("excerpt").notNull(),
+    textContent: text("text_content").notNull(),
+    keywords: text("keywords"),
+    publishedTime: timestamp("published_time", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    thumbnailUrl: text("thumbnail_url"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index("articles_title_content_search_idx").using(
+      "gin",
+      sql`(
+        setweight(to_tsvector('english', ${table.title}), 'A') ||
+        setweight(to_tsvector('english', ${table.textContent}), 'B')
+      )`,
+    ),
+  ],
+);
 
 export const analyses = pgTable("analyses", {
   id: uuid("id").defaultRandom().primaryKey(),

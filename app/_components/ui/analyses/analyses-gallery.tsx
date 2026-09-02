@@ -10,16 +10,18 @@ import AnalysisPreviewCard from "../article-cards/analysis-preview-card";
 type AnalysesGalleryResultsProps = {
   sorting: Params["sorting"];
   filters: NonNullable<Params["filters"]>;
+  search: string;
 };
 
 export default function AnalysesGallery() {
-  const { sorting, filters, resultsVersion } = useDiscover();
+  const { search, sorting, filters, resultsVersion } = useDiscover();
 
   return (
     <AnalysesGalleryResults
       key={`${sorting}-${JSON.stringify(filters)}-${resultsVersion}`}
       sorting={sorting}
       filters={filters}
+      search={search}
     />
   );
 }
@@ -27,9 +29,10 @@ export default function AnalysesGallery() {
 function AnalysesGalleryResults({
   sorting,
   filters,
+  search,
 }: AnalysesGalleryResultsProps) {
   const { isFetching, previewsResult, hasMore, fetchAnalysisPreviews } =
-    useAnalyses(9, sorting, filters);
+    useAnalyses(9, sorting, filters, search);
 
   const observer = useRef<IntersectionObserver | null>(null);
 

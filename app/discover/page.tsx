@@ -48,6 +48,7 @@ export default async function Discover({
 }: PageProps<"/discover">) {
   const params = await searchParams;
   const { sort } = params;
+  const initialSearch = typeof params.q === "string" ? params.q : "";
   const initialSorting = resolveSorting(sort);
   const initialFilters = {
     minFactualScore: resolveNumber(params.minFactualScore),
@@ -63,7 +64,7 @@ export default async function Discover({
 
   return (
     <DiscoverProvider
-      key={`${initialSorting}-${JSON.stringify(initialFilters)}`}
+      initialSearch={initialSearch}
       initialSorting={initialSorting}
       initialFilters={initialFilters}
     >

@@ -12,12 +12,14 @@ import { usePathname, useRouter } from "next/navigation";
 import type { Params } from "@/app/_lib/types/preview-params";
 
 type DiscoverContextValue = {
+  search: string;
   sorting: Params["sorting"];
   filters: NonNullable<Params["filters"]>;
   resultsVersion: number;
   saveFilters: (
     sorting: Params["sorting"],
     filters: NonNullable<Params["filters"]>,
+    search: string,
   ) => void;
 };
 
@@ -25,30 +27,38 @@ const DiscoverContext = createContext<DiscoverContextValue | null>(null);
 
 type DiscoverProviderProps = {
   children: ReactNode;
+  initialSearch: string;
   initialSorting: Params["sorting"];
   initialFilters: NonNullable<Params["filters"]>;
 };
 
 export function DiscoverProvider({
   children,
+  initialSearch,
   initialSorting,
   initialFilters,
 }: DiscoverProviderProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [sorting, setSorting] = useState(initialSorting);
+  const [search, setSearch] = useState(initialSearch);
   const [filters, setFilters] = useState(initialFilters);
   const [resultsVersion, setResultsVersion] = useState(0);
 
   const saveFilters = useCallback((
     nextSorting: Params["sorting"],
     nextFilters: NonNullable<Params["filters"]>,
+    nextSearch: string,
   ) => {
     setSorting(nextSorting);
     setFilters(nextFilters);
+    setSearch(nextSearch);
     setResultsVersion((version) => version + 1);
 
     const searchParams = new URLSearchParams();
+    if (nextSearch) {
+      searchParams.set("q", nextSearch);
+    }
     if (nextSorting !== "newest") {
       searchParams.set("sort", nextSorting);
     }
@@ -81,8 +91,8 @@ export function DiscoverProvider({
   }, [pathname, router]);
 
   const value = useMemo(
-    () => ({ sorting, filters, resultsVersion, saveFilters }),
-    [filters, resultsVersion, saveFilters, sorting],
+    () => ({ search, sorting, filters, resultsVersion, saveFilters }),
+    [filters, resultsVersion, saveFilters, search, sorting],
   );
 
   return (

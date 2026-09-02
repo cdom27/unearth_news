@@ -9,6 +9,7 @@ export default function useAnalyses(
   pageSize = DEFAULT_PAGE_SIZE,
   sorting: Params["sorting"] = "newest",
   filters: NonNullable<Params["filters"]> = {},
+  search = "",
 ) {
   const [isFetching, setIsFetching] = useState(false);
   const [previewsResult, setPreviewsResult] = useState<PreviewsResult>({
@@ -33,6 +34,7 @@ export default function useAnalyses(
         pageSize: String(pageSize),
         sort: sorting,
       });
+      if (search) params.set("q", search);
       const scalarFilters = [
         "minFactualScore",
         "maxFactualScore",
@@ -83,7 +85,7 @@ export default function useAnalyses(
       isRequestInFlight.current = false;
       setIsFetching(false);
     }
-  }, [filters, hasMore, pageSize, sorting]);
+  }, [filters, hasMore, pageSize, search, sorting]);
 
   return {
     fetchAnalysisPreviews,

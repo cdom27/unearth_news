@@ -3,6 +3,7 @@ export type Params = {
     page: number;
     pageSize: number;
   };
+  search?: string;
   filters?: {
     // analysis table
     minFactualScore?: number;

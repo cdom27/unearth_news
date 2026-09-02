@@ -10,13 +10,26 @@ import {
   asc,
   desc,
   count,
+  sql,
   type SQL,
 } from "drizzle-orm";
 
-function buildWhereClause(filters: Params["filters"]): SQL | undefined {
-  if (!filters) return undefined;
-
+function buildWhereClause(
+  filters: Params["filters"],
+  search?: string,
+): SQL | undefined {
   const conditions: SQL[] = [];
+
+  if (search) {
+    conditions.push(
+      sql`(
+        setweight(to_tsvector('english', ${articles.title}), 'A') ||
+        setweight(to_tsvector('english', ${articles.textContent}), 'B')
+      ) @@ websearch_to_tsquery('english', ${search})`,
+    );
+  }
+
+  if (!filters) return conditions.length ? and(...conditions) : undefined;
 
   if (filters.minFactualScore !== undefined) {
     conditions.push(gte(analyses.factualScore, filters.minFactualScore));
@@ -82,11 +95,12 @@ function getOrderBy(sorting: Params["sorting"]) {
 
 export async function queryAnalysesPreviews({
   pagination: { page = 1, pageSize },
+  search,
   filters,
   sorting,
 }: Params) {
   const offset = (page - 1) * pageSize;
-  const whereClause = buildWhereClause(filters);
+  const whereClause = buildWhereClause(filters, search);
   const orderByClause = getOrderBy(sorting);
 
   const [rows, totalResultsQuery] = await Promise.all([

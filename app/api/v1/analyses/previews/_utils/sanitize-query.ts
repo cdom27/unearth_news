@@ -8,6 +8,7 @@ const VALID_SORTS: Params["sorting"][] = ["newest", "oldest", "factualScore"];
 const VALID_SENTIMENTS = ["negative", "mixed", "positive"];
 const SCORE_MIN = 0;
 const SCORE_MAX = 1;
+const MAX_SEARCH_LENGTH = 200;
 
 function resolveToNumber(
   value: string | null,
@@ -81,6 +82,8 @@ export function sanitizePreviewsQuery(searchParams: URLSearchParams): Params {
   const maxBiasScore = resolveScore(searchParams.get("maxBiasScore"));
 
   return {
+    search:
+      searchParams.get("q")?.trim().slice(0, MAX_SEARCH_LENGTH) || undefined,
     pagination: {
       page: resolveToNumber(searchParams.get("page"), DEFAULT_PAGE),
       pageSize: resolveToNumber(
@@ -92,11 +95,15 @@ export function sanitizePreviewsQuery(searchParams: URLSearchParams): Params {
     sorting: validateSort(searchParams.get("sort")),
     filters: {
       minFactualScore:
-        minFactualScore !== undefined && maxFactualScore !== undefined && minFactualScore > maxFactualScore
+        minFactualScore !== undefined &&
+        maxFactualScore !== undefined &&
+        minFactualScore > maxFactualScore
           ? undefined
           : minFactualScore,
       maxFactualScore:
-        minFactualScore !== undefined && maxFactualScore !== undefined && minFactualScore > maxFactualScore
+        minFactualScore !== undefined &&
+        maxFactualScore !== undefined &&
+        minFactualScore > maxFactualScore
           ? undefined
           : maxFactualScore,
       minBiasScore:

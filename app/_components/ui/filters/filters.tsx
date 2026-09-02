@@ -66,7 +66,7 @@ function validateFilters(filters: FiltersState): ValidationErrors {
 }
 
 export default function Filters() {
-  const { sorting, filters, saveFilters } = useDiscover();
+  const { search, sorting, filters, saveFilters } = useDiscover();
   const [isOpen, setIsOpen] = useState(false);
   const [draftSorting, setDraftSorting] = useState(sorting);
   const [draftFilters, setDraftFilters] = useState<FiltersState>(filters);
@@ -115,7 +115,7 @@ export default function Filters() {
     setValidationErrors(errors);
     if (Object.keys(errors).length) return;
 
-    saveFilters(draftSorting, draftFilters);
+    saveFilters(draftSorting, draftFilters, search);
     setIsOpen(false);
   }
 
