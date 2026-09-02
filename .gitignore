@@ -11,6 +11,7 @@
 !.yarn/versions
 
 local
+drizzle
 
 # testing
 /coverage
