@@ -1,3 +1,4 @@
+import InfoIcon from "../_components/icons/info";
 import AnalysesGallery from "../_components/ui/analyses/analyses-gallery";
 import Filters from "../_components/ui/filters/filters";
 import Search from "../_components/ui/forms/search";
@@ -66,13 +67,20 @@ export default async function Discover({
       initialSorting={initialSorting}
       initialFilters={initialFilters}
     >
-      <section className="m-4 sm:my-6 sm:mx-12 md:my-10 xl:my-16 2xl:my-22 pb-8 sm:pb-12 md:pb-16 xl:pb-22 2xl:pb-28 lg:mx-18 xl:mx-24 2xl:mx-auto 2xl:max-w-325 flex flex-col gap-12 border-b border-clay-200">
-        <div className="flex flex-col gap-6">
+      <section className="m-4 sm:my-6 sm:mx-12 md:my-10 xl:my-16 2xl:my-22 pb-8 sm:pb-12 md:pb-16 xl:pb-22 2xl:pb-28 lg:mx-18 xl:mx-24 2xl:mx-auto 2xl:max-w-325 flex flex-col border-b border-clay-200">
+        <div className="flex flex-col gap-6 pb-12">
           <h1 className="text-6xl lg:text-7xl font-serif">Discover</h1>
           <p className="text-lg font-sans max-w-150">
-            Totam est consequatur reprehenderit. Deserunt quas harum itaque
-            deleniti expedita aliquam excepturi.
+            Browse claims, sources, and fact-checked stories.
           </p>
+        </div>
+
+        <div
+          className="pb-3 text-clay-400 flex items-center gap-1.5"
+          title={`Our search currently supports full-text search of titles and article content.\n\nSemantic search is actively being worked on, but not fully implemented.`}
+        >
+          <p className="italic">How search works</p>
+          <InfoIcon className="size-4" />
         </div>
 
         <div className="flex flex-col md:flex-row gap-6 justify-between items-center">
