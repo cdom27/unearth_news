@@ -14,7 +14,7 @@ export default function BreakingNewsCard(props: ArticleCardBaseProps) {
 
   async function handleSubmit() {
     try {
-      const slug = await analyzeArticle(props.articleURL);
+      const slug = await analyzeArticle(props.article.url);
 
       if (slug) {
         router.push(`/article/${slug}`);
@@ -44,7 +44,7 @@ export default function BreakingNewsCard(props: ArticleCardBaseProps) {
       <button
         onClick={() => handleSubmit()}
         className="group hover:cursor-pointer rounded-sm flex disabled:cursor-not-allowed"
-        aria-label={`Analyze: ${props.title} by ${props.sourceName}`}
+        aria-label={`Analyze: ${props.article.title} by ${props.source.name}`}
         disabled={message != "" ? true : false}
       >
         <ArticleCardBase {...props} />

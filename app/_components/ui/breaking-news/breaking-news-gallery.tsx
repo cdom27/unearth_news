@@ -1,32 +1,28 @@
 "use client";
 
 import useNewsAPI from "@/app/_hooks/use-news-api";
-// import { breakingNews } from "@/app/_lib/static/temp/breaking-news";
 import { useEffect, useState, useRef, useCallback } from "react";
 import CircleNotchIcon from "../../icons/circle-notch";
 import BreakingNewsCard from "../article-cards/breaking-news-card";
 import ArticleBadge from "../article-cards/article-badge";
-import mapNewsApiToArticle from "@/app/_lib/utils/map-news-api-to-article";
-import type { Article } from "@/app/_lib/types/article";
+import type { BreakingNews } from "@/app/_lib/types/breaking-news";
 
 export default function BreakingNewsGallery() {
-  const { isFetching, newsResult, message, fetchNews } = useNewsAPI();
+  const { isFetching, newsResult, fetchNews } = useNewsAPI();
 
-  const [breakingNewsArticles, setBreakingNewsArticles] = useState<Article[]>(
-    [],
-  );
+  const [breakingNewsArticles, setBreakingNewsArticles] = useState<
+    BreakingNews[]
+  >([]);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const pageSize = 9;
 
   const observer = useRef<IntersectionObserver | null>(null);
 
-  // Fetch news data on component mount
   useEffect(() => {
     fetchNews();
   }, [fetchNews]);
 
-  // Process fetched news data into paginated articles
   useEffect(() => {
     if (!newsResult || !newsResult.articles) return;
 
@@ -35,25 +31,19 @@ export default function BreakingNewsGallery() {
       (page + 1) * pageSize,
     );
 
-    const validArticles = newArticles
-      .map(mapNewsApiToArticle)
-      .filter((article): article is Article => article !== null);
+    const isDone =
+      (newArticles.length === 0 && page > 0) || newArticles.length < pageSize;
 
-    if (validArticles.length === 0 && page > 0) {
-      setHasMore(false);
-      return;
-    }
-
-    if (validArticles.length < pageSize) {
-      setHasMore(false);
-    }
+    if (newArticles.length === 0 && page > 0) return;
 
     setTimeout(
       () => {
+        if (isDone) setHasMore(false);
+
         setBreakingNewsArticles((prev) => {
-          const existingUrls = new Set(prev.map((a) => a.articleURL));
-          const filteredNewArticles = validArticles.filter(
-            (a) => !existingUrls.has(a.articleURL),
+          const existingUrls = new Set(prev.map((bn) => bn.article.url));
+          const filteredNewArticles = newArticles.filter(
+            (bn) => !existingUrls.has(bn.article.url || ""),
           );
           return [...prev, ...filteredNewArticles];
         });
@@ -86,17 +76,16 @@ export default function BreakingNewsGallery() {
   return (
     <article className="flex flex-col gap-4">
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-12">
-        {breakingNewsArticles.map((article) => (
+        {breakingNewsArticles.map((news) => (
           <BreakingNewsCard
-            key={article.title.concat(", ", article.sourceName)}
-            title={article.title}
-            excerpt={article.excerpt}
-            sourceName={article.sourceName}
-            publishedTime={article.publishedTime}
-            thumbnailURL={article.thumbnailURL}
-            articleURL={article.articleURL}
+            key={news.article.title.concat(", ", news.source.name)}
+            article={news.article}
+            source={news.source}
             badge={
-              <ArticleBadge variant="time" timeStamp={article.publishedTime} />
+              <ArticleBadge
+                variant="time"
+                timeStamp={news.article.publishedAt || ""}
+              />
             }
           />
         ))}
@@ -104,10 +93,14 @@ export default function BreakingNewsGallery() {
 
       <div className="grid grid-cols-1 col-span-3 gap-1.5">
         {hasMore && <CircleNotchIcon className="size-6 animate-spin mx-auto" />}
-        <p ref={lastArticleRef} className="text-center">
-          Showing {breakingNewsArticles.length} of{" "}
-          {newsResult?.articles?.length || 0} articles
-        </p>
+        <div ref={lastArticleRef}>
+          <p className="text-center">
+            {isFetching
+              ? "Fetching articles"
+              : `Showing ${breakingNewsArticles.length} of
+            ${newsResult?.articles?.length || 0} articles`}
+          </p>
+        </div>
       </div>
     </article>
   );

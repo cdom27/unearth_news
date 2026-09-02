@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-@theme {
+@theme static {
     --color-clay-50: #fffdf6;
     --color-clay-100: #f3f1ea;
     --color-clay-150: #ebe9e0;
@@ -25,6 +25,24 @@
         "Segoe UI", sans-serif;
     --font-serif:
         var(--font-besley-condensed), Georgia, "Times New Roman", serif;
+}
+
+.menu-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-clay-600) transparent;
+}
+
+.menu-scrollbar::-webkit-scrollbar {
+    width: 0.2rem;
+}
+
+.menu-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.menu-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--color-clay-400);
+    border-radius: 9999px;
 }
 
 body {

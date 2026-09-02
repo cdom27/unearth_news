@@ -1,10 +1,10 @@
 import { useCallback, useState } from "react";
-import type { NewsAPIResponseDTO } from "../_lib/types/news-api";
 import type { ApiResponse } from "../api/_lib/build-response";
+import { BreakingNewsResult } from "../_lib/types/breaking-news";
 
 export default function useNewsAPI() {
   const [isFetching, setIsFetching] = useState(false);
-  const [newsResult, setNewsResult] = useState<NewsAPIResponseDTO | null>(null);
+  const [newsResult, setNewsResult] = useState<BreakingNewsResult | null>(null);
   const [message, setMessage] = useState("");
 
   const fetchNews = useCallback(async () => {
@@ -18,14 +18,14 @@ export default function useNewsAPI() {
         },
       });
 
-      const result = (await response.json()) as ApiResponse<NewsAPIResponseDTO>;
+      const result = (await response.json()) as ApiResponse<BreakingNewsResult>;
 
       if (result.data && response.ok) {
         setMessage(result.message);
         setNewsResult(result.data);
       }
     } catch {
-      setMessage("An unexpected error has occured.");
+      setMessage("An unexpected error has occurred.");
       setNewsResult(null);
     } finally {
       setIsFetching(false);
