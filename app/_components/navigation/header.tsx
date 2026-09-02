@@ -6,7 +6,6 @@ import Link from "next/link";
 import LogoIcon from "../icons/logo";
 import MenuIcon from "../icons/menu";
 import { links } from "@/app/_lib/static/links";
-import XIcon from "../icons/x";
 import { navLinks } from "@/app/_lib/static/nav-links";
 import SideMenu from "../ui/side-menu/side-menu";
 
@@ -40,7 +39,7 @@ export default function Header() {
                       isHovered
                         ? "underline decoration-clay-400"
                         : isActive && hoveredLink === null
-                          ? "underline decoration-clay-900  "
+                          ? "underline decoration-clay-900"
                           : "decoration-50"
                     }`}
                   >
@@ -68,16 +67,28 @@ export default function Header() {
                 <ul>
                   <li className="text-lg font-semibold pb-2">{cat.name}</li>
 
-                  {cat.links.map((link) => (
-                    <li key={link.label} className="flex">
-                      <Link
-                        href={link.href}
-                        className="text-2xl w-full p-2 border-b border-clay-800 hover:bg-clay-800 transition-colors duration-300"
-                      >
-                        {link.label}
-                      </Link>
-                    </li>
-                  ))}
+                  {cat.links.map((link) => {
+                    const isActive = pathname === link.href;
+                    const isHovered = hoveredLink === link.href;
+                    return (
+                      <li key={link.label} className="flex">
+                        <Link
+                          href={link.href}
+                          onMouseEnter={() => setHoveredLink(link.href)}
+                          onMouseLeave={() => setHoveredLink(null)}
+                          className={`text-2xl w-full p-2 border-b border-clay-800 transition-colors duration-300 ${
+                            isHovered
+                              ? "text-brand-500"
+                              : isActive && hoveredLink === null
+                                ? "text-brand-500"
+                                : "text-clay-100"
+                          }`}
+                        >
+                          {link.label}
+                        </Link>
+                      </li>
+                    );
+                  })}
                 </ul>
               </li>
             ))}
