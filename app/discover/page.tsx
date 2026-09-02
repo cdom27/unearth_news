@@ -77,7 +77,7 @@ export default async function Discover({
 
         <div
           className="pb-3 text-clay-400 flex items-center gap-1.5"
-          title={`Our search currently supports full-text search of titles and article content.\n\nSemantic search is actively being worked on, but not fully implemented.`}
+          title={`Search currently supports full-text search of titles and article content.\n\nSemantic search is actively being worked on, but not fully implemented.`}
         >
           <p className="italic">How search works</p>
           <InfoIcon className="size-4" />

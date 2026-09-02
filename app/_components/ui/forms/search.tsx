@@ -38,7 +38,7 @@ export default function Search() {
             type="text"
             defaultValue={query}
             required
-            placeholder="Search by topic, outlet, claim, or keyword..."
+            placeholder="Search story content..."
             onChange={(e) => setQuery(e.target.value)}
             className="w-full focus:outline-none"
           />
