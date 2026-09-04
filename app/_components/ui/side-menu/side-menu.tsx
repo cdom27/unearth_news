@@ -24,7 +24,11 @@ export default function SideMenu({ open, setOpen, children }: SideMenuProps) {
   return (
     <div>
       <div
-        className={`fixed inset-0 bg-clay-900 transition-opacity duration-400 ${open ? "opacity-50 z-10" : "opacity-0 -z-50"}`}
+        className={`fixed inset-0 z-10 bg-clay-900 transition-opacity duration-400 ${
+          open
+            ? "opacity-50 pointer-events-auto"
+            : "opacity-0 pointer-events-none"
+        }`}
       />
       <div
         className={`bg-clay-900 text-clay-50 fixed w-[320px] p-4 sm:py-6 flex flex-col gap-4 inset-0 z-20 transition-transform duration-500 ${open ? "translate-0" : "-translate-x-full"}`}

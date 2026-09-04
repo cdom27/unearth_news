@@ -50,3 +50,7 @@ body {
     color: var(--color-clay-900);
     font-family: var(--font-sans);
 }
+
+html {
+    scrollbar-gutter: stable;
+}
