@@ -22,7 +22,10 @@ export default function AnalysisPreviewCard({
 
   return (
     <Tooltip content="Read Story">
-      <a href={`/article/${preview.analysis.slug}`}>
+      <a
+        href={`/article/${preview.analysis.slug}`}
+        className="group flex h-full w-full flex-col hover:cursor-pointer"
+      >
         <ArticleCardBase
           article={preview.article}
           source={preview.source}

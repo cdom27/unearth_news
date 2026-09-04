@@ -9,9 +9,8 @@ export async function fetchBreakingNews(
 ): Promise<NewsFetchResultDTO> {
   try {
     const sources =
-      "associated-press,reuters,politico,the-hill,the-washington-post,the-wall-street-journal,cnn,fox-news,bbc-news,breitbart-news,axios,nbc-news,cbc-news,the-guardian-uk,abc-news,al-jazeera-english,the-hindu,the-globe-and-mail,msnbc";
+      "associated-press,reuters,politico,the-washington-post,the-wall-street-journal,cnn,fox-news,bbc-news,breitbart-news,axios,nbc-news,cbc-news,the-guardian-uk,abc-news,al-jazeera-english,the-hindu,the-globe-and-mail,msnbc";
 
-    // Fetch first page
     const response = await fetch(
       `https://newsapi.org/v2/top-headlines?sources=${sources}&pageSize=${Math.min(pageSize, 100)}&apiKey=${process.env.NEWS_API_KEY}`,
       {
