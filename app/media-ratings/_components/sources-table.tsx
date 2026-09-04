@@ -4,6 +4,7 @@ import useSources from "@/app/_hooks/use-sources";
 import Search from "@/app/_components/ui/forms/search";
 import ArticleBadge from "@/app/_components/ui/article-cards/article-badge";
 import { useMediaRatings } from "./media-ratings-provider";
+import SourcesTableSkeleton from "./sources-table-skeleton";
 
 function displayValue(value: string | null) {
   return value || "—";
@@ -63,45 +64,49 @@ export default function SourcesTable() {
               ))}
             </tr>
           </thead>
-          <tbody>
-            {sources.map((source) => (
-              <tr key={source.id} className="border-t border-clay-200">
-                <th scope="row" className="px-4 py-4 font-semibold">
-                  <div className="flex flex-col gap-1">
-                    <span>{source.name}</span>
-                    <a
-                      href={`${sourceHref(source.url)}?ref=unearth.news`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-sm text-clay-500 hover:underline"
-                    >
-                      {source.url}
-                    </a>
-                  </div>
-                </th>
-                <td className="px-4 py-4">
-                  {source.bias ? (
-                    <div className="flex">
-                      <ArticleBadge
-                        variant="bias"
-                        bias={normalizeBias(source.bias)}
-                      />
+          {isFetching && sources.length === 0 ? (
+            <SourcesTableSkeleton />
+          ) : (
+            <tbody>
+              {sources.map((source) => (
+                <tr key={source.id} className="border-t border-clay-200">
+                  <th scope="row" className="px-4 py-4 font-semibold">
+                    <div className="flex flex-col gap-1">
+                      <span>{source.name}</span>
+                      <a
+                        href={`${sourceHref(source.url)}?ref=unearth.news`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-sm text-clay-500 hover:underline"
+                      >
+                        {source.url}
+                      </a>
                     </div>
-                  ) : (
-                    "—"
-                  )}
-                </td>
-                <td className="px-4 py-4">
-                  {displayValue(source.factualReporting)}
-                </td>
-                <td className="px-4 py-4">
-                  {displayValue(source.credibility)}
-                </td>
-                <td className="px-4 py-4">{displayValue(source.country)}</td>
-                <td className="px-4 py-4">{displayValue(source.mediaType)}</td>
-              </tr>
-            ))}
-          </tbody>
+                  </th>
+                  <td className="px-4 py-4">
+                    {source.bias ? (
+                      <div className="flex">
+                        <ArticleBadge
+                          variant="bias"
+                          bias={normalizeBias(source.bias)}
+                        />
+                      </div>
+                    ) : (
+                      "—"
+                    )}
+                  </td>
+                  <td className="px-4 py-4">
+                    {displayValue(source.factualReporting)}
+                  </td>
+                  <td className="px-4 py-4">
+                    {displayValue(source.credibility)}
+                  </td>
+                  <td className="px-4 py-4">{displayValue(source.country)}</td>
+                  <td className="px-4 py-4">{displayValue(source.mediaType)}</td>
+                </tr>
+              ))}
+            </tbody>
+          )}
         </table>
 
         {!isFetching && sources.length === 0 && (

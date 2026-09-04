@@ -5,6 +5,7 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import CircleNotchIcon from "../../icons/circle-notch";
 import BreakingNewsCard from "../article-cards/breaking-news-card";
 import ArticleBadge from "../article-cards/article-badge";
+import { ArticleCardBaseSkeleton } from "../article-cards/article-card-base";
 import type { BreakingNews } from "@/app/_lib/types/breaking-news";
 
 export default function BreakingNewsGallery() {
@@ -76,19 +77,23 @@ export default function BreakingNewsGallery() {
   return (
     <article className="flex flex-col gap-4">
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-12">
-        {breakingNewsArticles.map((news) => (
-          <BreakingNewsCard
-            key={news.article.title.concat(", ", news.source.name)}
-            article={news.article}
-            source={news.source}
-            badge={
-              <ArticleBadge
-                variant="time"
-                timeStamp={news.article.publishedAt || ""}
+        {isFetching && breakingNewsArticles.length === 0
+          ? Array.from({ length: 9 }, (_, index) => (
+              <ArticleCardBaseSkeleton key={`breaking-news-skeleton-${index}`} />
+            ))
+          : breakingNewsArticles.map((news) => (
+              <BreakingNewsCard
+                key={news.article.title.concat(", ", news.source.name)}
+                article={news.article}
+                source={news.source}
+                badge={
+                  <ArticleBadge
+                    variant="time"
+                    timeStamp={news.article.publishedAt || ""}
+                  />
+                }
               />
-            }
-          />
-        ))}
+            ))}
       </div>
 
       <div className="grid grid-cols-1 col-span-3 gap-1.5">

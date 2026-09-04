@@ -1,11 +1,37 @@
 import type { BaseCard } from "@/app/_lib/types/card";
 import type { ReactNode } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import QuoteIcon from "../../icons/quote";
+import placeholderImage from "@/app/_assets/images/placeholder.webp";
 
 export interface ArticleCardBaseProps extends BaseCard {
   badge: ReactNode;
   footerExtension?: ReactNode;
+}
+
+export function ArticleCardBaseSkeleton() {
+  return (
+    <article
+      className="h-full flex flex-col gap-6 animate-pulse"
+      aria-hidden="true"
+    >
+      <div>
+        <div className="aspect-video w-full bg-clay-200 rounded-t-sm" />
+
+        <div className="h-16 bg-clay-900 rounded-b-sm flex items-center justify-center gap-3 p-3">
+          <div className="h-6 w-6 rounded-full bg-clay-600" />
+          <div className="h-5 w-32 rounded-sm bg-clay-600" />
+        </div>
+      </div>
+
+      <div className="h-9 w-4/5 rounded-sm bg-clay-200" />
+      <div className="space-y-2">
+        <div className="h-5 w-full rounded-sm bg-clay-200" />
+        <div className="h-5 w-2/3 rounded-sm bg-clay-200" />
+      </div>
+    </article>
+  );
 }
 
 export default function ArticleCardBase({
@@ -14,7 +40,14 @@ export default function ArticleCardBase({
   badge,
   footerExtension,
 }: ArticleCardBaseProps) {
+  const [failedThumbnailUrl, setFailedThumbnailUrl] = useState<string | null>(
+    null,
+  );
   let truncatedExcerpt = article.excerpt;
+  const thumbnailSrc =
+    article.thumbnailUrl && article.thumbnailUrl !== failedThumbnailUrl
+      ? article.thumbnailUrl
+      : placeholderImage;
 
   if (article.excerpt) {
     if (article.excerpt.length > 250) {
@@ -25,20 +58,21 @@ export default function ArticleCardBase({
   return (
     <article className="h-full flex flex-col gap-6">
       <div>
-        {article.thumbnailUrl ? (
-          <div className="overflow-clip rounded-t-sm">
-            <Image
-              src={article.thumbnailUrl}
-              alt={article.title ?? "Untitled Report"}
-              width={450}
-              height={250}
-              loading="eager"
-              className="aspect-video w-full h-auto object-cover rounded-t-sm group-hover:scale-105 transition-transform duration-250"
-            />
-          </div>
-        ) : (
-          <div className="w-112.5 h-62.5 bg-clay-600" />
-        )}
+        <div className="overflow-clip rounded-t-sm">
+          <Image
+            src={thumbnailSrc}
+            alt={article.title ?? "Untitled Report"}
+            width={450}
+            height={250}
+            loading="eager"
+            onError={() => {
+              if (article.thumbnailUrl) {
+                setFailedThumbnailUrl(article.thumbnailUrl);
+              }
+            }}
+            className="aspect-video w-full h-auto object-cover rounded-t-sm group-hover:scale-105 transition-transform duration-250"
+          />
+        </div>
 
         <div className="text-clay-50 bg-clay-900 rounded-b-sm min-h-10 flex items-center justify-center gap-3 p-3">
           <div className="flex items-center gap-3">

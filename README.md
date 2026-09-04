@@ -14,5 +14,4 @@ The MVP rewrite moves to Next.js primarily to reduce overhead as managing two se
 - [ ] Detect videos (and non article/post) and reject analysis (for now). major issue with tiktok videos being submitted..
 - [ ] Websockets to stream analysis progress. two options: modal with timeline -> redirect once complete. or create analysis page before anything -> redirect user -> fill in data as is comes in.
 - [ ] Remove articles from breaking news gallery if unprocessable (currently only disabling)
-- [ ] Component loading skeletons
 - [ ] api calls in parallel when analyzing (currently sequential and taking up time SMH)
