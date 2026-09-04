@@ -70,7 +70,7 @@ export default function SourcesTable() {
                   <div className="flex flex-col gap-1">
                     <span>{source.name}</span>
                     <a
-                      href={sourceHref(source.url)}
+                      href={`${sourceHref(source.url)}?ref=unearth.news`}
                       target="_blank"
                       rel="noreferrer"
                       className="text-sm text-clay-500 hover:underline"
