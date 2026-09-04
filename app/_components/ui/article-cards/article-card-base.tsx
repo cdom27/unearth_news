@@ -1,7 +1,9 @@
 import type { BaseCard } from "@/app/_lib/types/card";
 import type { ReactNode } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import QuoteIcon from "../../icons/quote";
+import placeholderImage from "@/app/_assets/images/placeholder.webp";
 
 export interface ArticleCardBaseProps extends BaseCard {
   badge: ReactNode;
@@ -38,7 +40,14 @@ export default function ArticleCardBase({
   badge,
   footerExtension,
 }: ArticleCardBaseProps) {
+  const [failedThumbnailUrl, setFailedThumbnailUrl] = useState<string | null>(
+    null,
+  );
   let truncatedExcerpt = article.excerpt;
+  const thumbnailSrc =
+    article.thumbnailUrl && article.thumbnailUrl !== failedThumbnailUrl
+      ? article.thumbnailUrl
+      : placeholderImage;
 
   if (article.excerpt) {
     if (article.excerpt.length > 250) {
@@ -49,20 +58,21 @@ export default function ArticleCardBase({
   return (
     <article className="h-full flex flex-col gap-6">
       <div>
-        {article.thumbnailUrl ? (
-          <div className="overflow-clip rounded-t-sm">
-            <Image
-              src={article.thumbnailUrl}
-              alt={article.title ?? "Untitled Report"}
-              width={450}
-              height={250}
-              loading="eager"
-              className="aspect-video w-full h-auto object-cover rounded-t-sm group-hover:scale-105 transition-transform duration-250"
-            />
-          </div>
-        ) : (
-          <div className="w-112.5 h-62.5 bg-clay-600" />
-        )}
+        <div className="overflow-clip rounded-t-sm">
+          <Image
+            src={thumbnailSrc}
+            alt={article.title ?? "Untitled Report"}
+            width={450}
+            height={250}
+            loading="eager"
+            onError={() => {
+              if (article.thumbnailUrl) {
+                setFailedThumbnailUrl(article.thumbnailUrl);
+              }
+            }}
+            className="aspect-video w-full h-auto object-cover rounded-t-sm group-hover:scale-105 transition-transform duration-250"
+          />
+        </div>
 
         <div className="text-clay-50 bg-clay-900 rounded-b-sm min-h-10 flex items-center justify-center gap-3 p-3">
           <div className="flex items-center gap-3">
