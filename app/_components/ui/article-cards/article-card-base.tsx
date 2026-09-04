@@ -8,6 +8,30 @@ export interface ArticleCardBaseProps extends BaseCard {
   footerExtension?: ReactNode;
 }
 
+export function ArticleCardBaseSkeleton() {
+  return (
+    <article
+      className="h-full flex flex-col gap-6 animate-pulse"
+      aria-hidden="true"
+    >
+      <div>
+        <div className="aspect-video w-full bg-clay-200 rounded-t-sm" />
+
+        <div className="h-16 bg-clay-900 rounded-b-sm flex items-center justify-center gap-3 p-3">
+          <div className="h-6 w-6 rounded-full bg-clay-600" />
+          <div className="h-5 w-32 rounded-sm bg-clay-600" />
+        </div>
+      </div>
+
+      <div className="h-9 w-4/5 rounded-sm bg-clay-200" />
+      <div className="space-y-2">
+        <div className="h-5 w-full rounded-sm bg-clay-200" />
+        <div className="h-5 w-2/3 rounded-sm bg-clay-200" />
+      </div>
+    </article>
+  );
+}
+
 export default function ArticleCardBase({
   article,
   source,

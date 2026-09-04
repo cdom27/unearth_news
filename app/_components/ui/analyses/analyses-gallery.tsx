@@ -6,6 +6,7 @@ import { useDiscover } from "@/app/discover/_components/discover-provider";
 import { useCallback, useEffect, useRef } from "react";
 import CircleNotchIcon from "../../icons/circle-notch";
 import AnalysisPreviewCard from "../article-cards/analysis-preview-card";
+import { ArticleCardBaseSkeleton } from "../article-cards/article-card-base";
 
 type AnalysesGalleryResultsProps = {
   sorting: Params["sorting"];
@@ -64,9 +65,13 @@ function AnalysesGalleryResults({
   return (
     <article className="flex flex-col gap-4">
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-12">
-        {previewsResult.previews.map((ap) => (
-          <AnalysisPreviewCard key={ap.analysis.slug} preview={ap} />
-        ))}
+        {isFetching && previewsResult.previews.length === 0
+          ? Array.from({ length: 9 }, (_, index) => (
+              <ArticleCardBaseSkeleton key={`analysis-skeleton-${index}`} />
+            ))
+          : previewsResult.previews.map((ap) => (
+              <AnalysisPreviewCard key={ap.analysis.slug} preview={ap} />
+            ))}
       </div>
 
       <div className="grid grid-cols-1 col-span-3 gap-1.5">
