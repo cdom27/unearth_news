@@ -1,4 +1,9 @@
-import { articles, sources, analyses } from "@/app/_lib/db/schema";
+import {
+  articles,
+  sources,
+  analyses,
+  rejectedSubmissions,
+} from "@/app/_lib/db/schema";
 import type { ParsedArticleDTO } from "./dtos/article";
 import { parseArticle } from "./utils/parse-article";
 import { db } from "@/app/_lib/db/client";
@@ -13,6 +18,7 @@ import type { ClaimExtractionDTO } from "./dtos/claim-extraction";
 import { search } from "./utils/ai/exa/exa";
 import { ClaimVerificationDTO } from "./dtos/claim-verification";
 import { Claim } from "./types/claim";
+import { inspectMediaSubmission } from "./utils/inspect-media-submission";
 
 export async function analyzeArticle(url: string): Promise<AnalysisResultDTO> {
   try {
@@ -26,11 +32,48 @@ export async function analyzeArticle(url: string): Promise<AnalysisResultDTO> {
 
     // ensure an article record exists prior to attempting analysis
     if (!article) {
-      parsedData = (await parseArticle(url)) as ParsedArticleDTO;
+      const inspection = await inspectMediaSubmission(url);
+
+      if (inspection.rejected) {
+        await db.insert(rejectedSubmissions).values({
+          submittedUrl: url,
+          normalizedUrl: url,
+          finalUrl: inspection.finalUrl,
+          rejectionReason: inspection.reason,
+          detectionSignals: inspection.signals,
+        });
+
+        return {
+          success: false,
+          error:
+            inspection.reason === "known_video_platform"
+              ? "Video submissions are not supported"
+              : "Unable to fetch submitted page",
+          status: 422,
+        };
+      }
+
+      parsedData = (await parseArticle(inspection.html)) as ParsedArticleDTO;
 
       if (!parsedData || !parsedData.article) {
-        // future: save fail data in db
-        return { success: false, error: "Unable to parse article" };
+        await db.insert(rejectedSubmissions).values({
+          submittedUrl: url,
+          normalizedUrl: url,
+          finalUrl: inspection.finalUrl,
+          rejectionReason: "parse_failed",
+          detectionSignals: [
+            {
+              type: "readability_parse",
+              value: "no_article_content",
+            },
+          ],
+        });
+
+        return {
+          success: false,
+          error: "Unable to parse article",
+          status: 422,
+        };
       }
 
       // must have a source prior to saving the article in the db

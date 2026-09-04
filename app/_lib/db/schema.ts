@@ -89,3 +89,15 @@ export const analyses = pgTable("analyses", {
     .notNull()
     .defaultNow(),
 });
+
+export const rejectedSubmissions = pgTable("rejected_submissions", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  submittedUrl: text("submitted_url").notNull(),
+  normalizedUrl: text("normalized_url").notNull(),
+  finalUrl: text("final_url"),
+  rejectionReason: text("rejection_reason").notNull(),
+  detectionSignals: jsonb("detection_signals").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});

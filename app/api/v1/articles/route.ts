@@ -23,7 +23,10 @@ export async function POST(request: Request) {
     const analysisResult = await analyzeArticle(normalizedURL);
 
     if (!analysisResult.success) {
-      return apiResponse({ message: analysisResult.error, data: null }, 400);
+      return apiResponse(
+        { message: analysisResult.error, data: null },
+        analysisResult.status ?? 400,
+      );
     }
 
     return apiResponse({
