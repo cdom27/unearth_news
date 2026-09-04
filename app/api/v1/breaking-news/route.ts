@@ -3,7 +3,6 @@ import { fetchBreakingNews } from "./_lib/service";
 
 export async function GET() {
   try {
-    // Fetch up to 200 articles (2 pages of 100 each)
     const newsAPIResponse = await fetchBreakingNews(200);
 
     if (!newsAPIResponse.success) {
