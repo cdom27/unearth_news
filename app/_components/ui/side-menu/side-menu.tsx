@@ -7,9 +7,15 @@ interface SideMenuProps {
   setOpen: (action: boolean) => void;
   open: boolean;
   children: ReactNode;
+  id?: string;
 }
 
-export default function SideMenu({ open, setOpen, children }: SideMenuProps) {
+export default function SideMenu({
+  open,
+  setOpen,
+  children,
+  id,
+}: SideMenuProps) {
   useEffect(() => {
     if (!open) return;
 
@@ -29,8 +35,14 @@ export default function SideMenu({ open, setOpen, children }: SideMenuProps) {
             ? "opacity-50 pointer-events-auto"
             : "opacity-0 pointer-events-none"
         }`}
+        aria-hidden="true"
       />
       <div
+        id={id}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Navigation menu"
+        aria-hidden={!open}
         className={`bg-clay-900 text-clay-50 fixed w-[320px] p-4 sm:py-6 flex flex-col gap-4 inset-0 z-20 transition-transform duration-500 ${open ? "translate-0" : "-translate-x-full"}`}
       >
         <div className="flex justify-between items-center pb-4 border-b border-clay-800">
@@ -43,10 +55,13 @@ export default function SideMenu({ open, setOpen, children }: SideMenuProps) {
           </Link>
 
           <button
+            type="button"
+            aria-label="Close navigation menu"
             onClick={() => setOpen(false)}
             className="hover:cursor-pointer"
           >
             <XIcon className="size-5" />
+            <span className="sr-only">Close navigation menu</span>
           </button>
         </div>
 

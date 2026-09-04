@@ -41,7 +41,10 @@ export default function SourcesTable() {
         buttonLabel="Search Sources"
       />
 
-      <div className="overflow-x-auto border border-clay-200 rounded-md">
+      <div
+        className="overflow-x-auto border border-clay-200 rounded-md"
+        aria-busy={isFetching}
+      >
         <table className="w-full min-w-212.5 border-collapse text-left">
           <caption className="sr-only">Media source ratings</caption>
           <thead className="bg-clay-150 text-sm">
@@ -102,7 +105,9 @@ export default function SourcesTable() {
                     {displayValue(source.credibility)}
                   </td>
                   <td className="px-4 py-4">{displayValue(source.country)}</td>
-                  <td className="px-4 py-4">{displayValue(source.mediaType)}</td>
+                  <td className="px-4 py-4">
+                    {displayValue(source.mediaType)}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -115,7 +120,13 @@ export default function SourcesTable() {
           </p>
         )}
         {isFetching && (
-          <p className="p-8 text-center text-clay-500">Fetching sources...</p>
+          <p
+            className="p-8 text-center text-clay-500"
+            role="status"
+            aria-live="polite"
+          >
+            Fetching sources...
+          </p>
         )}
       </div>
 

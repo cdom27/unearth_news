@@ -45,8 +45,33 @@ const besleyCondensed = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "unearth.news",
+  title: "Unearth News - Home to transparent reporting",
   description: "A civic intelligence tool",
+  metadataBase: new URL("https://unearth.news"),
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    url: "https://unearth.news/",
+    siteName: "Unearth News",
+    title: "Unearth News",
+    description: "A civic intelligence tool",
+    images: [
+      {
+        url: "./_assets/images/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Unearth News",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Unearth News",
+    description: "A civic intelligence tool",
+    images: ["./_assets/images/og-image.png"],
+  },
 };
 
 export default function RootLayout({

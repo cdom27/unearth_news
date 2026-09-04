@@ -12,6 +12,8 @@ export default function BarChartIcon({
     return (
       <svg
         className={className}
+        aria-hidden="true"
+        focusable="false"
         viewBox="0 0 26 23"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -27,6 +29,8 @@ export default function BarChartIcon({
   return (
     <svg
       className={className}
+      aria-hidden="true"
+      focusable="false"
       viewBox="0 0 26 23"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

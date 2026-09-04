@@ -52,14 +52,21 @@ export default function Header() {
         </nav>
 
         <button
+          type="button"
+          aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
+          aria-controls="navigation-menu"
+          aria-expanded={isOpen}
           className="hover:cursor-pointer"
           onClick={() => setIsOpen(!isOpen)}
         >
           <MenuIcon className="w-9" />
+          <span className="sr-only">
+            {isOpen ? "Close navigation menu" : "Open navigation menu"}
+          </span>
         </button>
       </div>
 
-      <SideMenu open={isOpen} setOpen={setIsOpen}>
+      <SideMenu open={isOpen} setOpen={setIsOpen} id="navigation-menu">
         <nav>
           <ul className="flex flex-col gap-4">
             {links.map((cat) => (

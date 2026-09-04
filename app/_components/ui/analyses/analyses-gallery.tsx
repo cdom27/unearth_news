@@ -63,7 +63,7 @@ function AnalysesGalleryResults({
   );
 
   return (
-    <article className="flex flex-col gap-4">
+    <article className="flex flex-col gap-4" aria-busy={isFetching}>
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-12">
         {isFetching && previewsResult.previews.length === 0
           ? Array.from({ length: 9 }, (_, index) => (
@@ -77,7 +77,7 @@ function AnalysesGalleryResults({
       <div className="grid grid-cols-1 col-span-3 gap-1.5">
         {hasMore && <CircleNotchIcon className="size-6 animate-spin mx-auto" />}
         <div ref={lastAnalysisRef}>
-          <p className="text-center">
+          <p className="text-center" role="status" aria-live="polite">
             {isFetching
               ? "Fetching articles"
               : `Showing ${previewsResult.previews.length} of
