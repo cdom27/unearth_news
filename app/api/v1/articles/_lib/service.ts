@@ -44,6 +44,7 @@ export async function analyzeArticle(url: string): Promise<AnalysisResultDTO> {
           .values({
             name: parsedData.article.siteName || "",
             url: hostname,
+            slug: slugify(parsedData.article.siteName || hostname),
           })
           .returning();
 
