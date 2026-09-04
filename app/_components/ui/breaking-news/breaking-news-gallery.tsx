@@ -75,11 +75,13 @@ export default function BreakingNewsGallery() {
   );
 
   return (
-    <article className="flex flex-col gap-4">
+    <article className="flex flex-col gap-4" aria-busy={isFetching}>
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-12">
         {isFetching && breakingNewsArticles.length === 0
           ? Array.from({ length: 9 }, (_, index) => (
-              <ArticleCardBaseSkeleton key={`breaking-news-skeleton-${index}`} />
+              <ArticleCardBaseSkeleton
+                key={`breaking-news-skeleton-${index}`}
+              />
             ))
           : breakingNewsArticles.map((news) => (
               <BreakingNewsCard
@@ -99,7 +101,7 @@ export default function BreakingNewsGallery() {
       <div className="grid grid-cols-1 col-span-3 gap-1.5">
         {hasMore && <CircleNotchIcon className="size-6 animate-spin mx-auto" />}
         <div ref={lastArticleRef}>
-          <p className="text-center">
+          <p className="text-center" role="status" aria-live="polite">
             {isFetching
               ? "Fetching articles"
               : `Showing ${breakingNewsArticles.length} of
