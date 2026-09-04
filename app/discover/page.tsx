@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import InfoIcon from "../_components/icons/info";
 import AnalysesGallery from "../_components/ui/analyses/analyses-gallery";
 import Filters from "../_components/ui/filters/filters";
@@ -6,6 +7,23 @@ import DiscoverSearch from "./_components/discover-search";
 import { DiscoverProvider } from "./_components/discover-provider";
 
 const VALID_SORTS: Params["sorting"][] = ["newest", "oldest", "factualScore"];
+
+export const metadata: Metadata = {
+  title: "Unearth News - Discover",
+  description: "Browse claims, sources, and fact-checked stories.",
+  alternates: {
+    canonical: "/discover",
+  },
+  openGraph: {
+    title: "Unearth News - Discover",
+    description: "Browse claims, sources, and fact-checked stories.",
+    url: "https://unearth.news/discover",
+  },
+  twitter: {
+    title: "Unearth News - Discover",
+    description: "Browse claims, sources, and fact-checked stories.",
+  },
+};
 
 function resolveSorting(
   value: string | string[] | undefined,

@@ -1,5 +1,26 @@
+import type { Metadata } from "next";
 import SourcesTable from "./_components/sources-table";
 import { MediaRatingsProvider } from "./_components/media-ratings-provider";
+
+export const metadata: Metadata = {
+  title: "Unearth News - Media Ratings",
+  description:
+    "Browse source ratings for bias, factual reporting, and credibility.",
+  alternates: {
+    canonical: "/media-ratings",
+  },
+  openGraph: {
+    title: "Unearth News - Media Ratings",
+    description:
+      "Browse source ratings for bias, factual reporting, and credibility.",
+    url: "https://unearth.news/media-ratings",
+  },
+  twitter: {
+    title: "Unearth News - Media Ratings",
+    description:
+      "Browse source ratings for bias, factual reporting, and credibility.",
+  },
+};
 
 export default async function MediaRatings({
   searchParams,
