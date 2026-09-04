@@ -46,7 +46,7 @@ export default function ArticleBadge({
   } else if (variant === "bias") {
     return (
       <div
-        className={`flex items-center gap-1.5 ${getBiasColor(bias)} py-1 px-4 rounded-full`}
+        className={`flex items-center gap-1.5 ${getBiasColor(bias)} text-clay-100 py-1 px-4 rounded-full`}
         title={`Source typically leans ${bias}`}
       >
         <span>{bias}</span>

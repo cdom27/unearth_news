@@ -3,29 +3,44 @@
 import { useEffect, useRef, useState } from "react";
 import Button from "../button/button";
 import MagnifyingGlassIcon from "../../icons/magnifying-glass";
-import { useDiscover } from "@/app/discover/_components/discover-provider";
 
-export default function Search() {
-  const { search, sorting, filters, saveFilters } = useDiscover();
-  const [query, setQuery] = useState(search);
+type SearchProps = {
+  value: string;
+  onSearch: (query: string) => void;
+  inputLabel?: string;
+  placeholder?: string;
+  buttonLabel?: string;
+  debounceMs?: number;
+};
+
+export default function Search({
+  value,
+  onSearch,
+  inputLabel = "Search",
+  placeholder = "Search...",
+  buttonLabel = "Search",
+  debounceMs = 700,
+}: SearchProps) {
+  const [query, setQuery] = useState(value);
   const inputRef = useRef<HTMLInputElement>(null);
 
   function handleSubmit() {
     const nextSearch = query.trim();
-    if (nextSearch === search) return;
-    saveFilters(sorting, filters, nextSearch);
+    if (nextSearch === value) return;
+    onSearch(nextSearch);
   }
 
   useEffect(() => {
     const nextSearch = query.trim();
-    if (nextSearch === search) return;
+    if (nextSearch === value) return;
 
-    const timeout = window.setTimeout(() => {
-      saveFilters(sorting, filters, nextSearch);
-    }, 700);
+    const timeout = window.setTimeout(
+      () => onSearch(nextSearch),
+      debounceMs,
+    );
 
     return () => window.clearTimeout(timeout);
-  }, [filters, query, saveFilters, search, sorting]);
+  }, [debounceMs, onSearch, query, value]);
 
   return (
     <form
@@ -40,7 +55,7 @@ export default function Search() {
         onClick={() => inputRef.current?.focus()}
       >
         <label htmlFor="query" className="sr-only">
-          Search by topic, outlet, claim, or keyword...
+          {inputLabel}
         </label>
 
         <div className="flex items-center gap-3 pl-3 flex-1">
@@ -52,7 +67,7 @@ export default function Search() {
             name="query"
             type="text"
             value={query}
-            placeholder="Search story content..."
+            placeholder={placeholder}
             onChange={(e) => setQuery(e.target.value)}
             className="w-full focus:outline-none"
           />
@@ -63,7 +78,7 @@ export default function Search() {
           disabled={!query.trim()}
           className="hidden sm:block"
         >
-          <span>Search Stories</span>
+          <span>{buttonLabel}</span>
         </Button>
       </div>
 
@@ -74,7 +89,7 @@ export default function Search() {
         disabled={!query.trim()}
         className="sm:hidden w-full"
       >
-        <span>Search Stories</span>
+        <span>{buttonLabel}</span>
       </Button>
     </form>
   );
