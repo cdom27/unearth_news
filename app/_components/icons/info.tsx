@@ -4,6 +4,8 @@ export default function InfoIcon({ className = "size-8" }: IconProps) {
   return (
     <svg
       className={className}
+      aria-hidden="true"
+      focusable="false"
       viewBox="0 0 25 25"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

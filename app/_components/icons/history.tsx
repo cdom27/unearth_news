@@ -4,6 +4,8 @@ export default function HistoryIcon({ className = "size-8" }: IconProps) {
   return (
     <svg
       className={className}
+      aria-hidden="true"
+      focusable="false"
       width="25"
       height="24"
       viewBox="0 0 25 24"
