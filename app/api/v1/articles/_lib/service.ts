@@ -16,7 +16,6 @@ import { eq } from "drizzle-orm";
 import type { MetaDTO } from "./dtos/meta";
 import type { ClaimExtractionDTO } from "./dtos/claim-extraction";
 import { search } from "./utils/ai/exa/exa";
-import { ClaimVerificationDTO } from "./dtos/claim-verification";
 import { Claim } from "./types/claim";
 import { inspectMediaSubmission } from "./utils/inspect-media-submission";
 
@@ -150,6 +149,7 @@ export async function analyzeArticle(url: string): Promise<AnalysisResultDTO> {
         console.error("No summary data returned for: ", article.id);
         return { success: false, error: "Unexpected error" };
       }
+
       const parsedSummaryData = summaryResponse.data as SummaryDTO;
 
       const newAnalysis = await db
@@ -251,15 +251,28 @@ export async function analyzeArticle(url: string): Promise<AnalysisResultDTO> {
     if (currentStatus === "claims_extracted") {
       const claims = analysis.claims as Claim[];
 
+      const claimVerificationMeta = [];
+
       for (const claim of claims) {
         const searchResult = await search(claim.content);
-        claim.verification = searchResult as unknown as ClaimVerificationDTO;
+
+        claim.verification = searchResult.data;
+        claimVerificationMeta.push(searchResult.meta);
       }
+
+      const meta = analysis.meta as MetaDTO;
 
       const updatedAnalysis = await db
         .update(analyses)
         .set({
           claims: claims,
+          meta: {
+            ...meta,
+            claimVerification: {
+              model: "deep-lite",
+              requests: claimVerificationMeta,
+            },
+          },
           status: "claims_verified",
           updatedAt: new Date(),
         })
@@ -273,42 +286,37 @@ export async function analyzeArticle(url: string): Promise<AnalysisResultDTO> {
     }
 
     if (currentStatus === "claims_verified") {
-      // ok I know this deserves jail time but im just testing
-      const source = await db.query.sources.findFirst({
-        where: (sources, { eq }) => eq(sources.url, hostname),
-      });
+      const claims = analysis.claims as Claim[];
 
-      let baseScore = -1;
-      const reporting = source?.factualReporting;
+      const verdictScores = {
+        true: 1,
+        mixed: 0.5,
+        false: 0,
+      } as const;
 
-      if (!reporting || reporting === "" || reporting === "N/A") {
-        baseScore = -1;
-      } else if (reporting === "Very Low") {
-        baseScore = 0.1;
-      } else if (reporting === "Low") {
-        baseScore = 0.36;
-      } else if (reporting === "Mixed") {
-        baseScore = 0.63;
-      } else if (reporting === "Mostly Factual") {
-        baseScore = 0.9;
-      } else if (reporting === "High") {
-        baseScore = 0.95;
-      } else if (reporting === "Very High") {
-        baseScore = 1.0;
-      }
-
-      let factualScore = baseScore;
-      if (baseScore !== -1) {
-        const variance = Math.random() * 0.04 - 0.02;
-        factualScore = Number(
-          Math.max(0, Math.min(1, baseScore + variance)).toFixed(2),
+      const scores = claims
+        .map((claim) => claim.verification?.output?.content?.verdict)
+        .filter(
+          (verdict): verdict is keyof typeof verdictScores =>
+            verdict === "true" || verdict === "mixed" || verdict === "false",
         );
-      }
+
+      const factualScore =
+        scores.length > 0
+          ? Number(
+              (
+                scores.reduce(
+                  (sum, verdict) => sum + verdictScores[verdict],
+                  0,
+                ) / scores.length
+              ).toFixed(2),
+            )
+          : -1;
 
       const updatedAnalysis = await db
         .update(analyses)
         .set({
-          factualScore: factualScore,
+          factualScore,
           status: "completed",
           updatedAt: new Date(),
         })
@@ -320,7 +328,6 @@ export async function analyzeArticle(url: string): Promise<AnalysisResultDTO> {
 
       console.log("Completed analysis: ", analysisId);
     }
-
     return { success: true, slug: analysisSlug };
   } catch (error) {
     console.error("Unexpected error when processing the URL:", url, error);
