@@ -10,6 +10,5 @@ The MVP rewrite moves to Next.js primarily to reduce overhead as managing two se
 
 ### things i fudged earlier or didnt need at the time of building
 
-- [ ] Update score calc
 - [ ] Websockets to stream analysis progress. two options: modal with timeline -> redirect once complete. or create analysis page before anything -> redirect user -> fill in data as is comes in.
 - [ ] api calls in parallel when analyzing (currently sequential and taking up time SMH)
